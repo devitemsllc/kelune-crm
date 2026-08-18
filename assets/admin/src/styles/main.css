@@ -1,0 +1,39 @@
+/* Override WordPress admin styles */
+.toplevel_page_kelune-crm #wpwrap #wpcontent {
+  padding-left: 0;
+}
+
+@media (max-width: 782px) {
+  .toplevel_page_kelune-crm #wpwrap.wp-responsive-open #wpbody {
+    right: -190px;
+  }
+}
+
+/* rc-tabs copies `tabBarStyle` onto the overflow ("...") operations node too, so
+   it inherits the tab bar's bottom margin and sits misaligned. The overflow
+   button should never carry that spacing — zero it (inline style needs the
+   !important to lose). */
+.kelune-crm-ant-tabs-nav-operations {
+  margin-bottom: 0 !important;
+}
+
+/* Setup wizard: keep inactive steps mounted (so their form state survives) but
+   fully hidden. */
+.kelune-crm-cc-hidden {
+  display: none;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+}
+
+/* On narrow screens the step titles are blanked, so drop the icon's trailing
+   gap to keep the compact progress dots evenly spaced. */
+@media (max-width: 991px) {
+  .kelune-crm-cc-setup-wizard-steps
+    .kelune-crm-ant-steps-item
+    .kelune-crm-ant-steps-item-icon {
+    margin-inline-end: 0;
+  }
+}
