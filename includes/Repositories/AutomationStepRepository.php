@@ -75,20 +75,8 @@ class AutomationStepRepository
      */
     public function create($data)
     {
-        $insert_data = [
+        $insert_data = $this->stepColumns($data) + [
             'automation_id' => $data['automation_id'],
-            'step_order' => $data['step_order'] ?? 0,
-            'step_type' => $data['step_type'],
-            'parent_step_id' => $data['parent_step_id'] ?? null,
-            'branch_type' => $data['branch_type'] ?? null,
-            'action_type' => $data['action_type'] ?? null,
-            'action_config' => is_array($data['action_config'] ?? null) ? json_encode($data['action_config']) : null,
-            'condition_type' => $data['condition_type'] ?? null,
-            'condition_config' => is_array($data['condition_config'] ?? null) ? json_encode($data['condition_config']) : null,
-            'delay_type' => $data['delay_type'] ?? null,
-            'delay_value' => $data['delay_value'] ?? null,
-            'position_x' => $data['position_x'] ?? 0,
-            'position_y' => $data['position_y'] ?? 0,
             'created_at' => current_time('mysql', true),
             // Seed updated_at UTC on create so a never-edited row doesn't carry
             // the DB-session-local time the CURRENT_TIMESTAMP default would write.
@@ -114,7 +102,7 @@ class AutomationStepRepository
         $update_data = [];
 
         $allowed_fields = [
-            'step_order', 'step_type', 'parent_step_id', 'branch_type',
+            'step_order', 'step_type', 'label', 'parent_step_id', 'branch_type',
             'action_type', 'action_config', 'condition_type', 'condition_config',
             'delay_type', 'delay_value', 'position_x', 'position_y',
         ];
@@ -167,57 +155,159 @@ class AutomationStepRepository
         return $this->db->delete($this->automationStepsTable, ['id' => $id]) !== false;
     }
 
-    /** @param int $automation_id */
-    public function deleteByAutomation($automation_id): bool
-    {
-        return $this->db->delete($this->automationStepsTable, ['automation_id' => $automation_id]) !== false;
-    }
-
     /**
+     * Persist the builder's whole graph, keeping step ids stable.
+     *
+     * A step the payload identifies by id is UPDATED in place; only genuinely
+     * new nodes are inserted. That is what lets a running automation be edited:
+     * queue rows reference steps by id, so recreating them would strand every
+     * in-flight contact on an id that no longer exists.
+     *
+     * Steps absent from the payload are reported as `removed` rather than
+     * deleted here — the caller must release their queue rows first.
+     *
      * @param int $automation_id
      * @param array<int, array<string, mixed>> $steps
-     * @return array<int, int>
+     * @return array{ids: array<int, int>, removed: array<int, int>}
      */
-    public function bulkCreate($automation_id, $steps): array
+    public function syncSteps($automation_id, $steps): array
     {
-        $created_ids = [];
-        $id_mapping = [];
+        $existing_ids = $this->getIdsByAutomation((int) $automation_id);
 
-        // First pass: create all steps without parent relationships.
+        $ordered_ids = [];
+        $parents = [];
+
+        // First pass: upsert every step, leaving parent links for the second —
+        // a step's parent may sit later in the payload and have no id yet.
         foreach ($steps as $index => $step_data) {
             $step_data['automation_id'] = $automation_id;
 
-            $parent_index = isset($step_data['parent_index']) ? $step_data['parent_index'] : null;
-            $branch_type = isset($step_data['branch_type']) ? $step_data['branch_type'] : null;
+            $parents[$index] = [
+                'parent_index' => $step_data['parent_index'] ?? null,
+                'branch_type' => $step_data['branch_type'] ?? null,
+            ];
 
-            // parent_index is not a column; parent_step_id is wired up in the second pass.
             unset($step_data['parent_index']);
             $step_data['parent_step_id'] = null;
 
-            $step_id = $this->create($step_data);
+            $id = isset($step_data['id']) ? absint($step_data['id']) : 0;
+            unset($step_data['id']);
 
-            if ($step_id) {
-                $created_ids[] = $step_id;
-                $id_mapping[$index] = [
-                    'db_id' => $step_id,
-                    'parent_index' => $parent_index,
-                    'branch_type' => $branch_type,
-                ];
+            if ($id > 0 && in_array($id, $existing_ids, true)) {
+                // Parent and branch are left to the second pass. Blanking them
+                // here would open a window where a concurrently running
+                // executor sees a step with no children and completes the
+                // contact early.
+                $columns = $this->stepColumns($step_data);
+                unset($columns['parent_step_id'], $columns['branch_type']);
+
+                $this->db->update(
+                    $this->automationStepsTable,
+                    $columns + ['updated_at' => current_time('mysql', true)],
+                    ['id' => $id]
+                );
+            } else {
+                $id = (int) $this->create($step_data);
+            }
+
+            if ($id > 0) {
+                $ordered_ids[$index] = $id;
             }
         }
 
-        // Second pass: wire up parent relationships now that ids exist.
-        foreach ($id_mapping as $index => $info) {
-            if ($info['parent_index'] !== null && isset($id_mapping[$info['parent_index']])) {
-                $parent_db_id = $id_mapping[$info['parent_index']]['db_id'];
+        // Second pass: wire parents now that every step has an id. Written
+        // unconditionally so a step moved to the top of the graph loses its old
+        // parent instead of keeping a stale link.
+        foreach ($ordered_ids as $index => $step_id) {
+            $parent_index = $parents[$index]['parent_index'];
+            $parent_id = $parent_index !== null && isset($ordered_ids[$parent_index])
+                ? $ordered_ids[$parent_index]
+                : null;
 
-                $this->update($info['db_id'], [
-                    'parent_step_id' => $parent_db_id,
-                ]);
-            }
+            $this->db->update(
+                $this->automationStepsTable,
+                [
+                    'parent_step_id' => $parent_id,
+                    'branch_type' => $parents[$index]['branch_type'],
+                    'updated_at' => current_time('mysql', true),
+                ],
+                ['id' => $step_id]
+            );
         }
 
-        return $created_ids;
+        return [
+            'ids' => array_values($ordered_ids),
+            'removed' => array_values(array_diff($existing_ids, array_values($ordered_ids))),
+        ];
+    }
+
+    /**
+     * Delete steps by id, without the parent cascade delete() applies — the
+     * graph sync has already decided the exact set to remove.
+     *
+     * @param array<int, int> $ids
+     */
+    public function deleteSteps(array $ids): void
+    {
+        foreach ($ids as $id) {
+            $this->db->delete($this->automationStepsTable, ['id' => absint($id)]);
+        }
+    }
+
+    /**
+     * A step plus every step beneath it, which is exactly what delete() removes.
+     *
+     * @param int $step_id
+     * @return array<int, int>
+     */
+    public function getBranchIds($step_id): array
+    {
+        $ids = [(int) $step_id];
+
+        foreach ($this->getChildSteps((int) $step_id) as $child) {
+            $ids = array_merge($ids, $this->getBranchIds((int) $child->id));
+        }
+
+        return $ids;
+    }
+
+    /** @return array<int, int> */
+    private function getIdsByAutomation(int $automation_id): array
+    {
+        $ids = $this->db->get_col(
+            $this->db->prepare(
+                "SELECT id FROM {$this->automationStepsTable} WHERE automation_id = %d",
+                $automation_id
+            )
+        );
+
+        return array_map('intval', $ids);
+    }
+
+    /**
+     * The writable column map for a step payload. Every column is listed so an
+     * update clears what the new step type does not use.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    private function stepColumns(array $data): array
+    {
+        return [
+            'step_order' => $data['step_order'] ?? 0,
+            'step_type' => $data['step_type'] ?? '',
+            'label' => $data['label'] ?? null,
+            'parent_step_id' => $data['parent_step_id'] ?? null,
+            'branch_type' => $data['branch_type'] ?? null,
+            'action_type' => $data['action_type'] ?? null,
+            'action_config' => is_array($data['action_config'] ?? null) ? json_encode($data['action_config']) : null,
+            'condition_type' => $data['condition_type'] ?? null,
+            'condition_config' => is_array($data['condition_config'] ?? null) ? json_encode($data['condition_config']) : null,
+            'delay_type' => $data['delay_type'] ?? null,
+            'delay_value' => $data['delay_value'] ?? null,
+            'position_x' => $data['position_x'] ?? 0,
+            'position_y' => $data['position_y'] ?? 0,
+        ];
     }
 
     /**
@@ -295,7 +385,7 @@ class AutomationStepRepository
 
         foreach ($steps as $step) {
             if ($step->parent_step_id && !in_array($step->parent_step_id, $step_ids)) {
-                /* translators: 1: step ID, 2: parent step ID */
+                /* translators: %1$d: step ID, %2$d: parent step ID */
                 $errors[] = sprintf(__('Step %1$d has invalid parent step %2$d', 'kelune-crm'), $step->id, $step->parent_step_id);
             }
         }

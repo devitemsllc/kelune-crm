@@ -16,14 +16,10 @@ class EmailTemplateService
     /**
      * Built-in ("Built-in" tab) email templates.
      *
-     * These live in code — NOT the database. Nothing is seeded on activation and
-     * nothing is stored; the set is authored here and served on the fly (mirrors
-     * the built-in automation templates). Each template is authored as a
-     * visual-builder block tree (`structure` => ['mode','settings','blocks']); the
-     * HTML is generated from those blocks via EmailHtmlRenderer so the two never
-     * drift and every built-in template opens fully editable in the drag-and-drop
-     * builder. No HTML block is used — only the first-class visual blocks (text,
-     * button, divider, spacer, columns).
+     * Authored here in code and served on the fly — nothing is seeded or stored.
+     * Each is a visual-builder block tree (`structure` => ['mode','settings',
+     * 'blocks']) rendered to HTML by EmailHtmlRenderer, so the two never drift
+     * and every built-in opens fully editable in the builder.
      *
      * @return array<int, array<string, mixed>>
      */

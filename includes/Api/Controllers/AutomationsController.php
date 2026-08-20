@@ -109,12 +109,6 @@ class AutomationsController extends BaseController
             'permission_callback' => [$this, 'checkWritePermission'],
         ]);
 
-        register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/archive', [
-            'methods' => \WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'archiveAutomation'],
-            'permission_callback' => [$this, 'checkWritePermission'],
-        ]);
-
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/stats', [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'getStats'],
@@ -252,7 +246,7 @@ class AutomationsController extends BaseController
                     // WP skips enum validation entirely for an arg with no
                     // validate_callback.
                     'type' => 'string',
-                    'enum' => ['delete', 'activate', 'pause', 'archive', 'duplicate'],
+                    'enum' => ['delete', 'activate', 'pause', 'duplicate'],
                     'validate_callback' => 'rest_validate_request_arg',
                     'sanitize_callback' => 'sanitize_key',
                 ],
@@ -471,25 +465,6 @@ class AutomationsController extends BaseController
         return $this->successResponse([], __('Automation paused successfully', 'kelune-crm'));
     }
 
-    public function archiveAutomation(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
-    {
-        $id = $request->get_param('id');
-
-        $automation = $this->repository->find($id);
-
-        if (!$automation) {
-            return $this->errorResponse(__('Automation not found', 'kelune-crm'), 'not_found', 404);
-        }
-
-        $result = $this->repository->archive($id);
-
-        if (!$result) {
-            return $this->errorResponse(__('Failed to archive automation', 'kelune-crm'), 'archive_failed', 500);
-        }
-
-        return $this->successResponse([], __('Automation archived successfully', 'kelune-crm'));
-    }
-
     public function getStats(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
     {
         $id = $request->get_param('id');
@@ -586,10 +561,6 @@ class AutomationsController extends BaseController
             return $this->errorResponse(__('Automation not found', 'kelune-crm'), 'not_found', 404);
         }
 
-        if (!$automation->canEdit()) {
-            return $this->errorResponse(__('Cannot edit active automation', 'kelune-crm'), 'cannot_edit', 400);
-        }
-
         $data['automation_id'] = $automation_id;
         $step_id = $this->stepRepository->create($data);
 
@@ -616,10 +587,6 @@ class AutomationsController extends BaseController
 
         if (!$automation) {
             return $this->errorResponse(__('Automation not found', 'kelune-crm'), 'not_found', 404);
-        }
-
-        if (!$automation->canEdit()) {
-            return $this->errorResponse(__('Cannot edit active automation', 'kelune-crm'), 'cannot_edit', 400);
         }
 
         $step = $this->stepRepository->find($step_id);
@@ -654,10 +621,6 @@ class AutomationsController extends BaseController
             return $this->errorResponse(__('Automation not found', 'kelune-crm'), 'not_found', 404);
         }
 
-        if (!$automation->canEdit()) {
-            return $this->errorResponse(__('Cannot edit active automation', 'kelune-crm'), 'cannot_edit', 400);
-        }
-
         $step = $this->stepRepository->find($step_id);
 
         if (!$step || $step->automation_id != $automation_id) {
@@ -671,6 +634,13 @@ class AutomationsController extends BaseController
                 400
             );
         }
+
+        // delete() cascades to the branch below this step, so settle everyone
+        // waiting anywhere in it before the rows go.
+        $this->repository->releaseRemovedSteps(
+            $automation_id,
+            $this->stepRepository->getBranchIds($step_id)
+        );
 
         $result = $this->stepRepository->delete($step_id);
 
@@ -692,10 +662,6 @@ class AutomationsController extends BaseController
             return $this->errorResponse(__('Automation not found', 'kelune-crm'), 'not_found', 404);
         }
 
-        if (!$automation->canEdit()) {
-            return $this->errorResponse(__('Cannot edit active automation', 'kelune-crm'), 'cannot_edit', 400);
-        }
-
         // Each step carries the same untrusted shape as createStep, so it gets
         // the same rebuild — the bulk route is not a way around the sanitizer.
         $steps = array_map(
@@ -703,12 +669,16 @@ class AutomationsController extends BaseController
             is_array($steps) ? $steps : []
         );
 
-        $this->stepRepository->deleteByAutomation($automation_id);
-        $created_ids = $this->stepRepository->bulkCreate($automation_id, $steps);
+        $result = $this->stepRepository->syncSteps($automation_id, $steps);
+
+        // Contacts parked on a deleted step are settled before the step rows
+        // go, so a running automation can be edited without stranding anyone.
+        $this->repository->releaseRemovedSteps($automation_id, $result['removed']);
+        $this->stepRepository->deleteSteps($result['removed']);
 
         return $this->successResponse([
-            'created' => count($created_ids),
-        ], __('Steps created successfully', 'kelune-crm'));
+            'step_ids' => $result['ids'],
+        ], __('Workflow saved successfully', 'kelune-crm'));
     }
 
     public function updateStepPositions(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
@@ -720,10 +690,6 @@ class AutomationsController extends BaseController
 
         if (!$automation) {
             return $this->errorResponse(__('Automation not found', 'kelune-crm'), 'not_found', 404);
-        }
-
-        if (!$automation->canEdit()) {
-            return $this->errorResponse(__('Cannot edit active automation', 'kelune-crm'), 'cannot_edit', 400);
         }
 
         // Positions are pure geometry: an id and two integers, nothing else.
@@ -760,10 +726,6 @@ class AutomationsController extends BaseController
 
         if (!$automation) {
             return $this->errorResponse(__('Automation not found', 'kelune-crm'), 'not_found', 404);
-        }
-
-        if (!$automation->canEdit()) {
-            return $this->errorResponse(__('Cannot edit active automation', 'kelune-crm'), 'cannot_edit', 400);
         }
 
         $result = $this->stepRepository->reorder($automation_id, $orders);
@@ -828,10 +790,6 @@ class AutomationsController extends BaseController
                         }
                         break;
 
-                    case 'archive':
-                        $result = $this->repository->archive($id);
-                        break;
-
                     case 'duplicate':
                         $result = $this->repository->duplicate($id);
                         break;
@@ -855,7 +813,7 @@ class AutomationsController extends BaseController
                 'results' => $results,
             ],
             sprintf(
-                /* translators: 1: number of automations processed successfully, 2: number that failed. */
+                /* translators: %1$d: number of automations processed successfully, %2$d: number that failed */
                 __('%1$d automations processed successfully, %2$d failed', 'kelune-crm'),
                 count($results['success']),
                 count($results['failed'])
@@ -866,11 +824,9 @@ class AutomationsController extends BaseController
     /**
      * Sanitize an automation payload.
      *
-     * Rebuilds the array from known keys rather than filtering the request's:
-     * anything not named here cannot reach the database. That deliberately drops
-     * `created_by` and the stats counters — they are derived server-side, and
-     * accepting them from the client would let a caller spoof authorship or
-     * fabricate its own reporting numbers.
+     * Rebuilt from known keys, so anything not named here cannot reach the
+     * database — notably `created_by` and the stats counters, which a caller
+     * could otherwise use to spoof authorship or fabricate reporting numbers.
      *
      * @param array<string, mixed> $data
      * @return array<string, mixed>
@@ -905,7 +861,7 @@ class AutomationsController extends BaseController
 
         if (isset($data['status'])) {
             $status = sanitize_key((string) $data['status']);
-            $clean['status'] = in_array($status, ['draft', 'active', 'paused', 'archived'], true)
+            $clean['status'] = in_array($status, ['draft', 'active', 'paused'], true)
                 ? $status
                 : 'draft';
         }
@@ -916,11 +872,9 @@ class AutomationsController extends BaseController
     /**
      * Sanitize an automation's entry conditions.
      *
-     * Rebuilt from two known keys so nothing else can slip into the column:
-     * `reentry` governs whether/when a contact may be enrolled again, and
-     * `conditions` is the entry filter rule list. The re-entry wait is stored
-     * three ways on purpose — the raw amount+unit round-trips the form control,
-     * while `wait_days` is the single value the enrolment gate enforces.
+     * Rebuilt from two known keys so nothing else reaches the column. The
+     * re-entry wait is stored three ways on purpose: amount+unit round-trip the
+     * form control, `wait_days` is the value the enrolment gate enforces.
      *
      * @param array<int|string, mixed> $data
      * @return array<string, mixed>
@@ -967,6 +921,16 @@ class AutomationsController extends BaseController
     {
         $clean = [];
 
+        // The builder returns each existing step's own id so the sync updates
+        // that row instead of replacing it — queue rows reference steps by id.
+        if (!empty($data['id'])) {
+            $clean['id'] = absint($data['id']);
+        }
+
+        if (isset($data['label'])) {
+            $clean['label'] = sanitize_text_field((string) $data['label']);
+        }
+
         foreach (['step_type', 'action_type', 'condition_type', 'delay_type', 'branch_type'] as $key) {
             if (isset($data[$key])) {
                 $clean[$key] = sanitize_key((string) $data[$key]);
@@ -986,8 +950,8 @@ class AutomationsController extends BaseController
         }
 
         // bulkCreate() links parents by array INDEX (the DB ids do not exist yet
-        // on a fresh save), so this must survive the rebuild — dropping it
-        // orphaned every step and flattened the workflow on save.
+        // on a fresh save), so this must survive the rebuild or every step is
+        // orphaned and the workflow flattens.
         if (array_key_exists('parent_index', $data)) {
             $clean['parent_index'] = $data['parent_index'] === null
                 ? null
@@ -1024,9 +988,8 @@ class AutomationsController extends BaseController
         switch ($action_type) {
             case 'send_email':
                 $clean = [
-                    // The body is authored in the email composer and sent as
-                    // HTML, so it keeps post-safe markup — the same treatment
-                    // CampaignsController gives email_content.
+                    // Authored in the email composer and sent as HTML, so it
+                    // keeps post-safe markup.
                     'subject' => sanitize_text_field((string) ($config['subject'] ?? '')),
                     // Inbox preview text (preheader); display text, so header-safe.
                     'preview_text' => sanitize_text_field((string) ($config['preview_text'] ?? '')),
@@ -1035,8 +998,7 @@ class AutomationsController extends BaseController
 
                 if (isset($config['content_mode'])) {
                     $mode = sanitize_key((string) $config['content_mode']);
-                    // Anything unexpected (incl. the removed html/text modes)
-                    // falls back to the Visual editor.
+                    // Anything unexpected falls back to the Visual editor.
                     $clean['content_mode'] = in_array($mode, ['builder', 'richtext'], true)
                         ? $mode
                         : 'builder';
@@ -1177,10 +1139,9 @@ class AutomationsController extends BaseController
      * Recursively sanitize a free-form config tree (trigger config, builder
      * block structure).
      *
-     * The shape is open-ended — the visual builder invents its own block keys —
-     * so this cannot be a flat whitelist. Instead every leaf string is reduced to
-     * post-safe markup, which leaves colours, ids and URLs untouched while
-     * stripping anything executable out of block content.
+     * The shape is open-ended (the builder invents its own block keys), so
+     * every leaf string is reduced to post-safe markup instead — colours, ids
+     * and URLs survive, executable content does not.
      *
      * @param array<int|string, mixed> $tree
      * @return array<int|string, mixed>

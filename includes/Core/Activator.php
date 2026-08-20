@@ -17,7 +17,7 @@ class Activator
         if (version_compare(PHP_VERSION, KELUNE_CRM_MIN_PHP_VERSION, '<')) {
             deactivate_plugins(KELUNE_CRM_PLUGIN_BASENAME);
             wp_die(esc_html(sprintf(
-                /* translators: 1: required PHP version, 2: current PHP version */
+                /* translators: %1$s: required PHP version, %2$s: current PHP version */
                 __('Kelune CRM requires PHP %1$s or higher. Your current version is %2$s.', 'kelune-crm'),
                 KELUNE_CRM_MIN_PHP_VERSION,
                 PHP_VERSION

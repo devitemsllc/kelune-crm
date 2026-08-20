@@ -131,9 +131,8 @@ class EmailProvider
     }
 
     /**
-     * Sender emails an admin has manually registered on this connection (stored
-     * in the settings JSON, kept separate from the auto-enumerated
-     * verified_senders so re-enumeration never wipes them).
+     * Sender emails an admin registered manually, in the settings JSON — kept
+     * out of the auto-enumerated verified_senders so re-enumeration keeps them.
      *
      * @return array<int, string>
      */
@@ -166,11 +165,9 @@ class EmailProvider
     }
 
     /**
-     * Whether this connection is allowed to send as the given From address.
-     * Matching is by EXACT email: a verified DOMAIN gates which addresses an
-     * admin may manually register, but is not itself a routing wildcard — each
-     * sending address must be an explicit allowed sender (bound, enumerated, or
-     * manual).
+     * Whether this connection may send as the given From address. Matching is by
+     * EXACT email — a verified DOMAIN only gates which addresses an admin may
+     * register manually, it is never a routing wildcard.
      */
     public function ownsSender(string $email): bool
     {

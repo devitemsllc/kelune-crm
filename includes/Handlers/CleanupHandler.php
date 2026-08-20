@@ -9,23 +9,16 @@ use KeluneCRM\Repositories\AutomationRepository;
 /**
  * Daily housekeeping for the send and automation queues.
  *
- * Two jobs:
+ *  - Recovery. A row is claimed by flipping its status ('sending'/'processing').
+ *    A worker that dies mid-flight never flips it back, and the drainers only
+ *    claim from 'queued'/'pending' — so anything held in a claimed state longer
+ *    than a real send could take is returned to its queue.
  *
- *  - Recovery. A row is claimed by flipping its status ('sending' for campaign
- *    email, 'processing' for an automation step). If the worker dies mid-flight
- *    — fatal, timeout, deploy — nothing ever flips it back, and that row is
- *    stranded forever because the drainers only claim from 'queued'/'pending'.
- *    Anything sat in a claimed state longer than any real send could take is
- *    returned to its queue.
- *
- *  - Purging. Terminal automation queue rows (failed, cancelled) are of no
- *    further use once they are old, and would otherwise accumulate without
- *    bound. Parked rows are never purged: they are waiting on an opt-in that
- *    may still arrive. Incoming-webhook request logs are likewise purged once
- *    old — one row is written per request, so they grow without bound.
- *
- * Campaign email rows are deliberately not purged — cancelled ones are the
- * audit trail of a send that was withheld, and campaign stats read them.
+ *  - Purging. Terminal automation queue rows and incoming-webhook request logs
+ *    are dropped once old, or they grow without bound. Parked rows are never
+ *    purged: they await an opt-in that may still arrive. Campaign email rows are
+ *    never purged either — cancelled ones are the audit trail of a withheld
+ *    send, and campaign stats read them.
  */
 class CleanupHandler
 {

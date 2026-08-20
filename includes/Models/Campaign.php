@@ -6,6 +6,39 @@ namespace KeluneCRM\Models;
 
 class Campaign
 {
+    /** Never activated: editable, nothing queued. */
+    public const STATUS_DRAFT = 'draft';
+
+    /**
+     * Dispatch is permitted. Whether it happens now or at `scheduled_at` is a
+     * property of the campaign, not a separate status — so "Scheduled" and
+     * "Sending" are display labels derived from this state, never stored.
+     */
+    public const STATUS_ACTIVE = 'active';
+
+    /** Was active, stopped. Queued rows are held; activating resumes them. */
+    public const STATUS_PAUSED = 'paused';
+
+    /**
+     * Every queued email has been dispatched. Terminal, and the only status a
+     * user never sets — the completion sweep owns it. Re-sending is impossible
+     * anyway (queue rows are unique per contact), so a resend is a duplicate.
+     */
+    public const STATUS_SENT = 'sent';
+
+    /**
+     * The moves a campaign is allowed to make. Statuses express intent, so the
+     * user drives every transition except the one into STATUS_SENT.
+     *
+     * @var array<string, list<string>>
+     */
+    public const TRANSITIONS = [
+        self::STATUS_DRAFT => [self::STATUS_ACTIVE],
+        self::STATUS_ACTIVE => [self::STATUS_PAUSED, self::STATUS_SENT],
+        self::STATUS_PAUSED => [self::STATUS_ACTIVE],
+        self::STATUS_SENT => [],
+    ];
+
     /** @var int|null */
     public $id = null;
 
@@ -234,21 +267,43 @@ class Campaign
 
     public function isDraft(): bool
     {
-        return $this->status === 'draft';
+        return $this->status === self::STATUS_DRAFT;
     }
 
-    public function isScheduled(): bool
+    public function isActive(): bool
     {
-        return $this->status === 'scheduled';
-    }
-
-    public function isSending(): bool
-    {
-        return $this->status === 'sending';
+        return $this->status === self::STATUS_ACTIVE;
     }
 
     public function isPaused(): bool
     {
-        return $this->status === 'paused';
+        return $this->status === self::STATUS_PAUSED;
+    }
+
+    public function isSent(): bool
+    {
+        return $this->status === self::STATUS_SENT;
+    }
+
+    /** Whether this campaign may move to $status. */
+    public function canTransitionTo(string $status): bool
+    {
+        $allowed = self::TRANSITIONS[(string) $this->status] ?? [];
+
+        return in_array($status, $allowed, true);
+    }
+
+    /**
+     * Whether dispatch waits for `scheduled_at` rather than starting on
+     * activation. A time already in the past counts as due, so a campaign
+     * activated late sends immediately instead of stalling.
+     */
+    public function isScheduledForLater(): bool
+    {
+        if (empty($this->scheduled_at)) {
+            return false;
+        }
+
+        return strtotime((string) $this->scheduled_at . ' UTC') > time();
     }
 }

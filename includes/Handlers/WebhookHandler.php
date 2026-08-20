@@ -40,9 +40,8 @@ class WebhookHandler
     public function registerRoutes(string $namespace = 'kelune-crm/v1'): void
     {
         // Public webhook receiver. Authorization is the secret webhook_key in
-        // the URL (a prepared DB lookup in handle()), plus per-key active
-        // check, rate limiting and IP allow-listing — machine-to-machine, so
-        // no nonce/cookie. The named callback keeps the policy explicit.
+        // the URL (a prepared DB lookup in handle()), plus per-key active check,
+        // rate limiting and IP allow-listing — machine-to-machine, so no nonce.
         register_rest_route($namespace, '/webhook/(?P<webhook_key>[a-zA-Z0-9_-]+)', [
             'methods' => 'POST',
             'callback' => [$this, 'handle'],
@@ -51,11 +50,8 @@ class WebhookHandler
     }
 
     /**
-     * Permission gate for the public webhook receiver.
-     *
-     * Returns true because authorization is the secret key carried in the URL
-     * and enforced inside handle(); this exists so the route declares an
-     * explicit, named permission policy rather than a bare `__return_true`.
+     * Permission gate for the public webhook receiver. Returns true because
+     * authorization is the secret key carried in the URL, enforced in handle().
      */
     public function allowPublicAccess(WP_REST_Request $request): bool
     {
@@ -251,9 +247,7 @@ class WebhookHandler
         }
 
         // Fire the same domain hooks the REST controller and sync service fire,
-        // so a contact created or updated through a webhook enrols in automations
-        // exactly like one added from the dashboard. Without this the webhook
-        // wrote rows silently and no `contact_created`/`updated` trigger ran.
+        // so a webhook contact enrols in automations like a dashboard one.
         if ($contact_id && in_array($action_performed, ['created', 'updated'], true)) {
             $contact = $this->contactRepository->find((int) $contact_id);
             if ($contact) {

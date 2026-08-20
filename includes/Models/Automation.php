@@ -215,11 +215,6 @@ class Automation
         return $this->isActive();
     }
 
-    public function canEdit(): bool
-    {
-        return in_array($this->status, ['draft', 'paused']);
-    }
-
     /**
      * @return array<string, string>
      */
@@ -235,7 +230,7 @@ class Automation
             $errors['trigger_type'] = __('Trigger type is required', 'kelune-crm');
         }
 
-        $valid_statuses = ['draft', 'active', 'paused', 'archived'];
+        $valid_statuses = ['draft', 'active', 'paused'];
         if (!in_array($this->status, $valid_statuses)) {
             $errors['status'] = __('Invalid status', 'kelune-crm');
         }

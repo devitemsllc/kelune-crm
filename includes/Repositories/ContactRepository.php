@@ -212,9 +212,8 @@ class ContactRepository
     }
 
     /**
-     * Write just the status, announcing the change. Use this over update() for
-     * a status-only write: it touches one column and skips the read of the
-     * whole row.
+     * Write just the status, announcing the change. Preferred over update() for
+     * a status-only write — one column, no full-row read.
      */
     public function updateStatus(int $id, string $status): bool
     {
@@ -251,12 +250,10 @@ class ContactRepository
     }
 
     /**
-     * Fire the status-change event — but only on a real transition, so a save
-     * that rewrites the same status doesn't re-trigger the listeners.
-     *
-     * This is the one signal that a contact became (un)mailable. The sweeper in
-     * Handlers\ContactStatusSweeper hangs off it to park, cancel or resume the
-     * contact's queued email and automation work.
+     * Fire the status-change event, but only on a real transition so a save
+     * rewriting the same status doesn't re-trigger listeners. This is the one
+     * signal that a contact became (un)mailable — Handlers\ContactStatusSweeper
+     * hangs off it to park, cancel or resume their queued work.
      */
     private function announceStatusChange(int $id, ?string $old_status, string $new_status): void
     {
@@ -277,9 +274,8 @@ class ContactRepository
     /**
      * Delete a contact and everything hanging off it.
      *
-     * The child tables have no foreign keys, so the rows are removed here —
-     * otherwise a deleted contact leaves orphaned tag/list/meta/note rows that
-     * a later contact reusing the id would silently inherit.
+     * The child tables have no foreign keys, so their rows are removed here or
+     * a later contact reusing the id silently inherits them.
      *
      * @param int $id
      */
@@ -523,10 +519,9 @@ class ContactRepository
                 continue;
             }
 
-            // INSERT IGNORE reports an affected row only when a new membership
-            // was actually created; an existing membership is a no-op we must
-            // not re-announce, or it would re-enrol the contact in list-added
-            // automations on every touch.
+            // INSERT IGNORE reports an affected row only for a NEW membership.
+            // Re-announcing an existing one would re-enrol the contact in
+            // list-added automations on every touch.
             if ($this->db->rows_affected > 0) {
                 $added[] = $list_id;
             }

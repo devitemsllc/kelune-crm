@@ -7,27 +7,26 @@ namespace KeluneCRM\Services;
 /**
  * Reports the health of the plugin's scheduled work, and runs an event on demand.
  *
- * Backs the Settings → Cron Monitor screen. Most "emails aren't sending" reports
- * come down to WP-Cron not firing, so the registry here is deliberately limited
- * to events this product owns and can explain.
+ * Backs the Settings → Cron Monitor screen. Most "emails aren't sending"
+ * reports come down to WP-Cron not firing, so the registry is limited to
+ * events this product owns and can explain.
  */
 class CronMonitorService
 {
     /**
      * How far past its due time an event may drift before it reads as overdue.
      *
-     * WP-Cron is driven by site traffic, so a minute-interval event routinely
-     * lags a little on a quiet site. This grace period is what separates
-     * "normal lag" from "cron is not running".
+     * WP-Cron is traffic-driven, so a minute-interval event routinely lags on a
+     * quiet site. This grace separates normal lag from "cron is not running".
      */
     private const OVERDUE_GRACE_SECONDS = 120;
 
     /**
      * Every recurring event the monitor knows about.
      *
-     * Free-plugin events only. Pro appends its own through the
-     * `kelune_crm_cron_monitor_events` filter — Free cannot name Pro's hooks,
-     * and must not report them as missing when Pro is inactive.
+     * Free events only; Pro appends its own via the
+     * `kelune_crm_cron_monitor_events` filter. Free cannot name Pro's hooks and
+     * must not report them missing when Pro is inactive.
      *
      * @return list<array{hook: non-empty-string, label: string, description: string}>
      */
@@ -59,10 +58,9 @@ class CronMonitorService
         /**
          * Filter the events shown in the Cron Monitor.
          *
-         * Add-ons append their own recurring events here. Each entry must provide
-         * `hook`, `label` and `description`; the hook is also what the monitor's
-         * "Run Now" action is allowed to fire, so only register hooks that are
-         * safe to run on demand.
+         * Each entry must provide `hook`, `label` and `description`. The hook is
+         * also what "Run Now" may fire, so only register hooks safe to run on
+         * demand.
          *
          * @param list<array{hook: non-empty-string, label: string, description: string}> $events
          */
@@ -74,9 +72,9 @@ class CronMonitorService
     /**
      * Reduce filtered entries to well-formed, unique records.
      *
-     * The filter is public API, so a add-on can hand back anything. A malformed
-     * entry is dropped rather than allowed to fatal the screen or, worse, widen
-     * what runEvent() will execute.
+     * The filter is public API and can hand back anything. A malformed entry is
+     * dropped rather than allowed to fatal the screen or widen what runEvent()
+     * will execute.
      *
      * @param mixed $events
      * @return list<array{hook: non-empty-string, label: string, description: string}>
@@ -185,7 +183,7 @@ class CronMonitorService
             return __('Once daily', 'kelune-crm');
         }
 
-        /* translators: %s: human-readable duration, e.g. "5 mins". */
+        /* translators: %s: human-readable duration, e.g. "5 mins" */
         return sprintf(__('Every %s', 'kelune-crm'), human_time_diff(0, $seconds));
     }
 
@@ -256,9 +254,8 @@ class CronMonitorService
     /**
      * The registry entry for a hook, or null if it holds no such hook.
      *
-     * runEvent() passes caller-supplied input to do_action(), so the registry is
-     * the allowlist: matching here is what stops the endpoint firing any hook on
-     * the site by name.
+     * runEvent() passes caller-supplied input to do_action(), so this registry
+     * is the allowlist that stops the endpoint firing any hook by name.
      *
      * @return array{hook: non-empty-string, label: string, description: string}|null
      */
@@ -276,12 +273,10 @@ class CronMonitorService
     /**
      * Run a registered event immediately, in the current request.
      *
-     * Runs synchronously so the caller sees the outcome; the batch caps in the
-     * callbacks (50 automation steps, 100 emails) are what keep it inside
-     * max_execution_time.
+     * Synchronous so the caller sees the outcome; the callbacks' batch caps
+     * (50 automation steps, 100 emails) keep it inside max_execution_time.
      *
-     * Returns true on success. Not typed `true`: that is a PHP 8.2 standalone
-     * type and this plugin supports 8.1.
+     * Returns true on success. Not typed `true` — that is PHP 8.2 only.
      */
     public function runEvent(string $hook): \WP_Error|bool
     {

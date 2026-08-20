@@ -9,11 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Rate Limiter Service
- *
- * Implements rate limiting for webhooks
- * - 100 requests per minute per webhook
- * - 1000 requests per hour per webhook
+ * Per-webhook rate limiting: 100 requests a minute, 1000 an hour.
  */
 class RateLimiter
 {
@@ -81,7 +77,7 @@ class RateLimiter
             return [
                 'allowed' => false,
                 'message' => sprintf(
-                    /* translators: 1: maximum number of requests, 2: time window (minute or hour). */
+                    /* translators: %1$d: maximum number of requests, %2$s: time window (minute or hour) */
                     __('Rate limit exceeded. Maximum %1$d requests per %2$s.', 'kelune-crm'),
                     $limit,
                     $window === 'hour'

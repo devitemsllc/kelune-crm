@@ -351,6 +351,7 @@ class Migrator
             automation_id BIGINT UNSIGNED NOT NULL,
             step_order INT NOT NULL,
             step_type VARCHAR(50) NOT NULL,
+            label VARCHAR(191) NULL,
             parent_step_id BIGINT UNSIGNED NULL,
             branch_type VARCHAR(20) NULL,
             action_type VARCHAR(50) NULL,

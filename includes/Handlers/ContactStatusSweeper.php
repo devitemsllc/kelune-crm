@@ -8,20 +8,17 @@ use KeluneCRM\Models\Contact;
 use KeluneCRM\Repositories\AutomationRepository;
 
 /**
- * Reacts to a contact becoming (un)mailable, cleaning up the work already
- * queued for them.
+ * Reacts to a contact becoming (un)mailable, cleaning up work already queued
+ * for them.
  *
- * This is an optimisation, not the guarantee. The consent guarantee lives at
- * send time — EmailService::sendCampaignEmail() and Processors\ActionProcessor
- * both re-check Contact::isSendableStatus() immediately before dispatch, so an
- * email is never sent to a contact who shouldn't get it even if this sweep
- * never ran. What this adds is that the queue doesn't fill with rows destined
- * to be cancelled one by one, and an automation doesn't march through the steps
- * of someone who has left.
+ * An optimisation, not the guarantee: the consent gate is at send time, where
+ * EmailService::sendCampaignEmail() and Processors\ActionProcessor both re-check
+ * Contact::isSendableStatus() before dispatch. This only keeps the queue from
+ * filling with rows destined to be cancelled one by one.
  *
- * Because the send gate backstops it, every statement here is allowed to fail:
- * the updates race the campaign and automation workers for row locks, and a
- * deadlock on one table must not stop the others from being swept.
+ * Because that gate backstops it, every statement here may fail — these updates
+ * race the campaign and automation workers for row locks, and a deadlock on one
+ * table must not stop the others being swept.
  */
 class ContactStatusSweeper
 {

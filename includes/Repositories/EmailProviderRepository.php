@@ -148,13 +148,11 @@ class EmailProviderRepository
     }
 
     /**
-     * Resolve the active provider connection that owns a given From address. A
-     * match is an active provider whose bound sender_email equals the address, or
-     * whose verified/manual senders contain that exact address (domain-only
-     * entries gate manual additions but are not routing wildcards — see
-     * {@see \KeluneCRM\Models\EmailProvider::ownsSender()}). Returns null when
-     * no connection claims the sender (the caller then falls back to the default
-     * connection).
+     * Resolve the active provider connection that owns a given From address —
+     * bound sender_email, or an exact entry in its verified/manual senders
+     * ({@see \KeluneCRM\Models\EmailProvider::ownsSender()}; domain-only
+     * entries are not routing wildcards). Null when none claims the sender, and
+     * the caller falls back to the default connection.
      */
     public function findForSender(string $email): ?EmailProvider
     {
@@ -175,10 +173,9 @@ class EmailProviderRepository
             return new EmailProvider($row);
         }
 
-        // Otherwise scan active connections for one whose verified (auto-enumerated)
-        // or manual senders contain this exact address. The active-provider set is
-        // tiny, so an in-PHP scan is fine and keeps the sender matching in one place
-        // (EmailProvider::ownsSender).
+        // Otherwise scan active connections for one whose verified or manual
+        // senders hold this exact address. The set is tiny, and the match stays
+        // in one place (EmailProvider::ownsSender).
         $rows = $this->db->get_results(
             "SELECT * FROM {$this->table} WHERE status = 'active' ORDER BY is_default DESC, created_at DESC",
             ARRAY_A
@@ -194,10 +191,9 @@ class EmailProviderRepository
     }
 
     /**
-     * Persist the admin-registered manual sender list for a connection, stored in
-     * the settings JSON alongside the provider's option flags (kept separate from
-     * the auto-enumerated verified_senders column so re-enumeration never wipes
-     * it).
+     * Persist the admin-registered manual sender list for a connection, in the
+     * settings JSON — separate from the auto-enumerated verified_senders column
+     * so re-enumeration never wipes it.
      *
      * @param array<int, string> $emails
      */

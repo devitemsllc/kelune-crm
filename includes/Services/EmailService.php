@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KeluneCRM\Services;
 
+use KeluneCRM\Models\Campaign;
 use KeluneCRM\Models\Contact;
 use KeluneCRM\Models\EmailProvider;
 use KeluneCRM\Repositories\CampaignRepository;
@@ -13,28 +14,26 @@ use KeluneCRM\Services\Providers\ProviderFactory;
 class EmailService
 {
     /**
-     * Matches the placeholder a builder document carries in place of the global
-     * footer, capturing the template's footer link colour. Emitted by both HTML
-     * renderers (PHP + TS) as `<!--cm:global-footer:COLOR-->`; swapped here for
-     * the real global footer content at send (its {{unsubscribe_url}} resolves
-     * per recipient, its links tinted with the captured colour). MUST match the
-     * TS twin (utils/emailHtml.ts globalFooterMarker).
+     * Placeholder a builder document carries in place of the global footer,
+     * capturing the template's footer link colour: `<!--kelune-crm:global-footer:COLOR-->`.
+     * Swapped for real footer content at send. MUST match the TS twin in
+     * utils/emailHtml.ts (globalFooterMarker).
      */
-    public const GLOBAL_FOOTER_MARKER_PATTERN = '/<!--cm:global-footer:(.*?)-->/';
+    public const GLOBAL_FOOTER_MARKER_PATTERN = '/<!--kelune-crm:global-footer:(.*?)-->/';
 
     /**
      * Target outbound send rate, in emails per second.
      *
-     * Every provider caps throughput (SES allows 14/s by default; SMTP hosts and
-     * the API drivers all throttle in some form), and a throttle response comes
-     * back as a send failure — which the queue treats as final, never a retry.
-     * So an unpaced burst does not slow down, it silently drops recipients.
-     * 10/s keeps a margin under the lowest common quota.
+     * Every provider throttles, and a throttle response arrives as a send
+     * failure — which the queue treats as final, never a retry. An unpaced burst
+     * therefore drops recipients silently. 10/s keeps margin under the lowest
+     * common quota (SES defaults to 14/s).
      */
     private const EMAILS_PER_SECOND = 10;
 
     /** @var \wpdb */
     private $db;
+    private string $campaignsTable;
     private string $campaignEmailsTable;
     private string $campaignLinksTable;
     private string $contactsTable;
@@ -50,6 +49,7 @@ class EmailService
         global $wpdb;
         $this->db = $wpdb;
         $prefix = $wpdb->prefix . 'kelune_crm_';
+        $this->campaignsTable = $prefix . 'campaigns';
         $this->campaignEmailsTable = $prefix . 'campaign_emails';
         $this->campaignLinksTable = $prefix . 'campaign_links';
         $this->contactsTable = $prefix . 'contacts';
@@ -108,15 +108,12 @@ class EmailService
     /**
      * Resolve which provider connection to send through.
      *
-     * Only an EXPLICITLY chosen, active provider is used (campaign/automation
-     * "Email Provider" mode). When none is chosen the method returns null, which
-     * routes the send through wp_mail() — this is the "Global Email" / "Custom"
-     * sender path. We deliberately do NOT fall back to the default provider
-     * here: the account default is applied by whatever handles wp_mail (the
-     * site's SMTP plugin/server today, and — once built — this plugin's own
-     * site-wide mailer that registers the default provider as the wp_mail
-     * transport). Auto-resolving the default here would bypass that pipe and
-     * make "Global Email" mean something different from the rest of the site.
+     * Only an EXPLICITLY chosen, active provider is used ("Email Provider"
+     * mode); otherwise returns null and the send goes through wp_mail (the
+     * "Global Email" / "Custom" path). Does NOT fall back to the default
+     * provider — that is applied by whatever handles wp_mail, and resolving it
+     * here would make "Global Email" mean something different from the rest of
+     * the site.
      */
     private function resolveProvider(?int $provider_id): ?EmailProvider
     {
@@ -134,17 +131,13 @@ class EmailService
      * Dispatch one email through a resolved provider connection (or wp_mail when
      * none is configured).
      *
-     * The sender is resolved most-specific-first: the caller's custom values
-     * (a campaign's or automation step's own From), then the provider
-     * connection's bound sender, then the site-wide default from Settings →
-     * Global Email. A provider that carries a verified sender should win over
-     * a global default that the provider might reject.
+     * Sender resolves most-specific-first: the caller's custom From, then the
+     * provider's bound sender, then Settings → Global Email — a provider's
+     * verified sender must win over a global default it might reject.
      *
-     * For an explicit provider the message is assembled once as a PHPMailer
-     * instance (From/Reply-To/To/Cc/Bcc, HTML + plain-text bodies, attachments
-     * and custom headers) and the driver only transports it — SMTP sends it
-     * directly, SES sends its raw MIME, Mailgun/SendGrid re-map the parts.
-     * Without a provider the send goes through wp_mail (Global Email / Custom).
+     * With an explicit provider the message is assembled once as a PHPMailer
+     * instance and the driver only transports it; without one it goes through
+     * wp_mail.
      *
      * @param array{cc?: mixed, bcc?: mixed, attachments?: array<int, mixed>, headers?: array<string, string>, text?: string} $extras
      * @return bool|\WP_Error
@@ -244,14 +237,10 @@ class EmailService
 
     /**
      * Assemble a structured message and transport it through one provider
-     * connection. Shared by campaign/automation "Email Provider" sends and by
-     * the site-wide mailer (SiteMailerService), so every provider send — no
-     * matter the entry point — is built and routed the same way.
-     *
-     * The message is assembled once as a PHPMailer instance, the standard
-     * `phpmailer_init` action fires so third-party integrations (logging,
-     * DKIM, …) still see the mailer, then the driver transports it (SMTP sends
-     * directly, SES sends raw MIME, Mailgun/SendGrid re-map the parts).
+     * connection. Shared by "Email Provider" sends and by SiteMailerService, so
+     * every provider send is built and routed the same way: assembled once as a
+     * PHPMailer instance, `phpmailer_init` fired so third-party integrations
+     * still see the mailer, then handed to the driver.
      *
      * @param array<string, mixed> $message
      * @return bool|\WP_Error
@@ -271,9 +260,8 @@ class EmailService
             return $built;
         }
 
-        // Let third-party integrations that hook phpmailer_init (logging, DKIM,
-        // custom headers) act on the assembled message, matching core wp_mail.
-        // The provider driver runs after and wins on transport.
+        // Let phpmailer_init integrations (logging, DKIM, custom headers) act on
+        // the message, matching core wp_mail. The driver runs after and wins.
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core wp_mail() hook, fired intentionally for integration parity.
         do_action_ref_array('phpmailer_init', [&$built]);
 
@@ -444,14 +432,32 @@ class EmailService
         $campaign = $this->campaignRepository->find($campaign_id);
 
         if (!$campaign) {
-            return new \WP_Error('invalid_campaign', __('Campaign not found', 'kelune-crm'));
+            return new \WP_Error('invalid_campaign', __('Campaign not found', 'kelune-crm'), ['status' => 404]);
         }
 
         // Get recipient contact IDs
         $contact_ids = $this->getRecipientContactIds($campaign);
 
+        /**
+         * Filter the contacts this queue pass considers.
+         *
+         * Queueing is additive — the per-contact dedupe below skips anyone the
+         * campaign already holds a row for — so a listener may narrow a pass to
+         * part of the audience and queue the rest on a later pass.
+         *
+         * @param array<int, int|string> $contact_ids
+         * @param Campaign               $campaign
+         */
+        $contact_ids = (array) apply_filters('kelune_crm_campaign_recipient_ids', $contact_ids, $campaign);
+
+        // Targets that resolve to nobody mailable: the caller can fix this, so it
+        // is a bad request rather than a server fault.
         if (empty($contact_ids)) {
-            return new \WP_Error('no_recipients', __('No recipients found for this campaign', 'kelune-crm'));
+            return new \WP_Error(
+                'no_recipients',
+                __('This campaign\'s recipients include no mailable contacts.', 'kelune-crm'),
+                ['status' => 400]
+            );
         }
 
         // Resolved From line for the queue log, mirroring dispatch()'s cascade
@@ -468,7 +474,22 @@ class EmailService
             $queue_provider ? (string) $queue_provider->sender_email : '',
             $this->settingsService->getString('email_from_email')
         );
-        $log_from = trim($log_from_name . ' <' . $log_from_email . '>');
+
+        /**
+         * Filter the A/B variant each contact in this pass is queued under, as a
+         * `contact_id => variant_id` map. Resolved once for the whole pass rather
+         * than per row, so a listener splits the audience in a single decision.
+         *
+         * @param array<int, int>        $assignments
+         * @param Campaign               $campaign
+         * @param array<int, int|string> $contact_ids
+         */
+        $variant_assignments = (array) apply_filters(
+            'kelune_crm_campaign_variant_assignments',
+            [],
+            $campaign,
+            $contact_ids
+        );
 
         // Queue emails
         $queued = 0;
@@ -495,12 +516,15 @@ class EmailService
             // Generate tracking token
             $tracking_token = $this->generateTrackingToken((int) $campaign_id, (int) $contact_id);
 
+            $variant_id = (int) ($variant_assignments[(int) $contact_id] ?? 0);
+
             $result = $this->db->insert(
                 $this->campaignEmailsTable,
                 [
                     'campaign_id' => $campaign_id,
                     'contact_id' => $contact_id,
                     'email' => $contact['email'],
+                    'ab_variant_id' => $variant_id > 0 ? $variant_id : null,
                     'status' => 'queued',
                     'tracking_token' => $tracking_token,
                     'created_at' => current_time('mysql', true),
@@ -510,32 +534,88 @@ class EmailService
             if ($result) {
                 $queued++;
 
+                $campaign_email_id = (int) $this->db->insert_id;
+
+                // The log records what this row will actually be sent, so it goes
+                // through the same part resolution the send does.
+                $parts = $this->campaignEmailParts($campaign, [
+                    'id' => $campaign_email_id,
+                    'campaign_id' => (int) $campaign_id,
+                    'contact_id' => (int) $contact_id,
+                    'ab_variant_id' => $variant_id > 0 ? $variant_id : null,
+                    'email' => $contact['email'],
+                    'tracking_token' => $tracking_token,
+                    'status' => 'queued',
+                ]);
+
+                $row_from = trim(
+                    $this->firstNonEmpty($parts['from_name'], $log_from_name)
+                    . ' <' . $log_from_email . '>'
+                );
+
                 // Log to unified email_logs table
                 $this->emailLogService->logEmailQueued([
                     'email_type' => 'campaign',
                     'campaign_id' => $campaign_id,
                     'contact_id' => $contact_id,
                     'email_to' => $contact['email'],
-                    'email_from' => $log_from,
-                    'subject' => $campaign->subject,
-                    'body_html' => $campaign->email_content,
+                    'email_from' => $row_from,
+                    'subject' => $parts['subject'],
+                    'body_html' => $parts['content'],
                     'tracking_token' => $tracking_token,
                     'metadata' => json_encode([
                         'campaign_name' => $campaign->name,
-                        'campaign_email_id' => $this->db->insert_id,
+                        'campaign_email_id' => $campaign_email_id,
                     ]),
                 ]);
             }
         }
 
-        // Update campaign status
-        if ($queued > 0) {
-            $this->campaignRepository->update($campaign_id, [
-                'status' => 'sending',
-            ]);
-        }
-
+        // Status is not touched here: queueing is what an already-active campaign
+        // does, and "sending" is read from the queue rather than stored.
         return $queued;
+    }
+
+    /**
+     * The subject, body and From name one queue row will be sent with.
+     *
+     * The campaign's own values, unless a listener overrides them for this row.
+     * Both the queue-time log entry and the send read through here, so the logged
+     * copy and the delivered copy can never disagree.
+     *
+     * @param array<string, mixed> $email_row Queue row (campaign_emails).
+     * @return array{subject: string, content: string, from_name: string}
+     */
+    private function campaignEmailParts(Campaign $campaign, array $email_row): array
+    {
+        $parts = [
+            'subject' => (string) $campaign->subject,
+            'content' => (string) $campaign->email_content,
+            'from_name' => (string) $campaign->from_name,
+        ];
+
+        /**
+         * Filter the parts of a campaign email for a single queue row.
+         *
+         * Applied before merge tags, the global footer, the preheader and open/
+         * click tracking, so overridden copy still gets all of them.
+         *
+         * @param array{subject: string, content: string, from_name: string} $parts
+         * @param Campaign                                                   $campaign
+         * @param array<string, mixed>                                       $email_row
+         */
+        // Merged over the defaults so a listener returning only the parts it
+        // overrides still yields all three.
+        $filtered = array_merge(
+            $parts,
+            (array) apply_filters('kelune_crm_campaign_email_parts', $parts, $campaign, $email_row)
+        );
+
+        return [
+            'subject' => (string) $filtered['subject'],
+            'content' => (string) $filtered['content'],
+            'from_name' => (string) $filtered['from_name'],
+        ];
     }
 
     /**
@@ -565,11 +645,9 @@ class EmailService
             return new \WP_Error('invalid_data', __('Campaign or contact not found', 'kelune-crm'));
         }
 
-        // Re-check consent at send time, not just when the queue row was built.
-        // A contact can unsubscribe (or bounce) between being queued and being
-        // sent, and the recipient query that gated the enqueue ran long ago —
-        // this is the check that actually guarantees we honour it. Cancel the
-        // row rather than delete it, so the campaign keeps an audit trail.
+        // Re-check consent at send time: a contact can unsubscribe between being
+        // queued and sent, so this is the check that actually honours it. Cancel
+        // the row rather than delete it, to keep an audit trail.
         if (!Contact::isSendableStatus($contact['status'] ?? null)) {
             $this->db->update(
                 $this->campaignEmailsTable,
@@ -596,7 +674,7 @@ class EmailService
             return new \WP_Error(
                 'contact_not_sendable',
                 sprintf(
-                    /* translators: 1: contact ID, 2: contact status */
+                    /* translators: %1$d: contact ID, %2$s: contact status */
                     __('Contact %1$d is not mailable (status: %2$s)', 'kelune-crm'),
                     (int) $email['contact_id'],
                     (string) ($contact['status'] ?? '')
@@ -604,13 +682,15 @@ class EmailService
             );
         }
 
+        $parts = $this->campaignEmailParts($campaign, $email);
+
         // Append the global footer before personalizing so its merge tags —
         // {{business_name}}, {{unsubscribe_url}} — resolve in the same pass as
         // the body's.
-        $content = $this->appendGlobalFooter((string) $campaign->email_content);
+        $content = $this->appendGlobalFooter($parts['content']);
 
         // Personalize email content
-        $subject = wp_strip_all_tags($this->personalize($campaign->subject, $contact));
+        $subject = wp_strip_all_tags($this->personalize($parts['subject'], $contact));
         $content = $this->personalize($content, $contact);
 
         // Inbox preview text: hidden preheader at the top of the body so clients
@@ -630,19 +710,16 @@ class EmailService
         // Inject tracking pixel and replace links
         $content = $this->injectTracking($content, $email['tracking_token'], (int) $campaign->id);
 
-        // Resolve the sending connection. Only an explicitly chosen provider
-        // ("Email Provider" mode) sends through its driver; "Global Email" and
-        // "Custom" modes leave email_provider_id empty and go out via wp_mail
-        // (see resolveProvider). The campaign's from_email/name are the custom
-        // From override; when empty the wp_mail path uses the Global Email
-        // identity from Settings.
+        // Only an explicitly chosen provider sends through its driver; "Global
+        // Email" and "Custom" leave email_provider_id empty and go via wp_mail.
+        // The campaign's from_email/name are the custom From override.
         $provider = $this->resolveProvider($campaign->email_provider_id);
         $sent = $this->dispatch(
             $provider,
             $contact['email'],
             $subject,
             $content,
-            (string) $campaign->from_name,
+            $parts['from_name'],
             (string) $campaign->from_email,
             (string) $campaign->reply_to
         );
@@ -822,12 +899,17 @@ class EmailService
      */
     public function processQueue($limit = 100): array
     {
+        // Joined to the campaign so pausing actually stops a send in flight: a
+        // held campaign's rows stay 'queued' and are skipped until it is active
+        // again, which is what makes pause resumable rather than cosmetic.
         $emails = $this->db->get_results(
             $this->db->prepare(
-                "SELECT id FROM {$this->campaignEmailsTable}
-                WHERE status = 'queued'
-                ORDER BY created_at ASC
+                "SELECT ce.id FROM {$this->campaignEmailsTable} ce
+                INNER JOIN {$this->campaignsTable} c ON c.id = ce.campaign_id
+                WHERE ce.status = 'queued' AND c.status = %s
+                ORDER BY ce.created_at ASC
                 LIMIT %d",
+                Campaign::STATUS_ACTIVE,
                 $limit
             ),
             ARRAY_A
@@ -841,12 +923,9 @@ class EmailService
         foreach ($emails as $email) {
             $started = microtime(true);
 
-            // Claim the row before sending it. The batch above is a plain read,
-            // so two overlapping cron runs (or a manual trigger racing cron)
-            // select the same rows; without this the same contact receives the
-            // campaign twice. The UPDATE is the synchronisation point: it names
-            // the status it expects, so exactly one worker can flip a given row
-            // out of 'queued', and the loser skips it.
+            // Claim the row first: the batch above is a plain read, so
+            // overlapping runs select the same rows. The UPDATE names the status
+            // it expects, so exactly one worker flips a row out of 'queued'.
             if (!$this->claimQueuedEmail((int) $email['id'])) {
                 continue;
             }
@@ -859,10 +938,8 @@ class EmailService
                 $sent++;
             }
 
-            // Sleep only the remainder of the interval: a flat sleep would
-            // stack on top of the send latency and quietly halve the real rate.
-            // max(0) because microtime() is wall-clock: an NTP step backwards
-            // would otherwise turn the remainder into a very long sleep.
+            // Sleep only the remainder, or send latency stacks on top and halves
+            // the real rate. max(0) guards an NTP step backwards on wall-clock.
             $elapsed = max(0, (int) ((microtime(true) - $started) * 1000000));
 
             if ($elapsed < $interval) {
@@ -881,12 +958,20 @@ class EmailService
     }
 
     /**
-     * Whether any campaign email is still waiting to be sent.
+     * Whether any campaign email is still waiting to be sent. Rows belonging to a
+     * paused campaign do not count — nothing will send them, so treating them as
+     * pending work would spin the drain loop.
      */
     public function hasQueuedEmails(): bool
     {
         $exists = $this->db->get_var(
-            "SELECT 1 FROM {$this->campaignEmailsTable} WHERE status = 'queued' LIMIT 1"
+            $this->db->prepare(
+                "SELECT 1 FROM {$this->campaignEmailsTable} ce
+                INNER JOIN {$this->campaignsTable} c ON c.id = ce.campaign_id
+                WHERE ce.status = 'queued' AND c.status = %s
+                LIMIT 1",
+                Campaign::STATUS_ACTIVE
+            )
         );
 
         return null !== $exists;
@@ -936,27 +1021,49 @@ class EmailService
             return false;
         }
 
-        $update_data = [
-            'open_count' => $email['open_count'] + 1,
-            'updated_at' => current_time('mysql', true),
-        ];
+        $now = current_time('mysql', true);
+        $email_id = (int) $email['id'];
 
-        // Record first open. The engagement event + hook fire here too, once, so
-        // the email-opened automation condition/trigger see a campaign open the
-        // same way they see an automation-email open.
-        if (empty($email['opened_at'])) {
-            $update_data['opened_at'] = current_time('mysql', true);
+        // Claim the first open in the statement itself: opens arrive in bursts
+        // (an inbox image proxy prefetching, then the recipient), so exactly one
+        // caller must win this row or the engagement event fires twice.
+        $first_open = 1 === (int) $this->db->query(
+            $this->db->prepare(
+                "UPDATE {$this->campaignEmailsTable}
+                SET opened_at = %s, updated_at = %s
+                WHERE id = %d AND opened_at IS NULL",
+                $now,
+                $now,
+                $email_id
+            ) ?: ''
+        );
 
-            if (!empty($email['contact_id'])) {
-                $this->emailLogService->recordEmailEngagement('email_opened', (int) $email['contact_id'], [
-                    'campaign_id' => !empty($email['campaign_id']) ? (int) $email['campaign_id'] : null,
-                    'email_id' => (int) $email['id'],
-                ]);
-            }
+        // Counted by the database. Reading the value into PHP and writing it
+        // back loses every open but one whenever two arrive together.
+        $this->db->query(
+            $this->db->prepare(
+                "UPDATE {$this->campaignEmailsTable}
+                SET open_count = open_count + 1, updated_at = %s
+                WHERE id = %d",
+                $now,
+                $email_id
+            ) ?: ''
+        );
+
+        // The engagement event + hook fire once, so the email-opened automation
+        // condition/trigger see a campaign open the same way they see an
+        // automation-email open.
+        if ($first_open && !empty($email['contact_id'])) {
+            $this->emailLogService->recordEmailEngagement('email_opened', (int) $email['contact_id'], [
+                'campaign_id' => !empty($email['campaign_id']) ? (int) $email['campaign_id'] : null,
+                'email_id' => $email_id,
+            ]);
         }
 
         // Update user agent and IP on first open, deriving device/browser/os
         // so analytics can break opens down without an external dependency.
+        $update_data = [];
+
         if (empty($email['user_agent']) && !empty($user_agent)) {
             $update_data['user_agent'] = $user_agent;
             $parsed = $this->parseUserAgent($user_agent);
@@ -969,11 +1076,13 @@ class EmailService
             $update_data['ip_address'] = $ip_address;
         }
 
-        $this->db->update(
-            $this->campaignEmailsTable,
-            $update_data,
-            ['id' => $email['id']]
-        );
+        if ($update_data !== []) {
+            $this->db->update(
+                $this->campaignEmailsTable,
+                $update_data,
+                ['id' => $email_id]
+            );
+        }
 
         return true;
     }
@@ -981,8 +1090,8 @@ class EmailService
     /**
      * Derive device type, browser and OS from a user-agent string.
      *
-     * Lightweight substring matching — good enough for aggregate analytics
-     * and avoids bundling a heavy UA-parsing library.
+     * Lightweight substring matching: enough for aggregate analytics without
+     * a UA-parsing library.
      *
      * @return array{device_type: string, browser: string, os: string}
      */
@@ -1054,42 +1163,50 @@ class EmailService
             return false;
         }
 
-        $update_data = [
-            'click_count' => $email['click_count'] + 1,
-            'updated_at' => current_time('mysql', true),
-        ];
+        $now = current_time('mysql', true);
+        $email_id = (int) $email['id'];
 
-        // Record first click. Engagement event + hook fire here, once.
-        if (empty($email['clicked_at'])) {
-            $update_data['clicked_at'] = current_time('mysql', true);
-
-            if (!empty($email['contact_id'])) {
-                $this->emailLogService->recordEmailEngagement('email_clicked', (int) $email['contact_id'], [
-                    'campaign_id' => !empty($email['campaign_id']) ? (int) $email['campaign_id'] : null,
-                    'email_id' => (int) $email['id'],
-                    'link_url' => $this->resolveCampaignLinkUrl($link_id),
-                ]);
-            }
-        }
-
-        $this->db->update(
-            $this->campaignEmailsTable,
-            $update_data,
-            ['id' => $email['id']]
+        // Claim the first click in the statement itself, so concurrent clicks
+        // cannot both count as the first one.
+        $first_click = 1 === (int) $this->db->query(
+            $this->db->prepare(
+                "UPDATE {$this->campaignEmailsTable}
+                SET clicked_at = %s, updated_at = %s
+                WHERE id = %d AND clicked_at IS NULL",
+                $now,
+                $now,
+                $email_id
+            ) ?: ''
         );
 
-        // Update link stats
+        // Counted by the database, for the same reason opens are.
+        $this->db->query(
+            $this->db->prepare(
+                "UPDATE {$this->campaignEmailsTable}
+                SET click_count = click_count + 1, updated_at = %s
+                WHERE id = %d",
+                $now,
+                $email_id
+            ) ?: ''
+        );
+
+        // Record first click. Engagement event + hook fire here, once.
+        if ($first_click && !empty($email['contact_id'])) {
+            $this->emailLogService->recordEmailEngagement('email_clicked', (int) $email['contact_id'], [
+                'campaign_id' => !empty($email['campaign_id']) ? (int) $email['campaign_id'] : null,
+                'email_id' => $email_id,
+                'link_url' => $this->resolveCampaignLinkUrl($link_id),
+            ]);
+        }
+
+        // Update link stats. Clicks are counted per link, not per recipient:
+        // nothing records which contact followed which link, so a per-link
+        // unique figure has no source to come from.
         $this->db->query(
             $this->db->prepare(
                 "UPDATE {$this->campaignLinksTable}
-                SET total_clicks = total_clicks + 1,
-                    unique_clicks = (
-                        SELECT COUNT(DISTINCT contact_id)
-                        FROM {$this->campaignEmailsTable}
-                        WHERE campaign_id = %d AND clicked_at IS NOT NULL
-                    )
+                SET total_clicks = total_clicks + 1
                 WHERE id = %d",
-                $email['campaign_id'],
                 $link_id
             ) ?: ''
         );
@@ -1119,12 +1236,10 @@ class EmailService
      * Whether an address belongs to a contact who may not receive marketing
      * email.
      *
-     * Test and preview sends take a free-typed address rather than a contact,
-     * so the send-time gate — which reads a contact row — cannot see them. An
-     * admin typing an unsubscribed person's address into the test field would
-     * otherwise deliver campaign content to someone who opted out. Addresses
-     * that match no contact are not suppressed: sending yourself a preview at
-     * an address the CRM has never heard of is the normal case.
+     * Test and preview sends take a free-typed address, which the send-time
+     * gate (it reads a contact row) cannot see — without this an admin could
+     * mail campaign content to someone who opted out. Addresses matching no
+     * contact are not suppressed; previewing to an unknown address is normal.
      */
     public function isAddressSuppressed(string $email): bool
     {
@@ -1170,12 +1285,9 @@ class EmailService
     }
 
     /**
-     * The site-wide footer content (the author's `<p>` markup, `margin:0` forced
-     * inline), merge tags not yet resolved. No wrapper — callers place it: the
-     * builder document supplies its own styled wrapper around the GLOBAL_FOOTER
-     * marker, while the fragment path wraps it in buildGlobalFooterHtml().
-     *
-     * Returns '' when no footer is configured.
+     * Site-wide footer content (author's `<p>` markup, `margin:0` forced
+     * inline), merge tags unresolved and no wrapper — callers place it. Returns
+     * '' when no footer is configured.
      */
     private function globalFooterContent(): string
     {
@@ -1235,11 +1347,10 @@ class EmailService
     /**
      * Splice footer markup into a body, sizing and placing it to match the email.
      *
-     * A visual-builder body is a full HTML document whose centered "Main" column
-     * (page padding) holds the content "Container". The footer drops inside Main,
-     * just below the Container, constrained to the content width so it lines up
-     * under the content and shares the page background + padding. Rich-text /
-     * HTML / plain-text bodies are fragments: the footer is appended full-width.
+     * A builder body is a document whose centered "Main" column holds the
+     * content "Container"; the footer drops inside Main just below it, width-
+     * constrained so it lines up and shares the page background. Fragments
+     * (rich-text / HTML / plain-text) get the footer appended full-width.
      */
     private function spliceFooter(string $content, string $html): string
     {
@@ -1247,10 +1358,9 @@ class EmailService
             return $content;
         }
 
-        // The Main column closes with `</td></tr></table></body>`; that </td> is
-        // Main's own cell, so inserting before it puts the footer inside Main,
-        // right after the Container table. Anchored to </body> so it matches only
-        // the document's outermost close, never a nested block table.
+        // Main closes with `</td></tr></table></body>`; inserting before that
+        // </td> puts the footer inside Main. Anchored to </body> so it matches
+        // only the outermost close, never a nested block table.
         if (preg_match('/<\/td>\s*<\/tr>\s*<\/table>\s*<\/body>/i', $content, $m, PREG_OFFSET_CAPTURE)) {
             $width = preg_match('/max-width:\s*(\d+)px/i', $content, $w) ? (int) $w[1] : 600;
             // Only a top gap: Main's bottom page padding spaces the footer below.
@@ -1271,22 +1381,10 @@ class EmailService
     }
 
     /**
-     * Resolve the email footer for a campaign body. Three cases:
-     *
-     * - Builder document, Global footer: it carries GLOBAL_FOOTER_MARKER inside
-     *   its own styled wrapper. Swap the marker for the site-wide footer content
-     *   (tags unresolved — the campaign pipeline personalizes the whole body next).
-     * - Builder document, Custom footer or footer disabled: the template owns the
-     *   footer (already baked, or intentionally absent). Leave the body untouched.
-     * - Fragment (rich-text / HTML / plain-text): no builder chrome, so append the
-     *   global footer full-width, exactly as before.
-     */
-    /**
-     * Whether $content is a builder-generated document (which owns its footer)
-     * rather than a raw fragment (rich-text / HTML / plain-text) that needs the
-     * global footer appended. Keys on the builder sentinel — which survives the
-     * wp_kses_post applied on save — and falls back to the <!DOCTYPE> for any
-     * pre-sanitized or legacy content that still carries it.
+     * Whether $content is a builder document (owns its footer) rather than a
+     * fragment that needs the global footer appended. Keys on the builder
+     * sentinel, which survives the wp_kses_post applied on save; the <!DOCTYPE>
+     * fallback covers pre-sanitized content.
      */
     private function isBuilderDocument(string $content): bool
     {
@@ -1294,6 +1392,12 @@ class EmailService
             || stripos($content, '<!doctype') !== false;
     }
 
+    /**
+     * Resolve the footer for a campaign body: swap GLOBAL_FOOTER_MARKER for the
+     * site-wide footer (tags stay unresolved — the campaign pipeline
+     * personalizes the whole body next), leave a builder document that bakes
+     * its own footer untouched, and append full-width to a fragment.
+     */
     private function appendGlobalFooter(string $content): string
     {
         if (preg_match(self::GLOBAL_FOOTER_MARKER_PATTERN, $content, $m)) {
@@ -1309,14 +1413,10 @@ class EmailService
     }
 
     /**
-     * Resolve the email footer for a non-campaign (automation) body, resolving the
-     * footer's own merge tags for $contact — the automation merge-tag pass runs
-     * over the step body before this point and does not cover the business /
-     * unsubscribe tags, so they are resolved here.
-     *
-     * Mirrors appendGlobalFooter's three cases; the difference is that the footer
-     * (marker replacement, or a baked custom footer inside a builder document) is
-     * resolved here rather than by a later pipeline pass.
+     * Footer for a non-campaign (automation) body. Mirrors appendGlobalFooter,
+     * but resolves the footer's own merge tags for $contact here — the
+     * automation merge-tag pass covers the step body only, not the business /
+     * unsubscribe tags.
      *
      * @param array<string, mixed> $contact
      */
@@ -1352,10 +1452,9 @@ class EmailService
     }
 
     /**
-     * The global footer as it appears in a dashboard preview: the same wrapped
-     * markup real emails get, with the business-identity tags resolved from
-     * Settings and the unsubscribe link pointed at the site home (a preview has
-     * no per-recipient tracking token). Returns '' when no footer is configured.
+     * Global footer as a dashboard preview shows it: the wrapped markup real
+     * emails get, business tags resolved, unsubscribe pointed at the site home
+     * (a preview has no tracking token). Returns '' when none is configured.
      */
     public function renderFooterForPreview(): string
     {
@@ -1370,12 +1469,10 @@ class EmailService
     }
 
     /**
-     * The global footer CONTENT (unwrapped `<p>` markup) as it appears in a
-     * dashboard preview: business tags resolved, unsubscribe → site home. Unlike
-     * renderFooterForPreview() this has no font/colour wrapper, because a builder
-     * document supplies its own (template-configured) wrapper around the footer;
-     * the dashboard swaps the GLOBAL_FOOTER_MARKER for this. Returns '' when no
-     * footer is configured.
+     * Global footer CONTENT (unwrapped `<p>` markup) for a dashboard preview.
+     * No font/colour wrapper, unlike renderFooterForPreview() — a builder
+     * document supplies its own around the marker it swaps for this. Returns ''
+     * when no footer is configured.
      */
     public function renderFooterContentForPreview(): string
     {
@@ -1392,13 +1489,10 @@ class EmailService
     /**
      * Inject a hidden preheader (inbox preview text) at the top of an email body.
      *
-     * Most clients show the first visible text after the subject as the inbox
-     * preview. A hidden block placed first overrides that with the author's
-     * chosen text; the trailing zero-width spacers stop the client from bleeding
-     * the body's real content into the preview after it. Inserted just after the
-     * opening <body> tag when present, otherwise prepended. Shared by the
-     * campaign send path and the automation send_email action so both resolve
-     * preview text the same way.
+     * Clients show the first visible text after the subject as the inbox
+     * preview; a hidden block placed first overrides that, and the trailing
+     * zero-width spacers stop real body content bleeding in after it. Inserted
+     * after the opening <body> when present, otherwise prepended.
      */
     public function injectPreheader(string $html, string $preheader): string
     {
@@ -1422,11 +1516,9 @@ class EmailService
     }
 
     /**
-     * Send a test of an automation send_email step to a typed address, using the
-     * step's live (possibly unsaved) config. No contact row is touched (the step
-     * need not be persisted), but the send is written to email_logs as a test
-     * (email_type='test') so it shows Type=Test in Email Logs, exactly like the
-     * campaign wizard's Send Test.
+     * Send a test of an automation send_email step to a typed address using the
+     * step's live (possibly unsaved) config. Touches no contact row, but logs to
+     * email_logs with email_type='test' so it reads Type=Test in Email Logs.
      *
      * @param array<string, mixed> $config Sanitized send_email action_config.
      * @return bool|\WP_Error
@@ -1546,9 +1638,8 @@ class EmailService
     /**
      * Inject tracking pixel and replace links.
      *
-     * Both halves are gated independently by the track_email_opens /
-     * track_email_clicks settings. Gating here (rather than at the call site)
-     * keeps every campaign send on one honest path.
+     * Both halves gate independently on track_email_opens / track_email_clicks.
+     * Gating here rather than at the call site keeps every send on one path.
      *
      * @param string $content
      * @param string $tracking_token

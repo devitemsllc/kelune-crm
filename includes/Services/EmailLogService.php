@@ -107,10 +107,9 @@ class EmailLogService
      */
     public function logEmailOpened($log_id): bool
     {
-        // Whether this is the FIRST open decides whether an engagement event
-        // fires: the open pixel loads on every view, but a contact "opened this
-        // email" is a one-time fact — re-recording it on every reload would spam
-        // the events table and re-fire the email-opened automation trigger.
+        // Only the FIRST open fires an engagement event: the pixel loads on
+        // every view, but "opened this email" is a one-time fact — re-recording
+        // it would spam the events table and re-fire the automation trigger.
         $email_log = $this->repository->find((int) $log_id);
         $is_first_open = $email_log && empty($email_log->opened_at);
 
@@ -169,14 +168,11 @@ class EmailLogService
     /**
      * Record an email engagement (open/click) as a contact event AND announce it.
      *
-     * The single place both halves of the system learn about engagement:
-     *  - a row in the events table, which `ConditionEvaluator` reads for the
-     *    email_opened / email_clicked automation CONDITIONS, and
-     *  - the `kelune_crm_email_opened` / `kelune_crm_email_clicked` hooks,
-     *    which the Pro add-on's advanced trigger service enrols contacts on.
-     *
-     * Called from both send paths (campaign tracking and automation/transactional
-     * tracking) so an open is an open regardless of which mailer produced it.
+     * The single place both halves learn about engagement: a row in the events
+     * table (read by `ConditionEvaluator` for the email_opened / email_clicked
+     * conditions) and the `kelune_crm_email_opened` / `_clicked` hooks (which
+     * Pro enrols contacts on). Called from both send paths, so an open is an
+     * open whichever mailer produced it.
      *
      * @param 'email_opened'|'email_clicked' $event_type
      * @param array<string, mixed>           $data campaign_id / automation_id / email_id / link_url
@@ -215,7 +211,7 @@ class EmailLogService
      */
     public function generateTrackingToken(): string
     {
-        return 'kelunecrmlt_' . bin2hex(random_bytes(30)); // 60 hex + 12 char prefix = 72 total
+        return 'kelunecrmlt_' . bin2hex(random_bytes(30)); // 12 char prefix + 60 hex = 72 total
     }
 
     /**
@@ -232,12 +228,10 @@ class EmailLogService
     /**
      * Signature proving a click-tracking destination was authored by this site.
      *
-     * The destination travels in the query string, so without this the redirect
-     * endpoint would forward anywhere an attacker asked it to — a phishing jump
-     * off our own trusted domain. We build every tracked link ourselves, so we
-     * can sign it and refuse anything that does not verify.
-     *
-     * Keyed with wp_salt(), which is per-site and never leaves the server.
+     * The destination travels in the query string, so without a signature the
+     * redirect endpoint would forward anywhere an attacker asked — a phishing
+     * jump off a trusted domain. Every tracked link is built here, so it can be
+     * signed and anything unverified refused. Keyed with wp_salt().
      */
     public function signClickUrl(string $token, string $url): string
     {
@@ -340,9 +334,8 @@ class EmailLogService
     /**
      * Add tracking to email HTML (pixel + links).
      *
-     * Both halves are gated independently by the track_email_opens /
-     * track_email_clicks settings. Gating here (rather than at the call site)
-     * keeps every automation send on one honest path.
+     * Both halves gate independently on track_email_opens / track_email_clicks.
+     * Gating here rather than at the call site keeps every send on one path.
      *
      * @param string $html Email HTML content
      * @param string $token Tracking token
@@ -364,7 +357,8 @@ class EmailLogService
     }
 
     /**
-     * Resend a failed email
+     * Resend a logged email: copy it to a fresh log row and dispatch it through
+     * the same provider path every other send uses.
      *
      * @param int $log_id Email log ID
      * @return int|\WP_Error New log ID on success, WP_Error on failure
@@ -381,11 +375,9 @@ class EmailLogService
             );
         }
 
-        // Consent is re-checked here rather than only at dispatch, because the
-        // original log is a snapshot: the contact may have unsubscribed since it
-        // was written, and resending replays that old body to them. Refusing up
-        // front also means the queued row this writes can never become a send to
-        // someone who opted out once the TODO below is implemented.
+        // Re-check consent here, not just at dispatch: the original log is a
+        // snapshot and the contact may have unsubscribed since, so a resend
+        // would replay that body to them.
         if (!$this->isContactSendable($original_log->contact_id)) {
             return new \WP_Error(
                 'contact_not_sendable',
@@ -423,17 +415,85 @@ class EmailLogService
             );
         }
 
-        // TODO: Trigger actual email sending here
-        // This would integrate with EmailService to actually send the email
+        $new_log = $this->repository->find((int) $new_log_id);
+        $body_html = (string) $original_log->body_html;
+        $body_text = (string) $original_log->body_text;
+
+        // Re-point the body's tracking URLs at the new row. Never for a campaign
+        // body: that token also addresses its campaign_emails row, which is
+        // UNIQUE per (campaign, contact), so a swap resolves to nothing.
+        $old_token = (string) $original_log->tracking_token;
+        $new_token = $new_log ? (string) $new_log->tracking_token : '';
+        if (!$original_log->campaign_id && $old_token !== '' && $new_token !== '') {
+            $body_html = str_replace($old_token, $new_token, $body_html);
+            $body_text = str_replace($old_token, $new_token, $body_text);
+
+            // Persist what actually goes out, so the log matches the message.
+            $this->repository->update((int) $new_log_id, [
+                'body_html' => $body_html,
+                'body_text' => $body_text,
+            ]);
+        }
+
+        [$from_name, $from_email] = $this->splitFromHeader((string) $original_log->email_from);
+
+        // Built here, not held as a property: EmailService constructs an
+        // EmailLogService of its own and would recurse. No provider_id — the log
+        // stores a provider name, not a connection id, so the logged sender
+        // re-selects the connection through wp_mail routing.
+        $sent = (new EmailService())->sendTransactional(
+            (string) $original_log->email_to,
+            (string) $original_log->subject,
+            $body_html,
+            [
+                'from_name' => $from_name,
+                'from_email' => $from_email,
+                'text' => $body_text,
+            ]
+        );
+
+        if (is_wp_error($sent) || !$sent) {
+            $error_message = is_wp_error($sent)
+                ? $sent->get_error_message()
+                : __('Failed to send email', 'kelune-crm');
+
+            $this->logEmailFailed($new_log_id, $error_message);
+
+            return new \WP_Error('resend_failed', $error_message, ['status' => 500]);
+        }
+
+        $this->logEmailSent($new_log_id);
 
         return $new_log_id;
     }
 
     /**
+     * Split a stored `Name <address>` sender into its two parts. An unparseable
+     * value yields both empty, so the send falls back to the configured sender
+     * rather than emitting a malformed From.
+     *
+     * @return array{0: string, 1: string} [name, email]
+     */
+    private function splitFromHeader(string $from): array
+    {
+        $from = trim($from);
+
+        if ($from === '') {
+            return ['', ''];
+        }
+
+        if (preg_match('/^(.*?)\s*<([^>]+)>$/', $from, $matches)) {
+            return [trim($matches[1], " \t\"'"), sanitize_email($matches[2])];
+        }
+
+        return ['', sanitize_email($from)];
+    }
+
+    /**
      * Whether a logged email's contact may still receive marketing email.
      *
-     * A log with no contact_id is a one-off (a test or preview to a typed
-     * address); there is no contact to consult, so it is left to its caller.
+     * A log with no contact_id is a one-off (test/preview to a typed address);
+     * no contact to consult, so it is left to the caller.
      *
      * @param mixed $contact_id
      */

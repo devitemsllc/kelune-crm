@@ -27,12 +27,9 @@ class SESProvider implements EmailProviderInterface
             );
         }
 
-        // Let PHPMailer assemble the full MIME message (From, Reply-To,
-        // To/Cc/Bcc, HTML + plain-text parts, attachments and custom headers),
-        // then hand SES the raw message via SendRawEmail. This is why SES honors
-        // attachments and multiple recipients — the QueryAPI SendEmail action
-        // could not. The recipients and sender are read by SES from the MIME
-        // headers, so no Destination/Source params are needed.
+        // PHPMailer assembles the full MIME message, handed to SES via
+        // SendRawEmail so attachments and multi-recipient headers survive. SES
+        // reads sender/recipients from the MIME headers — no Destination/Source.
         try {
             $phpmailer->preSend();
             $raw_message = $phpmailer->getSentMIMEMessage();
@@ -186,9 +183,8 @@ class SESProvider implements EmailProviderInterface
     }
 
     /**
-     * SES send quota for the Connection Details view (Max 24-hour send, sent in
-     * last 24h, max send rate). Returns null when credentials are missing or the
-     * lookup fails.
+     * SES send quota for the Connection Details view. Returns null when
+     * credentials are missing or the lookup fails.
      *
      * @param array<string, mixed> $config
      * @return array{max_24h: int, sent_24h: int, max_rate: float}|null
@@ -220,10 +216,9 @@ class SESProvider implements EmailProviderInterface
     }
 
     /**
-     * Return the verified sending identities (emails and domains) for this SES
-     * account. Used to validate custom From addresses. Returns an empty array
-     * when the credentials lack ListIdentities permission or the lookup fails,
-     * so callers fall back to allow-with-warning instead of blocking.
+     * Verified sending identities (emails and domains) for this SES account,
+     * used to validate custom From addresses. Empty when ListIdentities is
+     * denied or fails, so callers allow-with-warning instead of blocking.
      *
      * @param array<string, mixed> $config
      * @return array<int, string>
@@ -384,7 +379,7 @@ class SESProvider implements EmailProviderInterface
     }
 
     /**
-     * Sign AWS request (complete AWS Signature Version 4 implementation)
+     * Sign an AWS request with Signature Version 4.
      *
      * @param string $access_key AWS access key ID
      * @param string $secret_key AWS secret access key

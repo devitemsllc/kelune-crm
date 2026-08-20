@@ -10,9 +10,8 @@ use KeluneCRM\Services\Providers\ProviderFactory;
 
 /**
  * REST CRUD for email provider connections, plus connection testing and
- * verified-sender lookups. Mirrors the secret-masking contract used by
- * SettingsController: stored secrets are never sent to the browser in
- * plaintext; the client echoes a sentinel back for unchanged secrets.
+ * verified-sender lookups. Stored secrets never reach the browser in plaintext;
+ * the client echoes a sentinel back for unchanged secrets.
  */
 class EmailProviderController extends BaseController
 {
@@ -23,8 +22,7 @@ class EmailProviderController extends BaseController
     private ProviderFactory $factory;
 
     /**
-     * Sentinel returned in place of stored secrets. Matches SettingsController so
-     * the frontend handles masked secrets the same way everywhere.
+     * Sentinel returned in place of stored secrets.
      */
     private const SECRET_MASK = '__secret_unchanged__';
 
@@ -82,9 +80,8 @@ class EmailProviderController extends BaseController
             'permission_callback' => [$this, 'checkReadPermission'],
         ]);
 
-        // Connection Details view (stats + valid senders + verified domains).
-        // SES returns live send-quota stats; other providers return their bound
-        // sender only.
+        // Connection Details view: SES returns live send-quota stats, other
+        // providers return their bound sender only.
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/connection-details', [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'connectionDetails'],
@@ -92,8 +89,8 @@ class EmailProviderController extends BaseController
         ]);
 
         // Manual sender emails for a connection (Amazon SES only): register/remove
-        // an extra From address so mail sent as it routes through this connection
-        // untouched instead of being force-rewritten.
+        // an extra From address so mail sent as it passes through untouched
+        // instead of being force-rewritten.
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/senders', [
             [
                 'methods' => \WP_REST_Server::CREATABLE,
@@ -341,9 +338,8 @@ class EmailProviderController extends BaseController
 
     /**
      * Register an extra sender email on a connection (Amazon SES only). The
-     * address's domain must be a verified SES domain; on success it is stored in
-     * the connection's manual senders so mail sent as it routes through this
-     * connection untouched instead of being force-rewritten.
+     * address's domain must be a verified SES domain; once stored, mail sent as
+     * it passes through untouched instead of being force-rewritten.
      */
     public function addSender(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
     {
@@ -460,12 +456,10 @@ class EmailProviderController extends BaseController
 
     /**
      * Refresh a connection's stored verified senders from the provider, best
-     * effort. The list feeds the from-email → connection routing (see
-     * {@see \KeluneCRM\Repositories\EmailProviderRepository::findForSender()}),
-     * so it must be populated at save time, not only when the UI asks. Network or
-     * permission failures are swallowed — the connection still saves, and the
-     * sender list stays whatever it was (an empty list simply means "allow any
-     * sender", handled downstream).
+     * effort. The list feeds from-email → connection routing
+     * ({@see \KeluneCRM\Repositories\EmailProviderRepository::findForSender()}),
+     * so it must be populated at save time. Failures are swallowed: an empty list
+     * means "allow any sender" downstream.
      */
     private function syncVerifiedSenders(int $id): void
     {

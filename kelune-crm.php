@@ -3,7 +3,7 @@
  * Plugin Name: Kelune CRM
  * Plugin URI: https://kelunecrm.com
  * Description: A complete CRM for WordPress with contact management, email campaigns, and visual marketing automation.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Devitems
  * Author URI: https://devitems.com
  * License: GPL v2 or later
@@ -20,12 +20,12 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('KELUNE_CRM_VERSION', '1.0.0');
+define('KELUNE_CRM_VERSION', '1.0.1');
 define('KELUNE_CRM_PLUGIN_FILE', __FILE__);
 define('KELUNE_CRM_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('KELUNE_CRM_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('KELUNE_CRM_PLUGIN_BASENAME', plugin_basename(__FILE__));
-define('KELUNE_CRM_DB_VERSION', '1.0.0');
+define('KELUNE_CRM_DB_VERSION', '1.0.1');
 define('KELUNE_CRM_MIN_PHP_VERSION', '8.1');
 define('KELUNE_CRM_MIN_WP_VERSION', '6.6');
 
@@ -35,7 +35,7 @@ if (version_compare(PHP_VERSION, KELUNE_CRM_MIN_PHP_VERSION, '<')) {
         ?>
         <div class="notice notice-error">
             <p><?php printf(
-                /* translators: 1: required PHP version, 2: current PHP version */
+                /* translators: %1$s: required PHP version, %2$s: current PHP version */
                 esc_html__('Kelune CRM requires PHP %1$s or higher. Your current version is %2$s.', 'kelune-crm'),
                 esc_html(KELUNE_CRM_MIN_PHP_VERSION),
                 esc_html(PHP_VERSION)

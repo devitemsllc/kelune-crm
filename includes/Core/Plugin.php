@@ -91,6 +91,8 @@ class Plugin
         add_action('admin_bar_menu', [$this, 'initAdminBar'], 100);
         add_action('rest_api_init', [$this, 'initRestApi']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminAssets']);
+        // Admin-menu / admin-bar divider styling. The admin bar (and its
+        // styling) also renders on the front end, so hook both contexts.
         add_action('admin_enqueue_scripts', [$this, 'enqueueMenuAssets']);
         add_action('wp_enqueue_scripts', [$this, 'enqueueMenuAssets']);
 
@@ -123,17 +125,14 @@ class Plugin
         // terminal rows).
         $this->container->get('cleanup_handler')->register();
 
-        // Site-wide mailer: once an active default email provider exists, route
-        // ALL wp_mail() (password resets, other plugins, and this plugin's own
-        // Global/Custom sends) through it — the plugin acts as the
-        // site's SMTP service.
+        // With an active default provider, route ALL wp_mail() through it —
+        // password resets, other plugins, and this plugin's Global/Custom sends.
         $this->container->get('site_mailer')->register();
 
         $this->loadModules();
 
-        // Signal that the Free plugin has finished bootstrapping. The Pro add-on
-        // hangs all of its registration (REST controllers, automation processors,
-        // triggers, feature flags) on this action (release plan §3.1).
+        // Free has finished bootstrapping. The Pro add-on hangs all of its
+        // registration (REST controllers, processors, triggers, flags) on this.
         do_action('kelune_crm_loaded', $this->container);
     }
 
@@ -146,9 +145,9 @@ class Plugin
     /**
      * Run pending database migrations on admin load.
      *
-     * The activation hook only fires on (re)activation, so bumping
-     * KELUNE_CRM_DB_VERSION would otherwise never reach existing installs.
-     * The Migrator no-ops when the stored version is already current.
+     * The activation hook fires only on (re)activation, so a bumped
+     * KELUNE_CRM_DB_VERSION would never reach existing installs. The Migrator
+     * no-ops when the stored version is current.
      */
     public function maybeMigrate(): void
     {
@@ -163,9 +162,8 @@ class Plugin
     }
 
     /**
-     * Redirect to the dashboard once, right after single-plugin activation.
-     * Activator seeds the short-lived transient; consume it here on the next
-     * admin request. Skipped on bulk activation (network/multi) so activating
+     * Redirect to the dashboard once after single-plugin activation, consuming
+     * the transient Activator seeds. Skipped on bulk activation so activating
      * several plugins at once is not hijacked.
      */
     public function maybeActivationRedirect(): void
@@ -232,8 +230,8 @@ class Plugin
     }
 
     /**
-     * Enqueue the brand icon styling and the admin app wrapper reset. Runs on
-     * both admin_enqueue_scripts (passes a page hook) and wp_enqueue_scripts
+     * Enqueue the admin-menu / admin-bar divider styling. Runs on both
+     * admin_enqueue_scripts (passes a page hook) and wp_enqueue_scripts
      * (passes nothing), hence the loose argument.
      *
      * @param mixed $hook
@@ -255,80 +253,63 @@ class Plugin
         // images/assets (e.g. the email template builder's image block).
         wp_enqueue_media();
 
-        // Vite-built dashboard: three vendor bundles plus the app, all classic
-        // scripts with fixed names. No code splitting, so nothing is fetched at
-        // runtime; cache-busting is the ?ver= plugin version.
-        $dist_dir = KELUNE_CRM_PLUGIN_DIR . 'assets/admin/dist';
-        $dist_url = KELUNE_CRM_PLUGIN_URL . 'assets/admin/dist';
+        // React app bundle. Entry filenames are content-hashed and named in
+        // manifest.php; async chunks (js/, css/) load at runtime.
+        $dist_url = KELUNE_CRM_PLUGIN_URL . 'assets/apps/dashboard';
 
-        if (file_exists($dist_dir . '/kelune-crm-admin.css')) {
+        $manifest = $this->dashboardManifest();
+        $main_js  = $manifest['js'];
+        $main_css = $manifest['css'];
+
+        if ('' !== $main_css) {
             wp_enqueue_style(
-                'kelune-crm-admin-app',
-                $dist_url . '/kelune-crm-admin.css',
+                'kelune-crm-dashboard',
+                $dist_url . '/' . $main_css,
                 ['wp-components'],
                 $this->version
             );
         }
 
-        // React is not bundled: every build reads WordPress' own copy from the
-        // globals its UMD builds define. Declaring the handles as dependencies
-        // is what guarantees they are printed first.
-        $react_deps = ['react', 'react-dom', 'react-jsx-runtime'];
-
-        // Ant Design (+ icons + dayjs), the charting stack, and the editor stack.
-        // Each hangs its packages off a global the app bundle reads instead of
-        // carrying its own copy. They depend only on React, never on each other;
-        // the app depends on all three, which orders them ahead of it.
-        $vendor_handles = [];
-
-        foreach (['antd', 'charts', 'editors'] as $vendor) {
-            $handle = 'kelune-crm-admin-' . $vendor;
-            $file = '/kelune-crm-admin-' . $vendor . '.js';
-
-            if (!file_exists($dist_dir . $file)) {
-                continue;
-            }
-
-            wp_enqueue_script($handle, $dist_url . $file, $react_deps, $this->version, true);
-
-            $vendor_handles[] = $handle;
-        }
-
-        if (file_exists($dist_dir . '/kelune-crm-admin.js')) {
+        if ('' !== $main_js) {
             wp_enqueue_script(
-                'kelune-crm-admin-app',
-                $dist_url . '/kelune-crm-admin.js',
-                array_merge(
-                    $react_deps,
-                    $vendor_handles,
-                    [
-                        // window.wp.i18n, which the dashboard's __() wrapper and
-                        // wp_set_script_translations() below both need.
-                        'wp-i18n',
-                        // Core's bundled TinyMCE, which the rich-text email
-                        // editor initialises itself. Core registers the handle
-                        // but enqueues it only on classic-editor screens.
-                        'wp-tinymce',
-                    ]
-                ),
+                'kelune-crm-dashboard',
+                $dist_url . '/' . $main_js,
+                [
+                    // Core registers wp-tinymce but enqueues it only on
+                    // classic-editor screens; the email editor needs it here.
+                    'wp-tinymce',
+                    // wp-i18n exposes window.wp.i18n for the dashboard's __() wrapper.
+                    'wp-i18n',
+                ],
                 $this->version,
                 true
             );
 
-            // Load the dashboard's translations for the kelune-crm text
-            // domain. WordPress serves languages/kelune-crm-<locale>-
-            // kelune-crm-admin-app.json (or a md5-hashed variant) into
-            // window.wp.i18n for the enqueued handle.
+            // WordPress feeds languages/kelune-crm-<locale>-
+            // kelune-crm-dashboard.json (or its md5 variant) into
+            // window.wp.i18n for this handle.
             wp_set_script_translations(
-                'kelune-crm-admin-app',
+                'kelune-crm-dashboard',
                 'kelune-crm',
                 KELUNE_CRM_PLUGIN_DIR . 'languages'
             );
 
+            // The bundle is an ES module: WordPress builds and prints the tag,
+            // we only add type="module" to the attributes it assembles.
+            add_filter('wp_script_attributes', static function (array $attributes): array {
+                if (($attributes['id'] ?? '') === 'kelune-crm-dashboard-js') {
+                    $attributes['type'] = 'module';
+                }
+
+                return $attributes;
+            });
+
             // Attach the dashboard's bootstrap data to the enqueued handle. Kept
             // inside this block: localizing is meaningless without the script it
             // hangs off, so it runs only when the bundle actually enqueued.
-            wp_localize_script('kelune-crm-admin-app', 'kelunecrm', [
+            // Add-ons extend the blob through `kelune_crm_dashboard_config`;
+            // Pro uses it to seed the license form's email field.
+            $config = [
                 'api_url' => rest_url('kelune-crm/v1'),
                 'nonce' => wp_create_nonce('wp_rest'),
                 'admin_url' => admin_url(),
@@ -338,8 +319,7 @@ class Plugin
                 'permalinks_plain' => '' === get_option('permalink_structure', ''),
                 'plugin_url' => KELUNE_CRM_PLUGIN_URL,
                 'version' => $this->version,
-                // Base for the editor's content stylesheet (the library itself
-                // arrives through the wp-tinymce dependency above).
+                // Base for the editor's content stylesheet.
                 'tinymce_base' => includes_url('js/tinymce'),
                 'wp_version' => get_bloginfo('version'),
                 // Active locale for the dashboard's Ant Design + dayjs locale packs.
@@ -352,11 +332,10 @@ class Plugin
                     'avatar_url' => $this->getCurrentUserAvatarUrl(),
                 ],
                 'settings' => $this->getSettings(),
-                // The global email footer, rendered for preview (business tags
-                // resolved, unsubscribe → site home). The dashboard appends the
-                // wrapped form to fragment previews, and swaps the builder's global
-                // footer marker for the unwrapped content form, so every preview shows
-                // what real recipients get.
+                // Global email footer for preview (business tags resolved,
+                // unsubscribe → site home). The dashboard appends the wrapped
+                // form to fragments and swaps the builder's marker for the
+                // unwrapped one, so previews match what recipients get.
                 'email_footer_preview_html' => (new \KeluneCRM\Services\EmailService())->renderFooterForPreview(),
                 'email_footer_content_preview_html' => (new \KeluneCRM\Services\EmailService())->renderFooterContentForPreview(),
                 // Free/Pro state for the dashboard: whether the Pro add-on is active
@@ -364,7 +343,12 @@ class Plugin
                 // surfaces (nav items, pages) only while Pro is active.
                 'pro_active' => $this->isProActive(),
                 'features' => $this->getFeatures(),
-            ]);
+            ];
+
+            /** @var array<string, mixed> $config */
+            $config = apply_filters('kelune_crm_dashboard_config', $config);
+
+            wp_localize_script('kelune-crm-dashboard', 'kelunecrm', $config);
         }
     }
 
@@ -379,8 +363,7 @@ class Plugin
 
     /**
      * Per-feature flag map exposed to the dashboard. Free defaults every Pro
-     * feature to false; the Pro add-on enables them via the
-     * `kelune_crm_features` filter (release plan §3.4).
+     * feature to false; Pro enables them via the `kelune_crm_features` filter.
      *
      * @return array<string, bool>
      */
@@ -406,21 +389,48 @@ class Plugin
         return array_map(static fn ($enabled): bool => (bool) $enabled, $features);
     }
 
+    /**
+     * Read the dashboard bundle manifest.
+     *
+     * Missing or malformed values degrade to empty strings, which skips the
+     * enqueue rather than emitting a broken URL.
+     *
+     * @return array{js: string, css: string}
+     */
+    private function dashboardManifest(): array
+    {
+        static $manifest = null;
+
+        if (null !== $manifest) {
+            return $manifest;
+        }
+
+        $file = KELUNE_CRM_PLUGIN_DIR . 'assets/apps/dashboard/manifest.php';
+        $data = is_readable($file) ? require $file : [];
+
+        if (!is_array($data)) {
+            $data = [];
+        }
+
+        // Interpolated into a URL: keep to a basename so nothing traverses out.
+        $manifest = [
+            'js' => isset($data['js']) && is_string($data['js']) ? basename($data['js']) : '',
+            'css' => isset($data['css']) && is_string($data['css']) ? basename($data['css']) : '',
+        ];
+
+        return $manifest;
+    }
+
     private function registerPostTypes(): void {}
 
     /**
-     * Events this plugin once scheduled and no longer runs.
+     * Cron event names this plugin does not run, cleared whenever they are found.
      *
-     * Deleting the wp_schedule_event() call is not enough: installs that
-     * activated while it existed still carry the event, and it would fire on
-     * every cron spawn into a hook nothing listens on — visible to the user in
-     * Site Health and cron tools as a plugin event with no callback. Worse, the
-     * stale entry would block a future feature of the same name from scheduling
-     * itself at the interval it actually wants, since every scheduler here is
-     * guarded by wp_next_scheduled(). So they are cleared on the way past.
-     *
-     * When one of these features lands, it registers its own event alongside its
-     * listener and drops the name from this list.
+     * An install can still carry the event, where it fires into a hook nothing
+     * listens on — visible in Site Health as a plugin event with no callback —
+     * and blocks a same-named feature from ever scheduling itself, since every
+     * scheduler here is guarded by wp_next_scheduled(). A feature that claims one
+     * of these names drops it from this list.
      *
      * @var list<string>
      */
@@ -476,18 +486,13 @@ class Plugin
     /**
      * The logged-in user's avatar for the dashboard greeting, or null.
      *
-     * Deliberately NOT gated on use_gravatar_service: that setting governs
-     * disclosing *contacts'* addresses to a third party, and a WP user is not a
-     * contact — it is the admin's own account, which WordPress already shows an
-     * avatar for in the admin bar, profile screen and comments. Suppressing it
-     * only here would make this screen inconsistent with the rest of wp-admin.
+     * Not gated on use_gravatar_service — that governs disclosing *contacts'*
+     * addresses to a third party, while a WP user is the admin's own account,
+     * which wp-admin already shows an avatar for everywhere else.
      *
-     * WordPress's own show_avatars option is the right gate here. Note that
-     * get_avatar_url() does NOT check it — that guard lives in get_avatar()
-     * (pluggable.php) — so it has to be checked explicitly, or an admin who
-     * turned avatars off site-wide would still get one on this screen.
-     * get_avatar_url() is still what resolves the URL, so an avatar supplied by
-     * another plugin wins over Gravatar as it does everywhere else in wp-admin.
+     * show_avatars is the right gate, and must be checked explicitly:
+     * get_avatar_url() does not honour it (that guard is in get_avatar()), so an
+     * admin who turned avatars off site-wide would still get one here.
      */
     private function getCurrentUserAvatarUrl(): ?string
     {
@@ -503,10 +508,9 @@ class Plugin
     /**
      * The settings blob handed to the dashboard on page load.
      *
-     * This array is printed inline into the admin page HTML, so it must never
-     * carry a credential even on a screen only administrators can reach. No
-     * setting holds one today; a future secret setting must be stripped here
-     * (and masked in SettingsController) rather than added blindly.
+     * Printed inline into the admin page HTML, so it must never carry a
+     * credential even on an administrators-only screen. A secret setting has to
+     * be stripped here (and masked in SettingsController), never added blindly.
      *
      * @return array<string, mixed>
      */

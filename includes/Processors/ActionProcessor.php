@@ -90,7 +90,7 @@ class ActionProcessor
             return [
                 'success' => true,
                 'message' => sprintf(
-                    /* translators: 1: contact email, 2: contact status */
+                    /* translators: %1$s: contact email, %2$s: contact status */
                     __('Email skipped: contact %1$s is %2$s.', 'kelune-crm'),
                     (string) $contact->get('email'),
                     (string) $contact->get('status')
@@ -246,7 +246,7 @@ class ActionProcessor
 
             return [
                 'success' => false,
-                /* translators: 1: recipient email address, 2: error message */
+                /* translators: %1$s: recipient email address, %2$s: error message */
                 'message' => sprintf(__('Failed to send email to %1$s: %2$s', 'kelune-crm'), $to, $error_message),
             ];
         }
@@ -415,12 +415,10 @@ class ActionProcessor
     /**
      * Resolve merge tags in an automation email, for HTML output.
      *
-     * Delegates to the shared MergeTagService — the same resolver the campaign
-     * sender uses — so a tag offered by the email composer resolves identically
-     * whichever surface authored the content.
-     *
-     * Contact values come back HTML-escaped (a name containing markup must
-     * render as text inside an email body, not become live HTML).
+     * Delegates to MergeTagService, the same resolver the campaign sender uses,
+     * so a tag resolves identically whichever surface authored the content.
+     * Contact values come back HTML-escaped — a name containing markup must
+     * render as text, not live HTML.
      *
      * @param array<string, mixed> $context
      */

@@ -20,10 +20,8 @@ class SiteMailerService
     private EmailService $emailService;
 
     /**
-     * Re-entrancy guard: a provider driver must never re-enter this router. Our
-     * drivers don't call wp_mail() (SMTP uses PHPMailer transport, the API
-     * drivers use wp_remote_post), but a third-party phpmailer_init hook could,
-     * so we guard defensively to avoid an infinite loop.
+     * Re-entrancy guard: the drivers don't call wp_mail() themselves, but a
+     * third-party phpmailer_init hook could, which would loop forever.
      */
     private bool $sending = false;
 
@@ -159,10 +157,9 @@ class SiteMailerService
     }
 
     /**
-     * Parse a wp_mail() $headers value (string or array) into its parts. Follows
-     * core wp_mail()'s parsing: split on newlines, split each on the first colon,
-     * recognise From / Reply-To / Cc / Bcc / Content-Type, and keep the rest as
-     * custom headers.
+     * Parse a wp_mail() $headers value (string or array), following core's own
+     * parsing: split on newlines, then the first colon, recognise
+     * From / Reply-To / Cc / Bcc / Content-Type, keep the rest as custom.
      *
      * @param string|array<int, string> $headers
      * @return array{from_email: string, from_name: string, reply_to: string, reply_to_name: string, cc: array<int, string>, bcc: array<int, string>, content_type: string, charset: string, custom: array<string, string>}

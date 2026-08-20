@@ -5,28 +5,23 @@ declare(strict_types=1);
 namespace KeluneCRM\Services;
 
 /**
- * Email HTML generator (PHP port of dashboard/src/utils/emailHtml.ts).
+ * Email HTML generator: turns the visual builder's block model into email-safe,
+ * table-based HTML with inline CSS.
  *
- * Turns the visual builder's block model into email-safe, table-based HTML with
- * inline CSS. Kept byte-for-byte compatible with the TypeScript generator so a
- * template authored as blocks renders identically whether the HTML is produced
- * here (predefined templates) or in the browser (builder save). The only
- * intentional omission is the juice() CSS-inlining step: every block already
- * emits inline styles, so there is nothing left to inline.
+ * Byte-for-byte compatible with the TypeScript twin (utils/emailHtml.ts) so a
+ * block template renders identically whether built here or in the browser. The
+ * juice() CSS-inlining step is omitted — every block already emits inline styles.
  */
 class EmailHtmlRenderer
 {
     /**
-     * Sentinel emitted at the top of the <body> of every builder-generated
-     * document. Marks the body as a self-contained email that OWNS its footer
-     * (baked custom, resolved global via the footer marker, or intentionally
-     * none) so the footer logic never appends the global footer to it. A comment
-     * is used on purpose: wp_kses_post strips the <!DOCTYPE>/<html>/<head>/<body>
-     * scaffold (leaving a fragment) but preserves comments, so this — unlike the
-     * doctype — survives sanitization. MUST match the TS twin
-     * (utils/emailHtml.ts EMAIL_DOC_MARKER).
+     * Sentinel at the top of every builder document's <body>, marking it as an
+     * email that OWNS its footer so the global footer is never appended.
+     * A comment, not the doctype: wp_kses_post strips the
+     * <!DOCTYPE>/<html>/<head>/<body> scaffold but preserves comments, so only
+     * this survives sanitization. MUST match the TS twin (EMAIL_DOC_MARKER).
      */
-    public const EMAIL_DOC_MARKER = '<!--cm:email-doc-->';
+    public const EMAIL_DOC_MARKER = '<!--kelune-crm:email-doc-->';
 
     /** @var array<string, mixed> */
     private const DEFAULT_SETTINGS = [
@@ -64,11 +59,10 @@ class EmailHtmlRenderer
     }
 
     /**
-     * Wrap ready-made body HTML in the same email-safe document shell the block
-     * renderer produces. Used by the emails the plugin composes itself (opt-in
-     * confirmation, admin notifications) so they inherit the same chrome. Those
-     * transactional emails pass no footer; only builder documents ($includeFooter)
-     * render the template footer below the content.
+     * Wrap ready-made body HTML in the same document shell the block renderer
+     * produces, so plugin-composed emails (opt-in confirmation, notifications)
+     * inherit the same chrome. They pass no footer; only builder documents
+     * ($includeFooter) render the template footer below the content.
      *
      * @param array<string, mixed> $settings
      */
@@ -127,11 +121,9 @@ class EmailHtmlRenderer
     }
 
     /**
-     * The footer block: sits inside Main, below the content Container, sized to
-     * the content width. `global` source emits the marker (EmailService swaps it
-     * for the site-wide footer at send); `custom` bakes the authored content.
-     * Empty when the footer is disabled. Kept byte-identical to the TS twin
-     * (utils/emailHtml.ts renderFooterBlock).
+     * The footer block: inside Main, below the Container, at content width.
+     * `global` emits the marker EmailService swaps at send; `custom` bakes the
+     * authored content; disabled renders empty. Byte-identical to the TS twin.
      *
      * @param array<string, mixed> $settings
      */
@@ -144,7 +136,7 @@ class EmailHtmlRenderer
         $linkColor = (string) ($settings['footerLinkColor'] ?? '#1677ff');
         $inner = ($settings['footerSource'] ?? 'global') === 'custom'
             ? self::colorizeAnchors((string) ($settings['footerContent'] ?? ''), $linkColor)
-            : '<!--cm:global-footer:' . $linkColor . '-->';
+            : '<!--kelune-crm:global-footer:' . $linkColor . '-->';
 
         $w = (string) $settings['contentWidth'];
         $font = (string) $settings['fontFamily'];
@@ -158,11 +150,10 @@ class EmailHtmlRenderer
     }
 
     /**
-     * Inline a link colour onto every `<a>` in a footer body — email clients
-     * ignore a stylesheet block, so the colour has to live on each anchor. Merges
-     * into an existing style attribute or adds one. Kept byte-identical to the TS
-     * twin (utils/emailHtml.ts colorizeAnchors). Shared with EmailService, which
-     * applies it when swapping the global-footer marker at send.
+     * Inline a link colour onto every `<a>` in a footer body: email clients
+     * ignore a stylesheet block, so it has to live on each anchor. Merges into an existing
+     * style attribute. Byte-identical to the TS twin; EmailService applies it
+     * when swapping the global-footer marker.
      */
     public static function colorizeAnchors(string $html, string $color): string
     {
@@ -297,12 +288,11 @@ class EmailHtmlRenderer
     }
 
     /**
-     * Inline block-level spacing onto each top-level child of the Text block's
-     * content. Email clients strip stylesheet blocks and ignore descendant /
-     * `:last-child` selectors, so paragraph gaps, list indent and the blockquote
-     * rule cannot ride along as a stylesheet — they are stamped inline here.
-     * Author-set inline styles (colour, alignment) are preserved and win, since
-     * they are kept ahead of ours. Mirror of the TypeScript `styleRichContent`.
+     * Inline block-level spacing onto each top-level child of a Text block.
+     * Email clients strip stylesheet blocks and ignore descendant / `:last-child`
+     * selectors, so paragraph gaps, list indent and the blockquote rule are
+     * stamped inline. Author styles stay ahead of ours and win. Mirror of the
+     * TypeScript `styleRichContent`.
      */
     private function styleRichContent(string $content): string
     {

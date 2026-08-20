@@ -175,11 +175,10 @@ class AutomationTriggerService
     /**
      * Whether the automation's trigger_config matches the fired event.
      *
-     * Tag/list/segment/campaign triggers can be scoped to a specific entity via
-     * trigger_config (tag_id, list_id, segment_id, campaign_id). When such a key
-     * is set the enrolment only fires for the matching id carried in the event
-     * context. An unconfigured (empty/0) trigger matches any event of its type,
-     * so pre-existing automations keep working.
+     * Triggers can be scoped to a specific entity via trigger_config (tag_id,
+     * list_id, segment_id, campaign_id); when set, enrolment fires only for the
+     * matching id in the event context. An unconfigured (empty/0) trigger
+     * matches any event of its type.
      *
      * @param \KeluneCRM\Models\Automation $automation
      * @param array<string, mixed> $context

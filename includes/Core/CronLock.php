@@ -7,19 +7,15 @@ namespace KeluneCRM\Core;
 /**
  * A short-lived, cross-process advisory lock backed by a single wp_options row.
  *
- * WP-Cron, a manual "Run Now", and the non-blocking loopback continuation can
- * all reach the same queue drainer at the same moment. The per-row claim in each
- * drainer already stops a job being processed twice, but without an outer lock
- * every racer still bootstraps PHP, reads the same batch and fights over the
- * same rows — wasted work and, on a weak host, real contention. This lock lets
- * the loser of the race bail after a single atomic query.
+ * WP-Cron, a manual "Run Now" and the loopback continuation can all reach the
+ * same drainer at once. The per-row claim already stops double-processing; this
+ * lock stops every racer bootstrapping PHP and fighting over the same batch, by
+ * letting the loser bail after one atomic query.
  *
- * The primitive is a conditional UPDATE on wp_options: claim the row only if it
- * is free (empty) or its stored timestamp is older than the TTL. An external
- * object cache is deliberately NOT used as a fast path — some drop-ins implement
- * add()/get() against a per-process array rather than the shared backend, which
- * would silently let two processes both "acquire" the lock. The DB row has no
- * such gap.
+ * The primitive is a conditional UPDATE on wp_options: claim the row only when
+ * free or older than the TTL. An external object cache must NOT be used as a
+ * fast path — some drop-ins back add()/get() with a per-process array, letting
+ * two processes both "acquire" the lock.
  */
 final class CronLock
 {

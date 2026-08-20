@@ -18,6 +18,9 @@ class AutomationStep
     /** @var string|null */
     public $step_type;
 
+    /** @var string|null */
+    public $label;
+
     /** @var int|null */
     public $parent_step_id;
 
@@ -76,6 +79,7 @@ class AutomationStep
             'automation_id' => $this->automation_id,
             'step_order' => (int) $this->step_order,
             'step_type' => $this->step_type,
+            'label' => $this->label,
             'parent_step_id' => $this->parent_step_id,
             'branch_type' => $this->branch_type,
             'action_type' => $this->action_type,

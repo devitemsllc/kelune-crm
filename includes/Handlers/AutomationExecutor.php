@@ -20,6 +20,7 @@ class AutomationExecutor
     private string $stepsTable;
     private string $logsTable;
     private string $contactsTable;
+    private string $automationsTable;
     private \KeluneCRM\Repositories\ContactRepository $contactRepo;
 
     public function __construct()
@@ -32,6 +33,7 @@ class AutomationExecutor
         $this->stepsTable = $prefix . 'automation_steps';
         $this->logsTable = $prefix . 'automation_logs';
         $this->contactsTable = $prefix . 'automation_contacts';
+        $this->automationsTable = $prefix . 'automations';
 
         $this->contactRepo = new ContactRepository();
     }
@@ -61,14 +63,10 @@ class AutomationExecutor
         }
 
         foreach ($queue_items as $item) {
-            // Atomically claim the row before touching it. The batch above is a
-            // plain read, so two overlapping runners (cron + a manual "Run Now",
-            // the loopback continuation, or a slow tick spilling into the next
-            // minute) select the same rows. The claim is the synchronisation
-            // point: it flips the row out of 'pending' only if it is still
-            // 'pending', so exactly one runner wins and the loser skips —
-            // without this the step runs twice (duplicate tags, webhooks, emails,
-            // and a double stat decrement). Mirrors EmailService::claimQueuedEmail.
+            // Claim the row atomically: the batch above is a plain read, so
+            // overlapping runners select the same rows. The claim flips it out
+            // of 'pending' only if still 'pending', so exactly one runner wins —
+            // without it the step runs twice (duplicate tags, webhooks, emails).
             if (!$this->claimQueueItem((int) $item['id'])) {
                 continue;
             }
@@ -80,13 +78,11 @@ class AutomationExecutor
                 $errors++;
                 $this->logError($item, $e->getMessage());
 
-                // Fail fast: a failed step is marked failed, not retried. Several
-                // actions (send_email, webhook) are not idempotent, so re-running
-                // one risks a duplicate side effect — worse than skipping it.
-                // `attempts` is recorded for diagnostics only. (A step
-                // whose worker *crashed* mid-run stays 'processing' and is returned
-                // to the queue once by the stale-claim recovery — that is not a
-                // retry of a failure, it is recovery of an interrupted run.)
+                // Fail fast: a failed step is marked failed, never retried.
+                // send_email and webhook are not idempotent, so re-running risks
+                // a duplicate side effect — worse than skipping. `attempts` is
+                // diagnostic only. A worker that CRASHED leaves the row
+                // 'processing' for stale-claim recovery; that is not a retry.
                 $this->updateQueueItem($item['id'], [
                     'status' => 'failed',
                     'attempts' => ($item['attempts'] ?? 0) + 1,
@@ -101,12 +97,11 @@ class AutomationExecutor
             'processed' => $processed,
             'errors' => $errors,
             'time' => $execution_time,
-            // Signal to the QueueRunner drain loop whether another pass is worth
-            // it: true when work is still due now (including immediate next steps
-            // this pass just enqueued), so a multi-step or chained automation
-            // finishes in one run instead of one step per cron minute.
+            // Tell the QueueRunner drain loop whether another pass is worth it:
+            // true when work is still due now (including steps this pass just
+            // enqueued), so a chained automation finishes in one run.
             'has_more' => $this->hasPendingDue(),
-            /* translators: 1: number of items processed, 2: execution time in milliseconds */
+            /* translators: %1$d: number of items processed, %2$s: execution time in milliseconds */
             'message' => sprintf(__('Processed %1$d items in %2$sms', 'kelune-crm'), $processed, $execution_time),
         ];
     }
@@ -119,12 +114,10 @@ class AutomationExecutor
      */
     private function claimQueueItem(int $id): bool
     {
-        // Stamp updated_at in UTC on the claim. The column is
-        // ON UPDATE CURRENT_TIMESTAMP, which would otherwise write DB-session-
-        // local time; the stale-claim recovery compares this value against the
-        // UTC clock (CleanupHandler::recoverStalledAutomationSteps), so a local
-        // timestamp there makes a fresh claim read as hours stale (re-queued and
-        // run twice) or an abandoned one read as fresh (stranded for hours).
+        // Stamp updated_at in UTC explicitly: the column is
+        // ON UPDATE CURRENT_TIMESTAMP, which writes DB-session-local time, and
+        // stale-claim recovery compares it against the UTC clock. A local stamp
+        // makes fresh claims read as stale (run twice) or abandoned ones fresh.
         $claimed = $this->db->update(
             $this->queueTable,
             ['status' => 'processing', 'updated_at' => current_time('mysql', true)],
@@ -136,14 +129,18 @@ class AutomationExecutor
 
     /**
      * Whether any queue row is pending and due to run now. Used by the drain
-     * loop to decide whether to keep going or hand back to cron/loopback.
+     * loop to decide whether to keep going or hand back to cron/loopback. Must
+     * apply the same predicate as getPendingQueueItems(), or the loop spins on
+     * rows the drain never selects.
      */
     public function hasPendingDue(): bool
     {
         $exists = $this->db->get_var(
             $this->db->prepare(
-                "SELECT 1 FROM {$this->queueTable}
-                WHERE status = 'pending' AND scheduled_for <= %s
+                "SELECT 1 FROM {$this->queueTable} q
+                INNER JOIN {$this->automationsTable} a ON a.id = q.automation_id
+                WHERE q.status = 'pending' AND q.scheduled_for <= %s
+                AND a.status = 'active'
                 LIMIT 1",
                 current_time('mysql', true)
             )
@@ -157,18 +154,15 @@ class AutomationExecutor
     {
         $item_start_time = microtime(true);
 
-        // The row is already 'processing' here — processQueue() claimed it
-        // atomically before calling us, which is what serialises concurrent
-        // runners. Do not re-write the status; that would be a second,
+        // Already 'processing' — processQueue() claimed it atomically, which is
+        // what serialises runners. Re-writing the status would be a second,
         // unguarded UPDATE.
 
-        // Re-read the enrolment before doing any work. The row was claimed from
-        // a batch that may be minutes old, and the contact can have unsubscribed
-        // since — in which case ContactStatusSweeper already cancelled this
-        // enrolment. Without this the step would run, schedule its successor and
-        // delete the cancelled row, marching the automation on for a contact who
-        // has left. The send gate would still refuse their email, but the
-        // non-email steps (tagging, webhooks, field writes) would not.
+        // Re-read the enrolment first: the batch may be minutes old and the
+        // contact can have unsubscribed since, leaving the enrolment cancelled.
+        // Without this the step runs and schedules its successor for someone who
+        // left — the send gate blocks their email, but tags/webhooks/field
+        // writes would still fire.
         $enrollment_status = $this->getEnrollmentStatus(
             (int) $item['automation_id'],
             (int) $item['contact_id']
@@ -226,11 +220,10 @@ class AutomationExecutor
                 throw new \Exception(esc_html('Unknown step type: ' . $step['step_type']));
         }
 
-        // A delay whose wait is not yet up asks to be retried, not completed.
-        // (Only reachable under clock skew — the queue read already gates on
-        // scheduled_for <= now.) Return the row to 'pending' for the next pass;
-        // do NOT fall through to the else branch below, which would mark the
-        // enrolment failed and delete the row, killing the automation mid-wait.
+        // A delay whose wait is not up asks to be retried, not completed (only
+        // reachable under clock skew). Return the row to 'pending'; do NOT fall
+        // through to the else branch, which would fail the enrolment and delete
+        // the row, killing the automation mid-wait.
         if (!empty($result['reschedule'])) {
             $this->updateQueueItem((int) $item['id'], ['status' => AutomationRepository::QUEUE_STATUS_PENDING]);
 
@@ -260,10 +253,9 @@ class AutomationExecutor
         $action_type = (string) $step['action_type'];
         $action_config = json_decode($step['action_config'] ?? '{}', true) ?: [];
 
-        // Resolve the processor from the free/pro registry. Basic actions are
-        // registered by Free; advanced ones (update_field, webhook, ...) are
-        // added by the Pro add-on. When the processor is absent (Pro inactive),
-        // skip the step gracefully so the automation continues instead of failing.
+        // Basic actions are registered by Free, advanced ones by the Pro add-on.
+        // An absent processor (Pro inactive) skips the step so the automation
+        // continues instead of failing.
         $processor = ProcessorRegistry::get($action_type);
 
         if ($processor === null) {
@@ -342,7 +334,7 @@ class AutomationExecutor
         // Delay passed, continue to next step
         return [
             'success' => true,
-            /* translators: 1: delay value, 2: delay unit (days, hours, etc.) */
+            /* translators: %1$d: delay value, %2$s: delay unit (days, hours, etc.) */
             'message' => sprintf(__('Delay completed (%1$d %2$s)', 'kelune-crm'), $delay_value, $delay_type),
         ];
     }
@@ -402,12 +394,17 @@ class AutomationExecutor
     /** @return array<int, array<string, mixed>>|null */
     private function getPendingQueueItems(int $limit = 50)
     {
+        // Only automations that are still running are drained. Pausing one
+        // therefore holds its in-flight contacts where they are; re-activating
+        // resumes them, overdue rows first.
         $items = $this->db->get_results(
             $this->db->prepare(
-                "SELECT * FROM {$this->queueTable}
-                WHERE status = 'pending'
-                AND scheduled_for <= %s
-                ORDER BY scheduled_for ASC
+                "SELECT q.* FROM {$this->queueTable} q
+                INNER JOIN {$this->automationsTable} a ON a.id = q.automation_id
+                WHERE q.status = 'pending'
+                AND q.scheduled_for <= %s
+                AND a.status = 'active'
+                ORDER BY q.scheduled_for ASC
                 LIMIT %d",
                 current_time('mysql', true),
                 $limit
@@ -483,9 +480,16 @@ class AutomationExecutor
      */
     private function getNextStepByParent(int $parent_id)
     {
+        // The engine advances one contact along one path, so a step has a single
+        // successor — the builder refuses to wire a second. Ordered anyway, so a
+        // graph that predates that rule resolves the same way every run instead
+        // of at the database's discretion.
         $step = $this->db->get_row(
             $this->db->prepare(
-                "SELECT * FROM {$this->stepsTable} WHERE parent_step_id = %d LIMIT 1",
+                "SELECT * FROM {$this->stepsTable}
+                WHERE parent_step_id = %d
+                ORDER BY step_order ASC, id ASC
+                LIMIT 1",
                 $parent_id
             ),
             ARRAY_A
@@ -506,6 +510,7 @@ class AutomationExecutor
                 "SELECT * FROM {$this->stepsTable}
                 WHERE parent_step_id = %d
                 AND branch_type = %s
+                ORDER BY step_order ASC, id ASC
                 LIMIT 1",
                 $parent_id,
                 $branch
@@ -564,10 +569,9 @@ class AutomationExecutor
      */
     private function updateContactStatus(int $automation_id, int $contact_id, string $status): void
     {
-        // Only an enrolment that is still running may be completed or failed —
-        // never one the sweeper cancelled, which is terminal. Guarding the write
-        // (rather than the caller) also keeps the counter maths below honest:
-        // it runs only when a row actually changed.
+        // Only a still-running enrolment may be completed or failed; a swept
+        // one is terminal. Guarding the write here keeps the counter maths
+        // below honest — it runs only when a row actually changed.
         if ('completed' === $status) {
             $sql = $this->db->prepare(
                 "UPDATE {$this->contactsTable}

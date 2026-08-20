@@ -194,9 +194,9 @@ class ContactSyncService
         $listIds = array_values(array_filter(array_map('absint', $options['list_ids'] ?? [])));
         $tagIds = array_values(array_filter(array_map('absint', $options['tag_ids'] ?? [])));
 
-        // addLists/addTags now fire kelune_crm_lists_added / _tags_added
-        // themselves (only for genuinely-new memberships), so no explicit
-        // do_action here — that would double-fire the automation triggers.
+        // addLists/addTags fire kelune_crm_lists_added / _tags_added
+        // themselves for genuinely-new memberships, so no do_action here — that
+        // would double-fire the automation triggers.
         if ($listIds !== []) {
             $this->contactRepository->addLists($contactId, $listIds);
         }

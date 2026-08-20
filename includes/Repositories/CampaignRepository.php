@@ -151,7 +151,7 @@ class CampaignRepository
             'name' => $data['name'],
             'description' => $data['description'] ?? '',
             'campaign_type' => $data['campaign_type'] ?? 'regular',
-            'status' => $data['status'] ?? 'draft',
+            'status' => $data['status'] ?? Campaign::STATUS_DRAFT,
             'subject' => $data['subject'] ?? '',
             'preview_text' => $data['preview_text'] ?? '',
             'from_name' => $data['from_name'] ?? '',
@@ -176,10 +176,9 @@ class CampaignRepository
             'scheduled_at' => $data['scheduled_at'] ?? null,
             'created_by' => $data['created_by'] ?? get_current_user_id(),
             'created_at' => current_time('mysql', true),
-            // Seed updated_at UTC on create too; otherwise the ON UPDATE /
-            // DEFAULT CURRENT_TIMESTAMP column would fill it with DB-session-local
-            // time until the first edit, and a never-edited row would display a
-            // wrong-offset "updated" time.
+            // Seed updated_at in UTC on create: the DEFAULT CURRENT_TIMESTAMP
+            // column would otherwise hold DB-session-local time until the first
+            // edit, so a never-edited row shows a wrong-offset "updated" time.
             'updated_at' => current_time('mysql', true),
         ];
 
@@ -210,16 +209,28 @@ class CampaignRepository
             'ab_testing_enabled', 'ab_test_winner_metric', 'ab_test_sample_size',
         ];
 
+        // Columns where an empty value is a meaningful "clear it" instruction, so
+        // presence is tested with array_key_exists and the value stored as null.
+        $nullable_fields = ['scheduled_at', 'sent_at', 'email_provider_id', 'template_id', 'json_structure'];
+
         foreach ($allowed_fields as $field) {
-            if (isset($data[$field])) {
-                if (in_array($field, ['target_segments', 'target_lists', 'target_tags', 'exclude_segments', 'exclude_lists', 'exclude_tags', 'settings', 'stats'])) {
-                    $update_data[$field] = is_array($data[$field]) ? json_encode($data[$field]) : $data[$field];
-                } elseif ($field === 'email_provider_id') {
-                    // Empty selection means "use the default provider" → store null.
-                    $update_data[$field] = !empty($data[$field]) ? (int) $data[$field] : null;
-                } else {
-                    $update_data[$field] = $data[$field];
-                }
+            $present = in_array($field, $nullable_fields, true)
+                ? array_key_exists($field, $data)
+                : isset($data[$field]);
+
+            if (!$present) {
+                continue;
+            }
+
+            if (in_array($field, ['target_segments', 'target_lists', 'target_tags', 'exclude_segments', 'exclude_lists', 'exclude_tags', 'settings', 'stats'], true)) {
+                $update_data[$field] = is_array($data[$field]) ? json_encode($data[$field]) : $data[$field];
+            } elseif ($field === 'email_provider_id') {
+                // Empty selection means "use the default provider" → store null.
+                $update_data[$field] = !empty($data[$field]) ? (int) $data[$field] : null;
+            } elseif (in_array($field, $nullable_fields, true)) {
+                $update_data[$field] = !empty($data[$field]) ? $data[$field] : null;
+            } else {
+                $update_data[$field] = $data[$field];
             }
         }
 
@@ -238,12 +249,52 @@ class CampaignRepository
         return $result !== false;
     }
 
+    /**
+     * Permit dispatch. Whether the send starts now or waits for `scheduled_at`
+     * is decided by the campaign's own schedule, not by this call.
+     *
+     * @param int $id
+     */
+    public function activate($id): bool
+    {
+        return $this->update($id, ['status' => Campaign::STATUS_ACTIVE]);
+    }
+
+    /**
+     * Hold dispatch. Queued rows stay queued — the sender skips them while the
+     * campaign is not active — so activating again resumes where it stopped.
+     *
+     * @param int $id
+     */
+    public function pause($id): bool
+    {
+        return $this->update($id, ['status' => Campaign::STATUS_PAUSED]);
+    }
+
+    /**
+     * Close a campaign whose queue has fully drained.
+     *
+     * @param int $id
+     */
+    public function markSent($id): bool
+    {
+        return $this->update($id, [
+            'status' => Campaign::STATUS_SENT,
+            'sent_at' => current_time('mysql', true),
+        ]);
+    }
+
     /** @param int $id */
     public function delete($id): bool
     {
         $this->db->delete($this->campaignEmailsTable, ['campaign_id' => $id]);
         $this->db->delete($this->campaignLinksTable, ['campaign_id' => $id]);
         $this->db->delete($this->campaignVariantsTable, ['campaign_id' => $id]);
+
+        // The A/B decision the Pro add-on records per campaign. Cleared here, with
+        // the variants, because deleting a campaign must leave nothing behind
+        // whether or not Pro is installed to clean up after itself.
+        delete_option('kelune_crm_ab_test_' . (int) $id);
 
         return $this->db->delete($this->campaignsTable, ['id' => $id]) !== false;
     }
@@ -261,10 +312,12 @@ class CampaignRepository
         }
 
         $data = $campaign->toArray();
-        unset($data['id'], $data['created_at'], $data['updated_at'], $data['sent_at']);
+        // A copy starts over: no send history, and no inherited send time — an
+        // old date would make the copy due the moment it is activated.
+        unset($data['id'], $data['created_at'], $data['updated_at'], $data['sent_at'], $data['scheduled_at']);
 
         $data['name'] = $data['name'] . ' (Copy)';
-        $data['status'] = 'draft';
+        $data['status'] = Campaign::STATUS_DRAFT;
         $data['stats'] = [];
 
         $new_id = $this->create($data);
@@ -413,19 +466,15 @@ class CampaignRepository
             }
         }
 
+        // Targeting rules that match nobody mean nobody — never everybody. An
+        // emptied or deleted list must not silently widen the send to the whole
+        // database, which is the one mistake a mailing tool cannot take back.
         $contact_ids = array_unique($contact_ids);
 
-        if (empty($contact_ids)) {
-            // No targets specified: everyone who can receive mail.
-            $contact_ids = $this->db->get_col("SELECT id FROM {$this->contactsTable} WHERE status = 'active'");
-        } else {
-            // Segment/list/tag membership is resolved off the pivot tables,
-            // which know nothing about contact status. Without this an
-            // unsubscribed contact would keep receiving list-targeted
-            // campaigns, and a pending double opt-in contact would be mailed
-            // before confirming.
-            $contact_ids = $this->filterSendableContacts($contact_ids);
-        }
+        // The pivot tables know nothing about contact status, so without this an
+        // unsubscribed contact keeps receiving list-targeted campaigns and a
+        // pending opt-in contact is mailed before confirming.
+        $contact_ids = $this->filterSendableContacts($contact_ids);
 
         $exclude_contact_ids = [];
         if (!empty($exclude_segments)) {
@@ -470,6 +519,66 @@ class CampaignRepository
         }
 
         return array_values($contact_ids);
+    }
+
+    /**
+     * Recipients this campaign still owes an email: contacts it targets that
+     * hold no queue row.
+     *
+     * Only contacts that already existed when the send began count, so a
+     * finished campaign never drips out to people who joined afterwards. A send
+     * that queues in batches (an A/B sample first) reports its untouched
+     * remainder here, which is what stops the completion sweep closing it early.
+     *
+     * @return array<int, int>
+     */
+    public function unqueuedRecipientIds(int $campaign_id): array
+    {
+        $started = $this->db->get_var(
+            $this->db->prepare(
+                "SELECT MIN(created_at) FROM {$this->campaignEmailsTable} WHERE campaign_id = %d",
+                $campaign_id
+            )
+        );
+
+        $campaign = $this->find($campaign_id);
+
+        if (!$started || !$campaign) {
+            return [];
+        }
+
+        $recipients = array_values(array_unique(array_filter(array_map('absint', $this->getRecipientIds(
+            $campaign->getTargetSegmentsArray(),
+            $campaign->getTargetListsArray(),
+            $campaign->getTargetTagsArray(),
+            $campaign->getExcludeSegmentsArray(),
+            $campaign->getExcludeListsArray(),
+            $campaign->getExcludeTagsArray()
+        )))));
+
+        $missing = [];
+
+        // Chunked for the same reason filterSendableContacts() is: a large list
+        // can hold tens of thousands of ids.
+        foreach (array_chunk($recipients, 5000) as $chunk) {
+            $placeholders = implode(',', array_fill(0, count($chunk), '%d'));
+            $query = $this->db->prepare(
+                "SELECT c.id FROM {$this->contactsTable} c
+                WHERE c.id IN ({$placeholders})
+                AND c.created_at <= %s
+                AND NOT EXISTS (
+                    SELECT 1 FROM {$this->campaignEmailsTable} ce
+                    WHERE ce.campaign_id = %d AND ce.contact_id = c.id
+                )",
+                array_merge($chunk, [$started, $campaign_id])
+            );
+
+            if ($query) {
+                $missing = array_merge($missing, $this->db->get_col($query) ?: []);
+            }
+        }
+
+        return array_map('intval', $missing);
     }
 
     /**
@@ -569,8 +678,16 @@ class CampaignRepository
     public function getSummaryStats(): array
     {
         $total = $this->db->get_var("SELECT COUNT(*) FROM {$this->campaignsTable}");
-        $active = $this->db->get_var($this->db->prepare("SELECT COUNT(*) FROM {$this->campaignsTable} WHERE status IN (%s, %s)", 'sending', 'scheduled'));
-        $scheduled = $this->db->get_var($this->db->prepare("SELECT COUNT(*) FROM {$this->campaignsTable} WHERE status = %s", 'scheduled'));
+        $active = $this->db->get_var($this->db->prepare("SELECT COUNT(*) FROM {$this->campaignsTable} WHERE status = %s", Campaign::STATUS_ACTIVE));
+        // Scheduled is a display state, not a status: an active campaign whose
+        // send time has not arrived yet.
+        $scheduled = $this->db->get_var(
+            $this->db->prepare(
+                "SELECT COUNT(*) FROM {$this->campaignsTable}
+                WHERE status = %s AND scheduled_at IS NOT NULL AND scheduled_at > UTC_TIMESTAMP()",
+                Campaign::STATUS_ACTIVE
+            )
+        );
 
         $avg_stats = $this->db->get_row(
             "SELECT
@@ -673,27 +790,21 @@ class CampaignRepository
     }
 
     /**
-     * Per-link click performance for a campaign.
+     * Per-link click counts for a campaign.
+     *
+     * Counts only: clicks are recorded per link, not per recipient, so a link
+     * can be followed several times by the same contact. Nothing here can be
+     * turned into a rate — every ratio the send would support has the same
+     * denominator for every row anyway, so it would rank nothing the counts do
+     * not already rank.
      *
      * @return array<int, array<string, mixed>>
      */
     public function getLinkStats(int $campaign_id): array
     {
-        // The CTR denominator must be emails that were actually sent — rows
-        // withheld from a non-mailable contact never reached anyone and would
-        // otherwise deflate every link's rate (matches getStats()).
-        $total_sent = (int) $this->db->get_var(
-            $this->db->prepare(
-                "SELECT COUNT(*) FROM {$this->campaignEmailsTable}
-                WHERE campaign_id = %d
-                AND status NOT IN ('cancelled', 'parked')",
-                $campaign_id
-            )
-        );
-
         $rows = $this->db->get_results(
             $this->db->prepare(
-                "SELECT original_url, unique_clicks, total_clicks
+                "SELECT original_url, total_clicks
                 FROM {$this->campaignLinksTable}
                 WHERE campaign_id = %d
                 ORDER BY total_clicks DESC",
@@ -702,14 +813,10 @@ class CampaignRepository
             ARRAY_A
         );
 
-        return array_map(function ($r) use ($total_sent): array {
-            $unique = (int) $r['unique_clicks'];
-
+        return array_map(static function ($r): array {
             return [
                 'url' => (string) $r['original_url'],
-                'unique_clicks' => $unique,
                 'total_clicks' => (int) $r['total_clicks'],
-                'ctr' => $total_sent > 0 ? round(($unique / $total_sent) * 100, 2) : 0,
             ];
         }, $rows ?: []);
     }

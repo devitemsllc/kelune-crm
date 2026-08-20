@@ -276,21 +276,45 @@ class AutomationRepository
 
         if ($new_automation_id) {
             $steps = $this->db->get_results(
-                $this->db->prepare("SELECT * FROM {$this->automationStepsTable} WHERE automation_id = %d", $id),
+                $this->db->prepare(
+                    "SELECT * FROM {$this->automationStepsTable} WHERE automation_id = %d ORDER BY step_order ASC, id ASC",
+                    $id
+                ),
                 ARRAY_A
             ) ?: [];
+
+            // Old step id => new step id, so the copied graph links to its own
+            // steps. Copying parent_step_id verbatim would leave the clone
+            // pointing into the source automation.
+            $id_map = [];
 
             foreach ($steps as $step) {
                 $step_data = $step;
                 unset($step_data['id']);
                 $step_data['automation_id'] = $new_automation_id;
+                $step_data['parent_step_id'] = null;
                 // Stamp fresh UTC timestamps on the clone rather than copying the
                 // source row's (or relying on the DB DEFAULT, which is
                 // session-local). Every moment in the product is stored UTC.
                 $step_data['created_at'] = current_time('mysql', true);
                 $step_data['updated_at'] = current_time('mysql', true);
 
-                $this->db->insert($this->automationStepsTable, $step_data);
+                if ($this->db->insert($this->automationStepsTable, $step_data)) {
+                    $id_map[(int) $step['id']] = (int) $this->db->insert_id;
+                }
+            }
+
+            foreach ($steps as $step) {
+                $old_id = (int) $step['id'];
+                $old_parent = null === $step['parent_step_id'] ? null : (int) $step['parent_step_id'];
+
+                if (null !== $old_parent && isset($id_map[$old_id], $id_map[$old_parent])) {
+                    $this->db->update(
+                        $this->automationStepsTable,
+                        ['parent_step_id' => $id_map[$old_parent]],
+                        ['id' => $id_map[$old_id]]
+                    );
+                }
             }
         }
 
@@ -316,12 +340,85 @@ class AutomationRepository
     }
 
     /**
-     * @param int $id
-     * @return bool
+     * Settle the contacts waiting on steps that a workflow edit deleted.
+     *
+     * Their queue row points at a step that is about to stop existing, so there
+     * is nothing left for them to run: the row is dropped and the enrolment
+     * closed as completed. Called before the steps are deleted, so the executor
+     * never sees a dangling next_step_id.
+     *
+     * @param int $automation_id
+     * @param array<int, int> $step_ids
      */
-    public function archive($id)
+    public function releaseRemovedSteps($automation_id, array $step_ids): void
     {
-        return $this->update($id, ['status' => 'archived']);
+        $step_ids = array_values(array_filter(array_map('absint', $step_ids)));
+
+        if (empty($step_ids)) {
+            return;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($step_ids), '%d'));
+        $params = array_merge([(int) $automation_id], $step_ids);
+
+        $contact_ids = $this->db->get_col(
+            $this->db->prepare(
+                "SELECT contact_id FROM {$this->automationQueueTable}
+                WHERE automation_id = %d
+                AND status IN ('pending', 'parked')
+                AND next_step_id IN ({$placeholders})",
+                ...$params
+            )
+        );
+
+        $this->db->query(
+            $this->db->prepare(
+                "DELETE FROM {$this->automationQueueTable}
+                WHERE automation_id = %d
+                AND status IN ('pending', 'parked')
+                AND next_step_id IN ({$placeholders})",
+                ...$params
+            ) ?: ''
+        );
+
+        foreach (array_map('intval', $contact_ids) as $contact_id) {
+            $this->completeEnrollment((int) $automation_id, $contact_id);
+        }
+    }
+
+    /**
+     * Close a still-running enrolment as completed, keeping the automation's
+     * cached counters in step. A no-op on an already terminal enrolment.
+     */
+    private function completeEnrollment(int $automation_id, int $contact_id): void
+    {
+        $updated = $this->db->query(
+            $this->db->prepare(
+                "UPDATE {$this->automationContactsTable}
+                SET status = 'completed', completed_at = %s
+                WHERE automation_id = %d AND contact_id = %d AND status = %s",
+                current_time('mysql', true),
+                $automation_id,
+                $contact_id,
+                self::STATUS_ACTIVE
+            ) ?: ''
+        );
+
+        if (!$updated) {
+            return;
+        }
+
+        $this->db->query(
+            $this->db->prepare(
+                "UPDATE {$this->automationsTable}
+                SET active_contacts = GREATEST(active_contacts - 1, 0),
+                    completed_contacts = completed_contacts + 1,
+                    updated_at = %s
+                WHERE id = %d",
+                current_time('mysql', true),
+                $automation_id
+            ) ?: ''
+        );
     }
 
     /**
@@ -472,10 +569,9 @@ class AutomationRepository
     {
         $automation_ids = $this->automationIdsForContact($contact_id);
 
-        // 'processing' is swept as well: those rows are mid-flight in a worker.
-        // The worker re-reads the enrolment before it acts on the row (see
-        // AutomationExecutor::processQueueItem), so it sees the cancellation and
-        // abandons rather than scheduling the next step.
+        // 'processing' rows are mid-flight, but the worker re-reads the
+        // enrolment before acting (AutomationExecutor::processQueueItem), so it
+        // sees the cancellation and abandons.
         $this->setQueueStatusForContact($contact_id, self::STATUS_CANCELLED, [
             self::QUEUE_STATUS_PENDING,
             self::QUEUE_STATUS_PROCESSING,
@@ -495,23 +591,19 @@ class AutomationRepository
     }
 
     /**
-     * Return a contact's parked enrolments to active once they are mailable
-     * again. Only parked rows: cancelled is terminal, so this never revives an
-     * automation the contact was removed from. Their queue rows are already due
-     * (scheduled_for sat still while parked), so they resume on the next batch.
-     * Returns the number of enrolments resumed.
+     * Return a contact's parked enrolments to active once mailable again.
+     * Parked rows only — cancelled is terminal. Their queue rows are already due
+     * (scheduled_for sat still while parked), so they resume next batch.
+     * Returns the number resumed.
      */
     public function resumeContactEnrollments(int $contact_id): int
     {
         $automation_ids = $this->automationIdsForContact($contact_id);
 
-        // Order matters: flip the enrolment back to active BEFORE releasing its
-        // queue rows. If the queue row were freed first, a drainer could claim
-        // it and re-read the enrolment while it is still parked, park the row
-        // again, and strand it forever (active enrolment + parked row that
-        // nothing re-queues). Enrolment-first closes that window — the row
-        // cannot be claimed until it is pending, by which point the enrolment
-        // already reads active.
+        // Enrolment first, THEN its queue rows. Freeing the row first lets a
+        // drainer claim it, re-read a still-parked enrolment, re-park the row
+        // and strand it forever. A row cannot be claimed until pending, by
+        // which point the enrolment already reads active.
         $resumed = $this->setEnrollmentStatusForContact($contact_id, self::STATUS_ACTIVE, [self::STATUS_PARKED]);
 
         $this->setQueueStatusForContact($contact_id, self::QUEUE_STATUS_PENDING, [self::STATUS_PARKED]);
@@ -542,9 +634,9 @@ class AutomationRepository
      * Recompute automations.active_contacts from the enrolment rows.
      *
      * The counter is otherwise maintained by increments scattered across the
-     * enrolment and executor paths, which the sweep's bulk status changes would
-     * silently desynchronise. Recomputing is both simpler than teaching every
-     * transition to adjust it and self-healing for counts that already drifted.
+     * enrolment and executor paths, which bulk status changes desynchronise.
+     * Recomputing is simpler than teaching every transition, and self-heals
+     * counts that already drifted.
      *
      * @param list<int> $automation_ids
      */
@@ -569,9 +661,8 @@ class AutomationRepository
     }
 
     /**
-     * The enrolment table has no updated_at — it tracks its lifecycle with
-     * enrolled_at/completed_at/exited_at instead, so callers pass the stamp
-     * that fits the transition.
+     * The enrolment table has no updated_at — it uses
+     * enrolled_at/completed_at/exited_at, so callers pass the fitting stamp.
      *
      * @param list<string> $from Statuses eligible to change.
      * @param array<string, string> $extra Additional columns to set.
@@ -642,10 +733,9 @@ class AutomationRepository
             return false;
         }
 
-        // The table's unique key (automation_id, contact_id) means a contact has
-        // at most one row here, so a prior enrolment is reused rather than
-        // duplicated. Fetch it whole — its status and terminal timestamps decide
-        // whether a re-entry is allowed at all.
+        // Unique key (automation_id, contact_id) → at most one row per contact,
+        // so a prior enrolment is reused. Fetch it whole: its status and
+        // terminal timestamps decide whether re-entry is allowed.
         $existing = $this->db->get_row(
             $this->db->prepare(
                 "SELECT id, status, completed_at, exited_at, times_enrolled
@@ -670,10 +760,9 @@ class AutomationRepository
             return false;
         }
 
-        // A contact awaiting double opt-in enrols parked rather than active: the
-        // automation waits for their consent instead of running past the steps
-        // they can't be mailed for. Confirming opt-in resumes it — see
-        // Handlers\ContactStatusSweeper.
+        // A contact awaiting double opt-in enrols parked, so the automation
+        // waits for consent instead of running steps they can't be mailed for.
+        // Confirming opt-in resumes it (Handlers\ContactStatusSweeper).
         $enrollment_status = $this->isContactParked($contact_id)
             ? self::STATUS_PARKED
             : self::STATUS_ACTIVE;
@@ -731,10 +820,9 @@ class AutomationRepository
                     'contact_id' => $contact_id,
                     'next_step_id' => $first_step,
                     'scheduled_for' => current_time('mysql', true),
-                    // 'pending' is the queue's ready-to-run state; a parked
-                    // enrolment's row is held back until opt-in is confirmed.
-                    // The executor claims on status = 'pending' only, so this
-                    // is what keeps a parked contact out of the batch.
+                    // 'pending' is the ready-to-run state and the executor
+                    // claims on it only, so holding a parked enrolment's row
+                    // back is what keeps that contact out of the batch.
                     'status' => self::STATUS_PARKED === $enrollment_status
                         ? self::STATUS_PARKED
                         : self::QUEUE_STATUS_PENDING,
@@ -743,10 +831,9 @@ class AutomationRepository
                 ]);
             }
 
-            // Update enrollment counters and stamp the last-triggered time (an
-            // enrolment is the automation firing for a contact). A parked
-            // enrolment is not yet active, so it must not count towards
-            // active_contacts — resuming it is what makes it active.
+            // Stamp last-triggered (an enrolment is the automation firing for a
+            // contact). A parked enrolment is not yet active, so it must not
+            // count towards active_contacts until resumed.
             $active_increment = self::STATUS_ACTIVE === $enrollment_status ? 1 : 0;
 
             $this->db->query(
@@ -759,10 +846,9 @@ class AutomationRepository
                 ) ?: ''
             );
 
-            // A ready (non-parked) enrolment just put a step in the queue due
-            // now — start draining immediately via the loopback rather than
-            // waiting for the automation queue's next cron minute. Debounced, so
-            // a bulk enrolment fires one request, not one per contact.
+            // A ready enrolment just queued a step due now — drain immediately
+            // via the loopback instead of waiting for the next cron minute.
+            // Debounced, so a bulk enrolment fires one request, not one each.
             if ($queued_ready) {
                 \KeluneCRM\Services\QueueRunner::kick('automations');
             }
@@ -776,11 +862,9 @@ class AutomationRepository
     /**
      * Whether a contact with a terminal prior enrolment may be enrolled again.
      *
-     * Reads the automation's re-entry policy: re-entry off means run-once, so
-     * the contact is blocked. With re-entry on, a wait window (in days) is
-     * measured from when the previous run ended (completed, else exited); the
-     * contact is blocked until that window elapses. A zero wait, or no terminal
-     * timestamp to anchor on, permits immediate re-entry.
+     * Re-entry off means run-once → blocked. With it on, a wait window (days)
+     * is measured from when the previous run ended (completed, else exited).
+     * A zero wait, or no terminal timestamp to anchor on, allows re-entry.
      *
      * @param \KeluneCRM\Models\Automation $automation
      * @param \stdClass $existing Row with completed_at / exited_at.

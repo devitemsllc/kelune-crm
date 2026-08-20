@@ -63,9 +63,9 @@ class EmailTemplate
         $this->template_type = $data['template_type'] ?? 'custom';
         $this->html_content = $data['html_content'] ?? '';
 
-        // JSON decode json_structure if it's a string. Legacy rows may be
-        // double-encoded (a JSON string of a JSON string); decode once more so
-        // they still resolve to the object shape the builder expects.
+        // Decode json_structure when stored as a string. A double-encoded row
+        // (a JSON string of a JSON string) is decoded once more, so it still
+        // resolves to the object shape the builder expects.
         if (isset($data['json_structure'])) {
             $decoded = is_string($data['json_structure'])
                 ? json_decode($data['json_structure'], true)

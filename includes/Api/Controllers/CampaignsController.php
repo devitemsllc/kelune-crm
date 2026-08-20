@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KeluneCRM\Api\Controllers;
 
+use KeluneCRM\Models\Campaign;
 use KeluneCRM\Repositories\CampaignRepository;
 use KeluneCRM\Services\EmailService;
 
@@ -94,33 +95,17 @@ class CampaignsController extends BaseController
             'permission_callback' => [$this, 'checkWritePermission'],
         ]);
 
-        register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/send', [
+        // Activating IS the send: it permits dispatch, which starts at once or at
+        // the campaign's own `scheduled_at`. Pausing holds it again.
+        register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/activate', [
             'methods' => \WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'sendCampaign'],
+            'callback' => [$this, 'activateCampaign'],
             'permission_callback' => [$this, 'checkWritePermission'],
-        ]);
-
-        register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/schedule', [
-            'methods' => \WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'scheduleCampaign'],
-            'permission_callback' => [$this, 'checkWritePermission'],
-            'args' => [
-                'scheduled_at' => [
-                    'required' => true,
-                    'sanitize_callback' => 'sanitize_text_field',
-                ],
-            ],
         ]);
 
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/pause', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'pauseCampaign'],
-            'permission_callback' => [$this, 'checkWritePermission'],
-        ]);
-
-        register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/resume', [
-            'methods' => \WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'resumeCampaign'],
             'permission_callback' => [$this, 'checkWritePermission'],
         ]);
 
@@ -148,6 +133,14 @@ class CampaignsController extends BaseController
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/recipients/count', [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'getRecipientCount'],
+            'permission_callback' => [$this, 'checkReadPermission'],
+        ]);
+
+        // Recipient count for targeting rules that are not persisted yet — the
+        // campaign wizard's Review step, where the edits are still in the form.
+        register_rest_route($namespace, '/' . $this->restBase . '/recipients/count', [
+            'methods' => \WP_REST_Server::CREATABLE,
+            'callback' => [$this, 'previewRecipientCount'],
             'permission_callback' => [$this, 'checkReadPermission'],
         ]);
 
@@ -183,7 +176,7 @@ class CampaignsController extends BaseController
             'args' => [
                 'action' => [
                     'required' => true,
-                    'enum' => ['delete', 'pause', 'resume', 'duplicate'],
+                    'enum' => ['delete', 'activate', 'pause', 'duplicate'],
                 ],
                 'ids' => [
                     'required' => true,
@@ -278,6 +271,12 @@ class CampaignsController extends BaseController
             return $this->errorResponse(__('A valid From email address is required', 'kelune-crm'), 'invalid_email', 400);
         }
 
+        // Sanitizing dropped everything, so the request named no field a client may
+        // write (`status`, for one). Saying so beats reporting a server failure.
+        if (empty($data)) {
+            return $this->errorResponse(__('No updatable fields were provided', 'kelune-crm'), 'no_fields', 400);
+        }
+
         $result = $this->repository->update($id, $data);
 
         if (!$result) {
@@ -331,23 +330,77 @@ class CampaignsController extends BaseController
         return $this->successResponse($campaign->toArray(), __('Campaign duplicated successfully', 'kelune-crm'));
     }
 
-    public function sendCampaign(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
+    /**
+     * Permit dispatch. A campaign scheduled for later just waits for the
+     * scheduler; anything else is queued and started right away.
+     */
+    public function activateCampaign(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
     {
-        $id = (int) $request->get_param('id');
-
-        $campaign = $this->repository->find($id);
+        $campaign = $this->repository->find((int) $request->get_param('id'));
 
         if (!$campaign) {
             return $this->errorResponse(__('Campaign not found', 'kelune-crm'), 'not_found', 404);
         }
 
-        if (!$campaign->isDraft() && !$campaign->isScheduled()) {
-            return $this->errorResponse(__('Only draft or scheduled campaigns can be sent', 'kelune-crm'), 'invalid_status', 400);
+        $queued = $this->startCampaign($campaign);
+
+        if (is_wp_error($queued)) {
+            return $queued;
+        }
+
+        return $this->successResponse(
+            ['queued' => $queued],
+            $campaign->isScheduledForLater()
+                ? __('Campaign scheduled successfully', 'kelune-crm')
+                : __('Campaign queued for sending', 'kelune-crm')
+        );
+    }
+
+    /**
+     * Activate a campaign and start its send, returning how many emails were
+     * queued (0 when the send waits for a scheduled time).
+     *
+     * @return \WP_Error|int
+     */
+    private function startCampaign(Campaign $campaign): \WP_Error|int
+    {
+        $id = (int) $campaign->id;
+
+        if (!$campaign->canTransitionTo(Campaign::STATUS_ACTIVE)) {
+            return $this->errorResponse(
+                $campaign->isSent()
+                    ? __('This campaign has already been sent. Duplicate it to send again.', 'kelune-crm')
+                    : __('This campaign cannot be activated.', 'kelune-crm'),
+                'invalid_status',
+                400
+            );
+        }
+
+        // Activation is the send, so what used to be caught at the Send button is
+        // checked here — the one place a campaign starts reaching contacts.
+        $missing = $this->missingToSend($campaign);
+
+        if ($missing !== null) {
+            return $this->errorResponse($missing, 'incomplete_campaign', 400);
+        }
+
+        if (!$this->repository->activate($id)) {
+            return $this->errorResponse(__('Failed to activate campaign', 'kelune-crm'), 'activate_failed', 500);
+        }
+
+        // A future send time is the scheduler's job; everything else starts now.
+        if ($campaign->isScheduledForLater()) {
+            return 0;
         }
 
         $queued = $this->emailService->queueCampaign($id);
 
         if (is_wp_error($queued)) {
+            // Nothing was queued, so the campaign never really started: put it
+            // back where it was rather than leaving an active campaign the
+            // scheduler would retry every minute.
+            $this->repository->update($id, ['status' => (string) $campaign->status]);
+
             return $queued;
         }
 
@@ -355,32 +408,7 @@ class CampaignsController extends BaseController
         // queue's cron minute.
         \KeluneCRM\Services\QueueRunner::kick('campaign_queue');
 
-        return $this->successResponse([
-            'queued' => $queued,
-        ], __('Campaign queued for sending', 'kelune-crm'));
-    }
-
-    public function scheduleCampaign(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
-    {
-        $id = $request->get_param('id');
-        $scheduled_at = $request->get_param('scheduled_at');
-
-        $campaign = $this->repository->find($id);
-
-        if (!$campaign) {
-            return $this->errorResponse(__('Campaign not found', 'kelune-crm'), 'not_found', 404);
-        }
-
-        $result = $this->repository->update($id, [
-            'status' => 'scheduled',
-            'scheduled_at' => $scheduled_at,
-        ]);
-
-        if (!$result) {
-            return $this->errorResponse(__('Failed to schedule campaign', 'kelune-crm'), 'schedule_failed', 500);
-        }
-
-        return $this->successResponse([], __('Campaign scheduled successfully', 'kelune-crm'));
+        return $queued;
     }
 
     public function pauseCampaign(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
@@ -393,44 +421,42 @@ class CampaignsController extends BaseController
             return $this->errorResponse(__('Campaign not found', 'kelune-crm'), 'not_found', 404);
         }
 
-        if (!$campaign->isSending()) {
-            return $this->errorResponse(__('Only sending campaigns can be paused', 'kelune-crm'), 'invalid_status', 400);
+        if (!$campaign->canTransitionTo(Campaign::STATUS_PAUSED)) {
+            return $this->errorResponse(__('Only active campaigns can be paused', 'kelune-crm'), 'invalid_status', 400);
         }
 
-        $result = $this->repository->update($id, [
-            'status' => 'paused',
-        ]);
-
-        if (!$result) {
+        if (!$this->repository->pause($id)) {
             return $this->errorResponse(__('Failed to pause campaign', 'kelune-crm'), 'pause_failed', 500);
         }
 
         return $this->successResponse([], __('Campaign paused successfully', 'kelune-crm'));
     }
 
-    public function resumeCampaign(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
+    /**
+     * The first thing stopping this campaign from reaching anyone, as a message
+     * for the client; null when it is ready to send.
+     */
+    private function missingToSend(Campaign $campaign): ?string
     {
-        $id = $request->get_param('id');
-
-        $campaign = $this->repository->find($id);
-
-        if (!$campaign) {
-            return $this->errorResponse(__('Campaign not found', 'kelune-crm'), 'not_found', 404);
+        if (empty($campaign->subject)) {
+            return __('Add an email subject before activating this campaign.', 'kelune-crm');
         }
 
-        if (!$campaign->isPaused()) {
-            return $this->errorResponse(__('Only paused campaigns can be resumed', 'kelune-crm'), 'invalid_status', 400);
+        if (empty($campaign->email_content)) {
+            return __('Add email content before activating this campaign.', 'kelune-crm');
         }
 
-        $result = $this->repository->update($id, [
-            'status' => 'sending',
-        ]);
+        $targets = array_merge(
+            $campaign->getTargetSegmentsArray(),
+            $campaign->getTargetListsArray(),
+            $campaign->getTargetTagsArray()
+        );
 
-        if (!$result) {
-            return $this->errorResponse(__('Failed to resume campaign', 'kelune-crm'), 'resume_failed', 500);
+        if (empty($targets)) {
+            return __('Select at least one recipient target before activating this campaign.', 'kelune-crm');
         }
 
-        return $this->successResponse([], __('Campaign resumed successfully', 'kelune-crm'));
+        return null;
     }
 
     public function sendTest(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
@@ -461,11 +487,24 @@ class CampaignsController extends BaseController
     {
         $clean = [];
 
-        $text_fields = ['name', 'subject', 'preview_text', 'from_name', 'campaign_type', 'status', 'scheduled_at', 'sent_at', 'ab_test_winner_metric'];
+        // `status` is deliberately absent: a campaign's state changes only through
+        // the activate/pause routes, so no write path can put it in a state the
+        // transition rules forbid.
+        $text_fields = ['name', 'subject', 'preview_text', 'from_name', 'campaign_type', 'ab_test_winner_metric'];
         foreach ($text_fields as $field) {
             if (isset($data[$field])) {
                 $clean[$field] = sanitize_text_field((string) $data[$field]);
             }
+        }
+
+        // The send time is the one datetime a client owns, and an empty value is a
+        // real instruction to clear it (send on activation instead), so it is
+        // carried through as null rather than dropped. `sent_at` records what the
+        // sender did and is written only by the completion sweep.
+        if (array_key_exists('scheduled_at', $data)) {
+            $clean['scheduled_at'] = !empty($data['scheduled_at'])
+                ? sanitize_text_field((string) $data['scheduled_at'])
+                : null;
         }
 
         // Multiline free text — keep newlines (sanitize_text_field would strip them).
@@ -635,6 +674,28 @@ class CampaignsController extends BaseController
         ]);
     }
 
+    public function previewRecipientCount(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $ids = static function ($value): array {
+            return is_array($value)
+                ? array_values(array_filter(array_map('absint', $value)))
+                : [];
+        };
+
+        $count = $this->repository->getRecipientCount(
+            $ids($request->get_param('target_segments')),
+            $ids($request->get_param('target_lists')),
+            $ids($request->get_param('target_tags')),
+            $ids($request->get_param('exclude_segments')),
+            $ids($request->get_param('exclude_lists')),
+            $ids($request->get_param('exclude_tags'))
+        );
+
+        return $this->successResponse([
+            'count' => $count,
+        ]);
+    }
+
     public function getSummaryStats(\WP_REST_Request $request): \WP_REST_Response
     {
         $stats = $this->repository->getSummaryStats();
@@ -680,22 +741,21 @@ class CampaignsController extends BaseController
                         $result = $this->repository->delete($id);
                         break;
 
-                    case 'pause':
+                    case 'activate':
+                        // A campaign already in the requested state counts as done,
+                        // so a mixed selection reports no failure for rows that
+                        // needed no change.
                         $campaign = $this->repository->find($id);
-                        if ($campaign && $campaign->status === 'sending') {
-                            $result = $this->repository->update($id, ['status' => 'paused']);
-                        } else {
-                            $result = false;
-                        }
+                        $result = $campaign
+                            && ($campaign->isActive() || !is_wp_error($this->startCampaign($campaign)));
                         break;
 
-                    case 'resume':
+                    case 'pause':
                         $campaign = $this->repository->find($id);
-                        if ($campaign && $campaign->status === 'paused') {
-                            $result = $this->repository->update($id, ['status' => 'sending']);
-                        } else {
-                            $result = false;
-                        }
+                        $result = $campaign
+                            && ($campaign->isPaused()
+                                || ($campaign->canTransitionTo(Campaign::STATUS_PAUSED)
+                                    && $this->repository->pause($id)));
                         break;
 
                     case 'duplicate':
@@ -719,7 +779,7 @@ class CampaignsController extends BaseController
         return $this->successResponse([
             'results' => $results,
         ], sprintf(
-            /* translators: 1: number of campaigns processed successfully, 2: number that failed. */
+            /* translators: %1$d: number of campaigns processed successfully, %2$d: number that failed */
             __('%1$d campaigns processed successfully, %2$d failed', 'kelune-crm'),
             count($results['success']),
             count($results['failed'])

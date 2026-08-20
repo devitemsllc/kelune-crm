@@ -272,7 +272,7 @@ class EmailLogsController extends BaseController
         } catch (\Exception $e) {
             return $this->errorResponse(
                 sprintf(
-                    /* translators: %s: underlying error message. */
+                    /* translators: %s: underlying error message */
                     __('Failed to fetch email logs: %s', 'kelune-crm'),
                     $e->getMessage()
                 ),
@@ -363,7 +363,7 @@ class EmailLogsController extends BaseController
         return $this->successResponse(
             ['deleted_count' => $deleted_count],
             sprintf(
-                /* translators: %d: number of email logs deleted. */
+                /* translators: %d: number of email logs deleted */
                 _n(
                     '%d email log deleted successfully',
                     '%d email logs deleted successfully',
@@ -427,7 +427,7 @@ class EmailLogsController extends BaseController
         } catch (\Exception $e) {
             return $this->errorResponse(
                 sprintf(
-                    /* translators: %s: underlying error message. */
+                    /* translators: %s: underlying error message */
                     __('Failed to fetch statistics: %s', 'kelune-crm'),
                     $e->getMessage()
                 ),

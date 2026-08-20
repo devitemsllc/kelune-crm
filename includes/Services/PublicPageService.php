@@ -83,7 +83,7 @@ class PublicPageService
     }
 
     /**
-     * Register the public-page stylesheet and return its <link> tag, emitted
+     * Register the public-page stylesheet and return its markup, emitted
      * through the WordPress styles pipeline (wp_register_style /
      * wp_enqueue_style) rather than a hand-written inline stylesheet or link.
      *
@@ -98,7 +98,7 @@ class PublicPageService
         if (!wp_style_is($handle, 'registered')) {
             wp_register_style(
                 $handle,
-                KELUNE_CRM_PLUGIN_URL . 'assets/frontend/css/kelune-crm.css',
+                KELUNE_CRM_PLUGIN_URL . 'assets/frontend/css/public-page.css',
                 [],
                 KELUNE_CRM_VERSION
             );

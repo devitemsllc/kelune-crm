@@ -7,28 +7,18 @@ namespace KeluneCRM\Services;
 /**
  * Built-in ("Use a Template") automation workflows.
  *
- * These live in code — NOT the database. Nothing is seeded on activation and
- * nothing is stored; the set is authored here and served on the fly (mirrors the
- * built-in email templates in {@see EmailTemplateService}). Importing a template
- * clones its steps into a real automation via the AutomationTemplatesController.
+ * Authored in code, never seeded or stored (as with {@see EmailTemplateService});
+ * importing one clones its steps into a real automation.
  *
- * Every workflow is designed to work on a brand-new install with ZERO existing
- * tags/lists/segments:
- *  - triggers are limited to `contact_created` and `manual`, which need no
- *    pre-existing entity to enrol contacts;
- *  - email steps are fully self-contained (subject + visual-builder body);
- *  - tag/list steps ship with NO tag/list preselected (label states the intent);
- *    the user picks or creates one inline via the creatable picker on the draft —
- *    templates never silently create tags/lists on import;
- *  - no `condition` steps are used (branching is a Pro-only processor), so every
- *    workflow is a single linear spine.
+ * Every workflow must run on a brand-new install with ZERO existing
+ * tags/lists/segments: triggers limited to `contact_created` and `manual`, email
+ * steps self-contained, tag/list steps shipped with nothing preselected (the user
+ * picks or creates inline on the draft), and no `condition` steps, since
+ * branching is a Pro-only processor.
  *
- * Email bodies are authored as visual-builder block trees and rendered to HTML
- * through {@see EmailHtmlRenderer} so the two never drift and each imported email
- * step opens fully editable in the drag-and-drop builder.
- *
- * The set is passed through the `kelune_crm_automation_templates` filter so the
- * Pro add-on (and third parties) can append premium workflows.
+ * Email bodies are block trees rendered through {@see EmailHtmlRenderer}, so the
+ * preview and the imported, editable step never drift. The set passes through the
+ * `kelune_crm_automation_templates` filter so Pro can append workflows.
  */
 class AutomationTemplateService
 {
@@ -153,12 +143,9 @@ class AutomationTemplateService
     }
 
     /**
-     * An add_tag action step, intentionally shipped with NO tag preselected.
-     *
-     * The step is a placeholder whose
-     * label states the intent (e.g. "Tag as Lead"), and the user picks or creates
-     * the tag inline via the creatable picker while reviewing the draft. Templates
-     * never silently create tags on import.
+     * An add_tag action step, shipped with NO tag preselected: the label states
+     * the intent ("Tag as Lead") and the user picks or creates one inline on the
+     * draft. Templates never silently create tags on import.
      *
      * @return array<string, mixed>
      */
@@ -175,9 +162,9 @@ class AutomationTemplateService
     // -- Email block helpers (mirror EmailTemplateService) ----------------------
 
     /**
-     * Design settings shared by every template email. Partial by design — the
-     * dashboard merges these over its DEFAULT_TEMPLATE_SETTINGS on import, and the
-     * renderer fills the rest for the preview body.
+     * Design settings shared by every template email. Partial: the dashboard
+     * merges these over DEFAULT_TEMPLATE_SETTINGS on import and the renderer
+     * fills the rest for the preview.
      *
      * @return array<string, mixed>
      */

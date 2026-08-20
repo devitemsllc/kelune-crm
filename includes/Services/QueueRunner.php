@@ -9,24 +9,15 @@ use KeluneCRM\Handlers\AutomationExecutor;
 use KeluneCRM\Handlers\CleanupHandler;
 
 /**
- * Single entry point for draining the plugin's background queues.
+ * Single entry point for draining the plugin's background queues, reachable
+ * three ways: the every-minute WP-Cron events (guaranteed fallback), the Cron
+ * Monitor "Run Now" button, and a non-blocking loopback request to a light
+ * admin-ajax endpoint ({@see self::handleAjax()}) fired as soon as work is
+ * queued — WP-Cron alone only fires on traffic, once a minute.
  *
- * WordPress cron is unreliable for time-sensitive work: it only fires when the
- * site gets traffic, and then only once per minute. So instead of leaning on it
- * alone, every queue is drained here through one locked, budgeted loop that can
- * be reached three ways:
- *
- *  1. WP-Cron — the every-minute events, kept as a guaranteed fallback.
- *  2. A manual "Run Now" from the Cron Monitor screen (fires the same hook).
- *  3. A non-blocking loopback HTTP request to a light admin-ajax endpoint
- *     ({@see self::handleAjax()}) — fired the moment work is queued, and again
- *     by the drainer itself while work remains. This is what makes sending feel
- *     immediate rather than "sometime in the next minute or two".
- *
- * All three converge on {@see self::runTask()}, guarded by a cross-process lock
- * ({@see CronLock}) so only one drainer runs a given queue at a time; the rest
- * bail after a single query. Combined with the atomic per-row claim in each
- * drainer, that closes every duplicate-processing race.
+ * All three converge on {@see self::runTask()} under a cross-process lock
+ * ({@see CronLock}) so only one drainer runs a queue at a time. That plus the
+ * atomic per-row claim in each drainer closes every duplicate-processing race.
  */
 final class QueueRunner
 {
@@ -41,12 +32,9 @@ final class QueueRunner
 
     /**
      * Seconds a drain lock is held before it is treated as abandoned. Refreshed
-     * after every pass, so this only has to cover a single pass — but a pass on
-     * a slow SMTP host (a batch of one-emails-a-second sends) can run long, so
-     * it is generous. Note the lock is only an *efficiency* guard against
-     * overlapping runners; the atomic per-row claim in each drainer is what
-     * actually prevents duplicate processing, and it holds even if the TTL is
-     * blown and a second runner starts (it just finds different, unclaimed rows).
+     * after every pass, so it only has to cover one pass on a slow SMTP host.
+     * The lock is an efficiency guard only — the atomic per-row claim is what
+     * prevents duplicate processing, even if the TTL is blown.
      */
     private const LOCK_TTL = 120;
 
@@ -116,11 +104,9 @@ final class QueueRunner
             return;
         }
 
-        // Web requests are often capped at 30s; give the run its full budget
-        // plus slack. The loop still stops itself at BUDGET_SECONDS. Raise only:
-        // a limit of 0 means unlimited (the usual case under WP-CLI) and a host
-        // that already allows more than we need is not worth capping — either
-        // way this call would shorten the run it exists to lengthen.
+        // Web requests are often capped at 30s; give the run its budget plus
+        // slack (the loop still stops itself at BUDGET_SECONDS). Raise only —
+        // 0 means unlimited, and lowering would shorten the run this lengthens.
         if (function_exists('set_time_limit') && function_exists('ini_get')) {
             $current = (int) ini_get('max_execution_time');
             $executionBudget = self::BUDGET_SECONDS + 30;
@@ -222,10 +208,9 @@ final class QueueRunner
     }
 
     /**
-     * The light endpoint. Authorised by the shared secret token (there is no
-     * logged-in user on a loopback request, so no nonce), then runs the drain
-     * synchronously and returns — the caller fired non-blocking and is not
-     * waiting on the response.
+     * The light endpoint, authorised by the shared secret token — a loopback
+     * request carries no login session, so a nonce is not available. Runs the
+     * drain synchronously; the caller fired non-blocking and is not waiting.
      */
     public static function handleAjax(): void
     {
@@ -251,10 +236,9 @@ final class QueueRunner
     }
 
     /**
-     * Fire the non-blocking loopback request to the light endpoint. Fire and
-     * forget: if the site cannot reach its own loopback (disabled, staging
-     * basic-auth, a security plugin) the request simply fails and WP-Cron drains
-     * the queue on its next tick — the loopback only ever accelerates.
+     * Fire the non-blocking loopback request to the light endpoint. If the site
+     * cannot reach its own loopback the request just fails and WP-Cron drains on
+     * its next tick — the loopback only ever accelerates.
      */
     private static function dispatch(string $task): void
     {

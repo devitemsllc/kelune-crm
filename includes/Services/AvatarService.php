@@ -10,11 +10,9 @@ namespace KeluneCRM\Services;
  * Callers get one `avatar_url` and do not care where it came from, so the
  * source can change without touching the dashboard. Precedence:
  *
- *  1. The contact's stored avatar_url (the contacts table column). This is
- *     first-party data the site owns, so it is NOT gated on
- *     use_gravatar_service — that setting governs disclosure to Gravatar, and
- *     serving an avatar the site already holds discloses nothing. Nothing
- *     writes this column yet; it is where an uploaded avatar will land.
+ *  1. The contact's stored avatar_url column. First-party data the site owns,
+ *     so NOT gated on use_gravatar_service — that setting governs disclosure to
+ *     Gravatar, and serving an avatar the site holds discloses nothing.
  *  2. The contact's Gravatar, when the admin has opted in.
  *  3. Empty string — the dashboard renders initials.
  */

@@ -9,10 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Payload Normalizer Service
- *
- * Handles both flat and nested webhook payload formats
- * Converts flat format to internal nested structure
+ * Converts a webhook payload — flat or nested — into the internal nested shape.
  */
 class PayloadNormalizer
 {
@@ -104,8 +101,8 @@ class PayloadNormalizer
      * Pull custom_field__* keys out into a nested custom_fields map.
      *
      * Prefixed keys are removed from the top level and merged into any existing
-     * custom_fields object, so both the flat and nested payload formats accept
-     * the custom_field__<field_key> keys documented in the webhook Usage tab.
+     * custom_fields object, so both payload formats accept the
+     * custom_field__<field_key> keys documented in the webhook Usage tab.
      *
      * @param array<string, mixed> $data
      * @return array<string, mixed>
