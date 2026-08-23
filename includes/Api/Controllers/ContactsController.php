@@ -673,7 +673,11 @@ class ContactsController extends BaseController
                 if ($field === 'email' || !array_key_exists($field, $row)) {
                     continue;
                 }
-                $type = $field === 'lead_score' ? 'integer' : 'text';
+                $type = match ($field) {
+                    'lead_score' => 'integer',
+                    'country' => 'country_code',
+                    default => 'text',
+                };
                 $data[$field] = $this->sanitizeInput($row[$field], $type);
             }
 
@@ -799,7 +803,7 @@ class ContactsController extends BaseController
         'address_line2' => 'text',
         'city' => 'text',
         'state' => 'text',
-        'country' => 'text',
+        'country' => 'country_code',
         'postal_code' => 'text',
         'timezone' => 'text',
         'status' => 'text',

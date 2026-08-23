@@ -4,7 +4,8 @@ import { CrownOutlined } from '@ant-design/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import useScreens from '../../hooks/useScreens';
 import { useFeature } from '../../hooks/useFeature';
-import { PRO_URL, proUpgradeText } from '../../utils/pro';
+import { proUpgradeText } from '../../utils/pro';
+import { PRICING_URL } from '../../utils/links';
 import type { FeatureKey } from '../../types/global';
 
 const { Title, Paragraph } = Typography;
@@ -65,7 +66,7 @@ export const ProUpgradeNotice = ({
           {description ?? proUpgradeText(title)}
         </Paragraph>
         <Button
-          href={PRO_URL}
+          href={PRICING_URL}
           target="_blank"
           rel="noopener noreferrer"
           color="primary"

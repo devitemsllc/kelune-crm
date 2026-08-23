@@ -6,6 +6,7 @@ namespace KeluneCRM\Services;
 
 use KeluneCRM\Repositories\AutomationRepository;
 use KeluneCRM\Repositories\ContactRepository;
+use KeluneCRM\Support\ContactFields;
 
 /**
  * Registers WordPress hooks for the basic (Free) automation triggers:
@@ -256,13 +257,8 @@ class AutomationTriggerService
      */
     private function getFieldValue($contact, $field)
     {
-        $standard_fields = [
-            'first_name', 'last_name', 'email', 'phone', 'company',
-            'website', 'address', 'city', 'state', 'zip', 'country', 'status',
-        ];
-
-        if (in_array($field, $standard_fields)) {
-            return $contact->get($field, '');
+        if (ContactFields::isStandard($field)) {
+            return $contact->get(ContactFields::resolve($field), '');
         }
 
         // Custom fields

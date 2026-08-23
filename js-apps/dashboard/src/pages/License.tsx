@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import {
-  FileTextOutlined,
+  CustomerServiceOutlined,
   InfoCircleOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
@@ -31,12 +31,10 @@ import api from '@/services/api';
 import ActivateForm from '@components/license/ActivateForm';
 import { getErrorMessage } from '@utils/getErrorMessage';
 import { calendarFormat } from '@utils/time';
+import { SITE_HOME_URL, SUPPORT_URL } from '@utils/links';
 
 const { Content } = Layout;
 const { Text, Title } = Typography;
-
-const HELP_URL = 'https://kelunecrm.com';
-const DOCS_URL = 'https://kelunecrm.com/docs/';
 
 interface LicenseRow {
   key: string;
@@ -186,7 +184,7 @@ const License = () => {
                     >
                       <Button
                         icon={<QuestionCircleOutlined />}
-                        href={HELP_URL}
+                        href={SITE_HOME_URL}
                         target="_blank"
                         rel="noopener noreferrer"
                       />
@@ -194,14 +192,14 @@ const License = () => {
                     <Tooltip
                       title={
                         <Space align="center">
-                          <FileTextOutlined />
-                          <span>{__('Documentation', 'kelune-crm')}</span>
+                          <CustomerServiceOutlined />
+                          <span>{__('Help & Support', 'kelune-crm')}</span>
                         </Space>
                       }
                     >
                       <Button
-                        icon={<FileTextOutlined />}
-                        href={DOCS_URL}
+                        icon={<CustomerServiceOutlined />}
+                        href={SUPPORT_URL}
                         target="_blank"
                         rel="noopener noreferrer"
                       />

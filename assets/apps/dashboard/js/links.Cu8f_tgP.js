@@ -1,0 +1,1 @@
+const o="https://kelunecrm.com",c=(t,n)=>`${o}${t}?utm_source=plugin&utm_medium=freeplugin&utm_campaign=${n}`,s=c("","learnmore"),a=c("/pricing","purchasepro"),p=c("/contact","support");export{a as P,p as S,s as a};

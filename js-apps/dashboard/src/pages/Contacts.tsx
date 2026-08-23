@@ -98,6 +98,7 @@ import type {
 } from '@/types/models';
 import type { Key } from 'react';
 import { timeDiff, timeFormat } from '../utils/time';
+import { countryName } from '../utils/countries';
 
 const { Text } = Typography;
 
@@ -741,6 +742,8 @@ const Contacts = () => {
       dataIndex: 'country',
       key: 'country',
       visible: visibleColumns.country,
+      render: (country: string | undefined) =>
+        country ? countryName(country) : '-',
     },
     {
       title: __('Source', 'kelune-crm'),

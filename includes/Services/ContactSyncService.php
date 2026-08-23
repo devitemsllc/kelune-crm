@@ -6,6 +6,7 @@ namespace KeluneCRM\Services;
 
 use KeluneCRM\Models\Contact;
 use KeluneCRM\Repositories\ContactRepository;
+use KeluneCRM\Support\CountryCode;
 
 /**
  * Creates and updates contacts on behalf of the automatic entry points
@@ -225,7 +226,7 @@ class ContactSyncService
                 'email' => sanitize_email((string) $value),
                 'user_id' => absint($value),
                 'source' => sanitize_key((string) $value),
-                'country' => strtoupper(substr(sanitize_text_field((string) $value), 0, 2)),
+                'country' => CountryCode::normalize($value),
                 default => sanitize_text_field((string) $value),
             };
         }

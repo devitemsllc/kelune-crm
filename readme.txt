@@ -3,7 +3,7 @@ Contributors: devitemsllc, nazmulhudadev, aslamhasib
 Tags: crm, contacts, email marketing, marketing automation, email campaigns
 Requires at least: 6.6
 Tested up to: 7.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -20,7 +20,7 @@ Every feature in the Free Features list below is included and fully functional. 
 
 == 👇 Helpful Links to Get Started ==
 
-🔎 [Learn More](https://kelunecrm.com?utm_source=wprepo&utm_medium=freeplugin&utm_campaign=learnmore) | 🚀 [Explore Pro](https://kelunecrm.com/pricing?utm_source=wprepo&utm_medium=freeplugin&utm_campaign=purchasepro)
+🔎 [Learn More](https://kelunecrm.com?utm_source=wprepo&utm_medium=freeplugin&utm_campaign=learnmore) | 🚀 [Explore Pro](https://kelunecrm.com/pricing?utm_source=wprepo&utm_medium=freeplugin&utm_campaign=purchasepro) | 📬 [Contact Us](https://kelunecrm.com/contact?utm_source=wprepo&utm_medium=freeplugin&utm_campaign=contact)
 
 == ❤️ Free Features ==
 
@@ -80,41 +80,15 @@ Kelune CRM Pro is an add-on that installs alongside this plugin and unlocks the 
 
 == Source Code ==
 
-The admin dashboard is built with React and TypeScript (Vite). The only compiled files in this plugin are its bundle, in `assets/apps/dashboard/`. Everything else is plain, human-readable PHP and CSS.
+The only compiled code in this plugin is the dashboard bundle in `assets/apps/dashboard/`; nothing is obfuscated. Its full React and TypeScript source, with the Vite build configuration, is published in a [public GitHub repository](https://github.com/devitemsllc/kelune-crm).
 
-The full, unminified source of that bundle is published in a [public GitHub repository](https://github.com/devitemsllc/kelune-crm), together with the build configuration (`js-apps/dashboard/vite.config.js`), the dependency manifest (`js-apps/dashboard/package.json`) and the lock file that pins every installed version (`js-apps/dashboard/yarn.lock`).
-
-To rebuild the bundle from that source (requires Node.js 20 or newer):
-
-1. `cd js-apps/dashboard`
-2. `yarn install`
-3. `yarn build`
-
-Build filenames embed a content hash, so the build is reproducible: the same sources always produce the same filenames. The build also writes `assets/apps/dashboard/manifest.php`, a generated array naming the entry script and stylesheet, which the plugin reads to enqueue them. Those two are registered through `wp_enqueue_script()` and `wp_enqueue_style()`; the remaining chunks under `assets/apps/dashboard/js/` and `assets/apps/dashboard/css/` are loaded from this plugin's own directory as ES module imports. No part of the bundle is fetched from a remote server at runtime.
-
-The build does not modify any third-party code, and no code is obfuscated.
-
-The rich-text editor uses WordPress core's own bundled TinyMCE from `wp-includes/js/tinymce/`, enqueued through core's `wp-tinymce` script handle; no TinyMCE library code is included in this plugin. No other files in this plugin are compiled, minified, or obfuscated.
+To rebuild it (Node.js 20 or newer): `cd js-apps/dashboard`, then `yarn install` and `yarn build`.
 
 == Bundled Libraries ==
 
-The files in `assets/apps/dashboard/` are produced by the build described above from the third-party packages listed below. Each is compiled into the shipped scripts — none is fetched at runtime.
+The scripts in `assets/apps/dashboard/` are compiled from third-party npm packages — React, Ant Design, Redux Toolkit, React Flow and others — and none of them is fetched at runtime. Every package is MIT licensed except SheetJS (`xlsx`), used to read spreadsheet files during contact import, which is Apache License 2.0; their own dependencies are MIT, ISC, BSD or 0BSD. All are compatible with this plugin's "GPLv2 or later" license. `js-apps/dashboard/package.json` and `js-apps/dashboard/yarn.lock` in the repository linked above name and pin every package, direct and indirect.
 
-* React and ReactDOM (`react`, `react-dom`) — MIT.
-* Ant Design (`antd`) — MIT; only the locale pack matching your site language is loaded.
-* React Router (`react-router-dom`) — MIT.
-* Ant Design Icons (`@ant-design/icons`) and Ant Design Charts with AntV G2 (`@ant-design/charts`) — MIT.
-* Redux Toolkit and React Redux (`@reduxjs/toolkit`, `react-redux`) — MIT.
-* React Flow (`reactflow`), used by the automation canvas — MIT.
-* dnd kit (`@dnd-kit/core`, `@dnd-kit/modifiers`, `@dnd-kit/sortable`, `@dnd-kit/utilities`), used by the email builder — MIT.
-* CodeMirror (`@uiw/react-codemirror`, `@codemirror/lang-html`), used by the HTML editor — MIT.
-* juice (`juice`), which inlines CSS into email HTML — MIT.
-* Axios (`axios`) — MIT, Day.js (`dayjs`) — MIT, and react-responsive (`react-responsive`) — MIT.
-* SheetJS (`xlsx`), used to read spreadsheet files during contact import — Apache License 2.0.
-
-Every package above is MIT licensed except SheetJS, which is Apache 2.0; the dependencies they pull in are MIT, ISC, BSD or 0BSD. All of those are compatible with this plugin's "GPLv2 or later" license. `js-apps/dashboard/package.json` declares the packages depended on directly, and `js-apps/dashboard/yarn.lock` pins the exact version installed for every package, including indirect ones such as AntV G2, html2canvas and Lodash; both files are published in the repository linked above.
-
-No third-party PHP libraries are included: the plugin's own classes load through the hand-written `autoload.php` at the plugin root, and the scoped-vendor directory `libs/third-party/packages/` holds no packages.
+No third-party PHP libraries are included.
 
 == Frequently Asked Questions ==
 
@@ -208,6 +182,11 @@ Used to deliver email when you select SMTP as your email provider. This is not a
 
 == Changelog ==
 
+= Version: 1.0.2 - Date: 23 August, 2026 =
+* Added: Country and Address Line 2 fields for contact.
+* Updated: Help and upgrade links throughout the dashboard.
+* Fixed: Minor bugs and issues to enhance functionality and user experience.
+
 = Version: 1.0.1 - Date: 20 August, 2026 =
 * Added: Optional label for automation steps, shown on the automation canvas.
 * Added: Contact import accepts Excel files (.xlsx, .xls) alongside CSV.
@@ -219,6 +198,9 @@ Used to deliver email when you select SMTP as your email provider. This is not a
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.0.2 =
+Adds Country and Address Line 2 fields for contacts, updates the dashboard help and upgrade links, plus minor bug fixes.
 
 = 1.0.1 =
 Adds automation step labels and contact import from Excel files (.xlsx, .xls), and is tested with the latest WordPress. The database updates automatically on the first admin page load after upgrading.

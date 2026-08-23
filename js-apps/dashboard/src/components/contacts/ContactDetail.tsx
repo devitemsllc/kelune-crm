@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
 import api from '../../services/api';
 import ContactStatusTag from './ContactStatusTag';
 import { timeDiff, timeFormat } from '../../utils/time';
+import { countryName } from '../../utils/countries';
 import type {
   Contact,
   Tag as TagModel,
@@ -207,7 +208,7 @@ const ContactDetail = ({ contact }: ContactDetailProps) => {
               {contact.postal_code || '-'}
             </Descriptions.Item>
             <Descriptions.Item label={__('Country', 'kelune-crm')}>
-              {contact.country || '-'}
+              {contact.country ? countryName(contact.country) : '-'}
             </Descriptions.Item>
             <Descriptions.Item label={__('Source', 'kelune-crm')}>
               {contact.source ? (

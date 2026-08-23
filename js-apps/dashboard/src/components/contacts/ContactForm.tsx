@@ -25,6 +25,7 @@ import api from '../../services/api';
 import { CONTACT_STATUS_OPTIONS } from './contactStatus';
 import { timeDiff, timeFormat } from '../../utils/time';
 import { formSectionDivider } from '../../utils/formStyles';
+import { countryOptions } from '../../utils/countries';
 import { ListSelect, TagSelect } from '@/components/common/AudienceSelect';
 import type { Contact, Tag, ContactList, Note } from '@/types/models';
 import SubmitOnEnter from '../common/SubmitOnEnter';
@@ -176,6 +177,10 @@ const ContactForm = ({ contact, form, onSubmit }: ContactFormProps) => {
     if (deletedNoteIds.length > 0) {
       standardFields.deleted_note_ids = deletedNoteIds;
     }
+
+    // Cleared Select is undefined and JSON drops it, so the update
+    // endpoint would keep the old value.
+    standardFields.country = values.country ?? '';
 
     onSubmit(standardFields);
   };
@@ -350,6 +355,13 @@ const ContactForm = ({ contact, form, onSubmit }: ContactFormProps) => {
         <Input placeholder={__('123 Main St', 'kelune-crm')} />
       </Form.Item>
 
+      <Form.Item
+        name="address_line2"
+        label={__('Address Line 2', 'kelune-crm')}
+      >
+        <Input placeholder={__('Apt 4B', 'kelune-crm')} />
+      </Form.Item>
+
       <Row gutter={16}>
         <Col span={8}>
           <Form.Item name="city" label={__('City', 'kelune-crm')}>
@@ -367,6 +379,16 @@ const ContactForm = ({ contact, form, onSubmit }: ContactFormProps) => {
           </Form.Item>
         </Col>
       </Row>
+
+      <Form.Item name="country" label={__('Country', 'kelune-crm')}>
+        <Select
+          allowClear
+          showSearch
+          optionFilterProp="label"
+          placeholder={__('Select a country', 'kelune-crm')}
+          options={countryOptions()}
+        />
+      </Form.Item>
 
       <Row gutter={16}>
         <Col span={12}>

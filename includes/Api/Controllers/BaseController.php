@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace KeluneCRM\Api\Controllers;
 
+use KeluneCRM\Support\CountryCode;
+
 abstract class BaseController
 {
     protected string $namespace = '';
@@ -138,6 +140,8 @@ abstract class BaseController
                 return floatval($data);
             case 'boolean':
                 return filter_var($data, FILTER_VALIDATE_BOOLEAN);
+            case 'country_code':
+                return CountryCode::normalize($data);
             default:
                 return sanitize_text_field($data);
         }

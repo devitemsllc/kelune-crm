@@ -1,8 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
 
-/** Marketing URL behind every upgrade CTA. */
-export const PRO_URL = 'https://devitems.com';
-
 /** Hover copy for a control the Pro add-on unlocks. */
 export const proLockTitle = (name: string): string =>
   sprintf(

@@ -11,10 +11,9 @@ import {
 } from 'antd';
 import { __ } from '@wordpress/i18n';
 import { useLicense } from '@hooks/useLicense';
+import { SUPPORT_URL } from '@utils/links';
 
 const { Paragraph } = Typography;
-
-const DOCS_URL = 'https://kelunecrm.com/docs/';
 
 interface LicenseInfoProps {
   nextStep: () => void;
@@ -73,8 +72,8 @@ const LicenseInfo = ({ nextStep }: LicenseInfoProps) => {
       <Divider style={{ margin: '32px 0 24px 0' }} />
       <Row gutter={16} justify="space-between">
         <Col flex="none">
-          <Button href={DOCS_URL} target="_blank" rel="noopener noreferrer">
-            {__('Help & Docs', 'kelune-crm')}
+          <Button href={SUPPORT_URL} target="_blank" rel="noopener noreferrer">
+            {__('Help & Support', 'kelune-crm')}
           </Button>
         </Col>
         <Col flex="none">

@@ -18,10 +18,9 @@ import { setLicense } from '@store/slices/licenseSlice';
 import api from '@/services/api';
 import { licenseEmail } from '@utils/license';
 import { getErrorMessage } from '@utils/getErrorMessage';
+import { SUPPORT_URL } from '@utils/links';
 
 const { Paragraph } = Typography;
-
-const DOCS_URL = 'https://kelunecrm.com/docs/';
 
 interface LicenseFormProps {
   setIsLoading: (value: boolean) => void;
@@ -135,11 +134,11 @@ const LicenseForm = ({ setIsLoading, nextStep }: LicenseFormProps) => {
         <Col flex="none">
           <Button
             htmlType="button"
-            href={DOCS_URL}
+            href={SUPPORT_URL}
             target="_blank"
             rel="noopener noreferrer"
           >
-            {__('Help & Docs', 'kelune-crm')}
+            {__('Help & Support', 'kelune-crm')}
           </Button>
         </Col>
         <Col flex="none">
