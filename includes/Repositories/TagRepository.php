@@ -139,15 +139,23 @@ class TagRepository
      */
     public function update(int $id, array $data): bool
     {
-        return $this->db->update(
-            $this->tableName,
-            [
-                'name' => $data['name'],
-                'slug' => sanitize_title($data['name']),
-                'description' => $data['description'] ?? '',
-            ],
-            ['id' => $id]
-        ) !== false;
+        $update_data = [];
+
+        // The slug tracks the name, so it is rewritten only alongside one.
+        if (isset($data['name'])) {
+            $update_data['name'] = $data['name'];
+            $update_data['slug'] = sanitize_title((string) $data['name']);
+        }
+
+        if (isset($data['description'])) {
+            $update_data['description'] = $data['description'];
+        }
+
+        if (empty($update_data)) {
+            return false;
+        }
+
+        return $this->db->update($this->tableName, $update_data, ['id' => $id]) !== false;
     }
 
     public function delete(int $id): bool

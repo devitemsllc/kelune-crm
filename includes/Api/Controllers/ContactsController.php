@@ -258,9 +258,9 @@ class ContactsController extends BaseController
         $data = $this->prepareItemForDatabase($request);
 
         $notes = isset($data['notes']) ? $data['notes'] : null;
-        $tag_ids = isset($data['tag_ids']) ? $data['tag_ids'] : null;
-        $list_ids = isset($data['list_ids']) ? $data['list_ids'] : null;
-        $deleted_note_ids = isset($data['deleted_note_ids']) ? $data['deleted_note_ids'] : null;
+        $tag_ids = array_key_exists('tag_ids', $data) ? $data['tag_ids'] : null;
+        $list_ids = array_key_exists('list_ids', $data) ? $data['list_ids'] : null;
+        $deleted_note_ids = array_key_exists('deleted_note_ids', $data) ? $data['deleted_note_ids'] : null;
         unset($data['notes'], $data['tag_ids'], $data['list_ids'], $data['deleted_note_ids']);
 
         foreach ($data as $key => $value) {
@@ -816,6 +816,9 @@ class ContactsController extends BaseController
      * turn null into '' (sanitize_text_field(null) === ''), so a partial update
      * would blank every column the caller happened not to send.
      *
+     * Collection fields use key presence instead of null, because [] is a
+     * legitimate instruction to clear the relation.
+     *
      * @return array<string, mixed>
      */
     private function prepareItemForDatabase(\WP_REST_Request $request): array
@@ -837,9 +840,12 @@ class ContactsController extends BaseController
             ? $this->sanitizeCustomFields($custom_fields)
             : null;
         $data['notes'] = null !== $notes ? $this->sanitizeInput($notes, 'textarea') : null;
-        $data['tag_ids'] = $this->sanitizeIdList($request->get_param('tag_ids'));
-        $data['list_ids'] = $this->sanitizeIdList($request->get_param('list_ids'));
-        $data['deleted_note_ids'] = $this->sanitizeIdList($request->get_param('deleted_note_ids'));
+
+        foreach (['tag_ids', 'list_ids', 'deleted_note_ids'] as $field) {
+            if ($request->has_param($field)) {
+                $data[$field] = $this->sanitizeIdList($request->get_param($field));
+            }
+        }
 
         return $data;
     }

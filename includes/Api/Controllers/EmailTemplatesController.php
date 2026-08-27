@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Repositories\EmailTemplateRepository;
+use KeluneCRM\Services\EmailHtmlRenderer;
 
 class EmailTemplatesController extends BaseController
 {
@@ -109,7 +110,7 @@ class EmailTemplatesController extends BaseController
         /* translators: %s: email subject line */
         $subject = sprintf(__('[TEST] %s', 'kelune-crm'), $subject);
 
-        $html = wp_kses_post((string) ($request->get_param('html') ?? ''));
+        $html = EmailHtmlRenderer::stripStyleArtifact(wp_kses_post((string) ($request->get_param('html') ?? '')));
         if (empty($html)) {
             return $this->errorResponse(
                 __('Template content is empty', 'kelune-crm'),
@@ -239,7 +240,9 @@ class EmailTemplatesController extends BaseController
             // empty draft from the list's info modal and designed later (parity
             // with automations, which persist before the workflow is built).
             $html_content = $request->get_param('html_content');
-            $html_content = empty($html_content) ? '' : wp_kses_post($html_content);
+            $html_content = empty($html_content)
+                ? ''
+                : EmailHtmlRenderer::stripStyleArtifact(wp_kses_post($html_content));
 
             $data = [
                 'name' => $name,
@@ -317,7 +320,9 @@ class EmailTemplatesController extends BaseController
             }
 
             if ($request->has_param('html_content')) {
-                $data['html_content'] = wp_kses_post($request->get_param('html_content'));
+                $data['html_content'] = EmailHtmlRenderer::stripStyleArtifact(
+                    wp_kses_post($request->get_param('html_content'))
+                );
             }
 
             if ($request->has_param('json_structure')) {

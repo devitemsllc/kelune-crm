@@ -42,6 +42,32 @@ class EmailHtmlRenderer
     ];
 
     /**
+     * Drop stripped-tag text left above a builder document's marker.
+     *
+     * wp_kses_post removes a disallowed tag but keeps its text, so a stored
+     * document can carry a stray CSS line above the email. Nothing legitimate
+     * precedes the marker in a sanitized document, so anything but whitespace
+     * there is that residue; a document still holding its scaffold (a '<'
+     * before the marker) is left alone. Mirrors the TS twin.
+     */
+    public static function stripStyleArtifact(string $html): string
+    {
+        $marker = strpos($html, self::EMAIL_DOC_MARKER);
+
+        if (false === $marker) {
+            return $html;
+        }
+
+        $head = substr($html, 0, $marker);
+
+        if ('' === trim($head) || false !== strpos($head, '<')) {
+            return $html;
+        }
+
+        return substr($html, $marker);
+    }
+
+    /**
      * Build the full email document from blocks + settings.
      *
      * @param array<int, array<string, mixed>> $blocks
@@ -79,28 +105,22 @@ class EmailHtmlRenderer
             $body
         ) ?? $body;
 
-        $bg = (string) $settings['backgroundColor'];
-        $font = (string) $settings['fontFamily'];
-        $contentBg = (string) $settings['contentBackground'];
-        $contentWidth = (string) $settings['contentWidth'];
+        $bg = self::escAttr($settings['backgroundColor']);
+        $font = self::escAttr($settings['fontFamily']);
+        $contentBg = self::escAttr($settings['contentBackground']);
+        $contentWidth = self::escAttr($settings['contentWidth']);
         $pagePadding = $this->s($settings['pagePadding'] ?? null, '30px 15px 10px 15px');
         $contentPadding = $this->s($settings['contentPadding'] ?? null, '20px');
 
+        // Page styles are inlined on the body tag: wp_kses_post would strip a
+        // stylesheet block and leave its text visible atop the email.
         return '<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: ' . $font . ';
-            background-color: ' . $bg . ';
-        }
-    </style>
 </head>
-<body>
+<body style="margin: 0; padding: 0; font-family: ' . $font . '; background-color: ' . $bg . ';">
     ' . self::EMAIL_DOC_MARKER . '
     <table width="100%" cellpadding="0" cellspacing="0" style="background-color: ' . $bg . ';">
         <tr>
@@ -138,8 +158,8 @@ class EmailHtmlRenderer
             ? self::colorizeAnchors((string) ($settings['footerContent'] ?? ''), $linkColor)
             : '<!--kelune-crm:global-footer:' . $linkColor . '-->';
 
-        $w = (string) $settings['contentWidth'];
-        $font = (string) $settings['fontFamily'];
+        $w = self::escAttr($settings['contentWidth']);
+        $font = self::escAttr($settings['fontFamily']);
         $footerFontSize = $this->s($settings['footerFontSize'] ?? null, '14px');
 
         return '<table width="' . $w . '" cellpadding="0" cellspacing="0" role="presentation" style="max-width: ' . $w . 'px; width: 100%;"><tr><td style="padding: ' . $this->s($settings['footerPadding'] ?? null, '20px 20px 20px 20px') . '; background: ' . $this->s($settings['footerBackground'] ?? null, 'transparent') . ';">'
@@ -160,6 +180,7 @@ class EmailHtmlRenderer
         return (string) preg_replace_callback(
             '/<a\b([^>]*)>/i',
             static function (array $m) use ($color): string {
+                $color = self::escAttr($color);
                 $attrs = $m[1];
                 if (preg_match('/\bstyle\s*=\s*(["\'])/i', $attrs)) {
                     return '<a' . preg_replace(
@@ -185,7 +206,7 @@ class EmailHtmlRenderer
     private function s($val, string $fallback): string
     {
         $str = $val === null ? '' : (string) $val;
-        return trim($str) === '' ? $fallback : $str;
+        return self::escAttr(trim($str) === '' ? $fallback : $str);
     }
 
     /**
@@ -193,7 +214,7 @@ class EmailHtmlRenderer
      *
      * @param mixed $value
      */
-    private function escAttr($value): string
+    private static function escAttr($value): string
     {
         return str_replace(
             ['&', '"', "'", '<', '>'],
@@ -401,7 +422,7 @@ class EmailHtmlRenderer
             . '; text-decoration: none;';
 
         return '<div style="text-align: ' . $this->s($st['textAlign'] ?? null, 'center') . ';">'
-            . '<a href="' . $this->escAttr($this->s($st['link'] ?? null, '#')) . '" style="' . $btnStyle . '">'
+            . '<a href="' . $this->s($st['link'] ?? null, '#') . '" style="' . $btnStyle . '">'
             . $this->escAttr($st['text'] ?? __('Click Me', 'kelune-crm')) . '</a></div>';
     }
 

@@ -55,6 +55,29 @@ export const GLOBAL_FOOTER_MARKER_RE = /<!--kelune-crm:global-footer:(.*?)-->/;
 export const EMAIL_DOC_MARKER = '<!--kelune-crm:email-doc-->';
 export const EMAIL_DOC_MARKER_RE = /<!--kelune-crm:email-doc-->/;
 
+/**
+ * Drop stripped-tag text left above a builder document's marker.
+ *
+ * `wp_kses_post` removes a disallowed tag but keeps its text, so a stored
+ * document can carry a stray CSS line above the email. Nothing legitimate
+ * precedes the marker in a sanitized document, so anything but whitespace there
+ * is that residue; a document still holding its scaffold (a `<` before the
+ * marker) is left alone. Mirrors the PHP twin.
+ */
+export const stripStyleArtifact = (html: string): string => {
+  const marker = html.indexOf(EMAIL_DOC_MARKER);
+  if (marker === -1) {
+    return html;
+  }
+
+  const head = html.slice(0, marker);
+  if (head.trim() === '' || head.includes('<')) {
+    return html;
+  }
+
+  return html.slice(marker);
+};
+
 // Inline a link colour onto every <a> in a footer body — email clients ignore a
 // stylesheet block, so the colour has to live on each anchor. Merges into an
 // existing style attribute or adds one. Kept byte-identical to the PHP twin
@@ -62,8 +85,8 @@ export const EMAIL_DOC_MARKER_RE = /<!--kelune-crm:email-doc-->/;
 export const colorizeAnchors = (html: string, color: string): string =>
   html.replace(/<a\b([^>]*)>/gi, (_full, attrs: string) =>
     /\bstyle\s*=\s*["']/i.test(attrs)
-      ? `<a${attrs.replace(/\bstyle\s*=\s*(["'])/i, `style=$1color: ${color}; `)}>`
-      : `<a${attrs} style="color: ${color};">`
+      ? `<a${attrs.replace(/\bstyle\s*=\s*(["'])/i, `style=$1color: ${escAttr(color)}; `)}>`
+      : `<a${attrs} style="color: ${escAttr(color)};">`
   );
 
 export const DEFAULT_TEMPLATE_SETTINGS: TemplateSettings = {
@@ -96,10 +119,11 @@ const escAttr = (value: unknown): string =>
     .replace(/>/g, '&gt;');
 
 // `val || fallback` but treats undefined/null/'' as missing so we never emit
-// "font-family: undefined;" for templates that omit a style key.
+// "font-family: undefined;" for templates that omit a style key. Escapes on the
+// way out so a value carrying a quote cannot break out of its attribute.
 const s = (val: unknown, fallback: string): string => {
   const str = val == null ? '' : String(val);
-  return str.trim() === '' ? fallback : str;
+  return escAttr(str.trim() === '' ? fallback : str);
 };
 
 // Outer wrapper shared by every block: block background, outer padding and
@@ -213,7 +237,7 @@ const renderButton = (st: EmailBlockStyles): string => {
     `text-decoration: none;`;
   return (
     `<div style="text-align: ${s(st.textAlign, 'center')};">` +
-    `<a href="${escAttr(s(st.link, '#'))}" style="${btnStyle}">${escAttr(st.text ?? __('Click Me', 'kelune-crm'))}</a></div>`
+    `<a href="${s(st.link, '#')}" style="${btnStyle}">${escAttr(st.text ?? __('Click Me', 'kelune-crm'))}</a></div>`
   );
 };
 
@@ -292,11 +316,12 @@ const renderFooterBlock = (settings: TemplateSettings): string => {
     settings.footerSource === 'custom'
       ? colorizeAnchors(settings.footerContent ?? '', settings.footerLinkColor)
       : globalFooterMarker(settings.footerLinkColor);
-  const w = settings.contentWidth;
+  const w = escAttr(settings.contentWidth);
+  const font = escAttr(settings.fontFamily);
   const footerFontSize = s(settings.footerFontSize, '14px');
   return (
     `<table width="${w}" cellpadding="0" cellspacing="0" role="presentation" style="max-width: ${w}px; width: 100%;"><tr><td style="padding: ${s(settings.footerPadding, '20px 20px 20px 20px')}; background: ${s(settings.footerBackground, 'transparent')};">` +
-    `<table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="font-family: ${settings.fontFamily}; font-size: ${footerFontSize}; font-weight: ${s(settings.footerFontWeight, '400')}; line-height: ${s(settings.footerLineHeight, defaultLineHeight(footerFontSize))}; color: ${s(settings.footerTextColor, '#333333')}; text-align: center;">` +
+    `<table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="font-family: ${font}; font-size: ${footerFontSize}; font-weight: ${s(settings.footerFontWeight, '400')}; line-height: ${s(settings.footerLineHeight, defaultLineHeight(footerFontSize))}; color: ${s(settings.footerTextColor, '#333333')}; text-align: center;">` +
     inner +
     `</td></tr></table>` +
     `</td></tr></table>`
@@ -332,28 +357,27 @@ export const renderEmailDocument = (
     '<a target="_blank" rel="noopener noreferrer"'
   );
 
+  // Page styles are inlined on the body tag: the server's wp_kses_post would
+  // strip a stylesheet block and leave its text visible atop the email.
+  const bg = escAttr(settings.backgroundColor);
+  const font = escAttr(settings.fontFamily);
+  const contentBg = escAttr(settings.contentBackground);
+  const contentWidth = escAttr(settings.contentWidth);
+
   const html = `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: ${settings.fontFamily};
-            background-color: ${settings.backgroundColor};
-        }
-    </style>
 </head>
-<body>
+<body style="margin: 0; padding: 0; font-family: ${font}; background-color: ${bg};">
     ${EMAIL_DOC_MARKER}
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: ${settings.backgroundColor};">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: ${bg};">
         <tr>
             <td align="center" style="padding: ${s(settings.pagePadding, '30px 15px 10px 15px')};">
-                <table width="${settings.contentWidth}" cellpadding="0" cellspacing="0" style="background-color: ${settings.contentBackground}; max-width: ${settings.contentWidth}px; width: 100%;">
+                <table width="${contentWidth}" cellpadding="0" cellspacing="0" style="background-color: ${contentBg}; max-width: ${contentWidth}px; width: 100%;">
                     <tr>
-                        <td style="padding: ${s(settings.contentPadding, '20px')}; font-family: ${settings.fontFamily};">
+                        <td style="padding: ${s(settings.contentPadding, '20px')}; font-family: ${font};">
                             ${withTargets}
                         </td>
                     </tr>

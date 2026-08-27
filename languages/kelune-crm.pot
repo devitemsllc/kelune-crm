@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Kelune CRM 1.0.2\n"
+"Project-Id-Version: Kelune CRM 1.0.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/kelune-crm\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-23T07:07:11+00:00\n"
+"POT-Creation-Date: 2026-08-27T05:55:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: kelune-crm\n"
@@ -514,7 +514,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationBuilder.tsx:66
 #: js-apps/dashboard/src/pages/Automations.tsx:203
-#: includes/Api/Controllers/AutomationsController.php:439
+#: includes/Api/Controllers/AutomationsController.php:440
 msgid "Failed to activate automation"
 msgstr ""
 
@@ -525,7 +525,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationBuilder.tsx:77
 #: js-apps/dashboard/src/pages/Automations.tsx:213
-#: includes/Api/Controllers/AutomationsController.php:462
+#: includes/Api/Controllers/AutomationsController.php:463
 msgid "Failed to pause automation"
 msgstr ""
 
@@ -915,21 +915,21 @@ msgid "This step is required and cannot be deleted"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/SendStepTestEmail.tsx:22
-#: includes/Api/Controllers/AutomationsController.php:278
+#: includes/Api/Controllers/AutomationsController.php:279
 msgid "Add email content before sending a test."
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/SendStepTestEmail.tsx:28
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:355
-#: includes/Api/Controllers/AutomationsController.php:286
-#: includes/Api/Controllers/CampaignsController.php:473
+#: includes/Api/Controllers/AutomationsController.php:287
+#: includes/Api/Controllers/CampaignsController.php:474
 msgid "Test email sent successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/SendStepTestEmail.tsx:33
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:358
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:349
-#: includes/Api/Controllers/EmailTemplatesController.php:150
+#: includes/Api/Controllers/EmailTemplatesController.php:151
 msgid "Failed to send test email"
 msgstr ""
 
@@ -2411,12 +2411,12 @@ msgid "Available in Kelune CRM Pro"
 msgstr ""
 
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:314
-#: includes/Api/Controllers/CampaignsController.php:254
+#: includes/Api/Controllers/CampaignsController.php:255
 msgid "Campaign created successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:336
-#: includes/Api/Controllers/CampaignsController.php:292
+#: includes/Api/Controllers/CampaignsController.php:293
 msgid "Campaign updated successfully"
 msgstr ""
 
@@ -3198,7 +3198,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:237
 #: js-apps/dashboard/src/pages/settings/CronMonitor.tsx:55
-#: includes/Services/EmailService.php:1822
+#: includes/Services/EmailService.php:1826
 msgid "Unknown"
 msgstr ""
 
@@ -3921,16 +3921,16 @@ msgstr ""
 #: js-apps/dashboard/src/components/email-templates/BlockProperties.tsx:62
 #: js-apps/dashboard/src/components/email-templates/blocks/ImageBlock.tsx:5
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:363
-#: js-apps/dashboard/src/utils/emailHtml.ts:142
-#: includes/Services/EmailHtmlRenderer.php:377
+#: js-apps/dashboard/src/utils/emailHtml.ts:163
+#: includes/Services/EmailHtmlRenderer.php:398
 msgid "Image"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-templates/blockDefaults.ts:38
 #: js-apps/dashboard/src/components/email-templates/BlockProperties.tsx:79
 #: js-apps/dashboard/src/components/email-templates/blocks/ButtonBlock.tsx:4
-#: js-apps/dashboard/src/utils/emailHtml.ts:159
-#: includes/Services/EmailHtmlRenderer.php:405
+#: js-apps/dashboard/src/utils/emailHtml.ts:180
+#: includes/Services/EmailHtmlRenderer.php:426
 msgid "Click Me"
 msgstr ""
 
@@ -4100,7 +4100,7 @@ msgid "Add at least one block before sending a test"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:342
-#: includes/Api/Controllers/EmailTemplatesController.php:104
+#: includes/Api/Controllers/EmailTemplatesController.php:105
 msgid "Test Email"
 msgstr ""
 
@@ -5027,7 +5027,7 @@ msgid "Avg Completion Rate"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Automations.tsx:164
-#: includes/Api/Controllers/AutomationsController.php:350
+#: includes/Api/Controllers/AutomationsController.php:351
 msgid "Automation created successfully"
 msgstr ""
 
@@ -5036,22 +5036,22 @@ msgid "Failed to save automation"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Automations.tsx:179
-#: includes/Api/Controllers/AutomationsController.php:395
+#: includes/Api/Controllers/AutomationsController.php:396
 msgid "Automation deleted successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Automations.tsx:183
-#: includes/Api/Controllers/AutomationsController.php:392
+#: includes/Api/Controllers/AutomationsController.php:393
 msgid "Failed to delete automation"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Automations.tsx:189
-#: includes/Api/Controllers/AutomationsController.php:414
+#: includes/Api/Controllers/AutomationsController.php:415
 msgid "Automation duplicated successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Automations.tsx:193
-#: includes/Api/Controllers/AutomationsController.php:405
+#: includes/Api/Controllers/AutomationsController.php:406
 msgid "Failed to duplicate automation"
 msgstr ""
 
@@ -5116,7 +5116,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/pages/CampaignBuilderPage.tsx:74
 #: js-apps/dashboard/src/pages/Campaigns.tsx:190
-#: includes/Api/Controllers/CampaignsController.php:355
+#: includes/Api/Controllers/CampaignsController.php:356
 msgid "Campaign queued for sending"
 msgstr ""
 
@@ -5164,32 +5164,32 @@ msgid "Active Campaigns"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Campaigns.tsx:164
-#: includes/Api/Controllers/CampaignsController.php:311
+#: includes/Api/Controllers/CampaignsController.php:312
 msgid "Campaign deleted successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Campaigns.tsx:168
-#: includes/Api/Controllers/CampaignsController.php:308
+#: includes/Api/Controllers/CampaignsController.php:309
 msgid "Failed to delete campaign"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Campaigns.tsx:174
-#: includes/Api/Controllers/CampaignsController.php:330
+#: includes/Api/Controllers/CampaignsController.php:331
 msgid "Campaign duplicated successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Campaigns.tsx:178
-#: includes/Api/Controllers/CampaignsController.php:321
+#: includes/Api/Controllers/CampaignsController.php:322
 msgid "Failed to duplicate campaign"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Campaigns.tsx:194
-#: includes/Api/Controllers/CampaignsController.php:388
+#: includes/Api/Controllers/CampaignsController.php:389
 msgid "Failed to activate campaign"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Campaigns.tsx:204
-#: includes/Api/Controllers/CampaignsController.php:429
+#: includes/Api/Controllers/CampaignsController.php:430
 msgid "Failed to pause campaign"
 msgstr ""
 
@@ -5594,7 +5594,7 @@ msgid "Add email content before saving the template"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:114
-#: includes/Api/Controllers/EmailTemplatesController.php:277
+#: includes/Api/Controllers/EmailTemplatesController.php:280
 msgid "Template created successfully"
 msgstr ""
 
@@ -5603,13 +5603,13 @@ msgid "Failed to save template"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:125
-#: includes/Api/Controllers/EmailTemplatesController.php:401
+#: includes/Api/Controllers/EmailTemplatesController.php:406
 msgid "Template deleted successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:129
-#: includes/Api/Controllers/EmailTemplatesController.php:393
-#: includes/Api/Controllers/EmailTemplatesController.php:405
+#: includes/Api/Controllers/EmailTemplatesController.php:398
+#: includes/Api/Controllers/EmailTemplatesController.php:410
 msgid "Failed to delete template"
 msgstr ""
 
@@ -5625,18 +5625,18 @@ msgid "Failed to delete templates"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:158
-#: includes/Api/Controllers/EmailTemplatesController.php:513
+#: includes/Api/Controllers/EmailTemplatesController.php:518
 msgid "Template duplicated successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:162
-#: includes/Api/Controllers/EmailTemplatesController.php:495
-#: includes/Api/Controllers/EmailTemplatesController.php:517
+#: includes/Api/Controllers/EmailTemplatesController.php:500
+#: includes/Api/Controllers/EmailTemplatesController.php:522
 msgid "Failed to duplicate template"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:168
-#: includes/Api/Controllers/EmailTemplatesController.php:451
+#: includes/Api/Controllers/EmailTemplatesController.php:456
 msgid "Favorite status updated"
 msgstr ""
 
@@ -5729,7 +5729,7 @@ msgid "List deleted successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Lists.tsx:115
-#: includes/Api/Controllers/ListsController.php:188
+#: includes/Api/Controllers/ListsController.php:194
 msgid "Failed to delete list"
 msgstr ""
 
@@ -6252,7 +6252,7 @@ msgid "Email provider deleted"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:393
-#: includes/Api/Controllers/EmailProviderController.php:231
+#: includes/Api/Controllers/EmailProviderController.php:247
 msgid "Failed to delete email provider"
 msgstr ""
 
@@ -6331,7 +6331,7 @@ msgid "Encryption"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:644
-#: includes/Api/Controllers/EmailProviderController.php:619
+#: includes/Api/Controllers/EmailProviderController.php:635
 msgid "Access Key ID"
 msgstr ""
 
@@ -6340,7 +6340,7 @@ msgid "Enter the Access Key ID"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:647
-#: includes/Api/Controllers/EmailProviderController.php:622
+#: includes/Api/Controllers/EmailProviderController.php:638
 msgid "Secret Access Key"
 msgstr ""
 
@@ -6363,7 +6363,7 @@ msgid "Enter the Mailgun API key"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:663
-#: includes/Api/Controllers/EmailProviderController.php:630
+#: includes/Api/Controllers/EmailProviderController.php:646
 msgid "Domain"
 msgstr ""
 
@@ -6856,7 +6856,7 @@ msgid "Tag deleted successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/Tags.tsx:99
-#: includes/Api/Controllers/TagsController.php:171
+#: includes/Api/Controllers/TagsController.php:177
 msgid "Failed to delete tag"
 msgstr ""
 
@@ -6979,156 +6979,156 @@ msgstr ""
 msgid "https://devitems.com"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:271
+#: includes/Api/Controllers/AutomationsController.php:272
 msgid "A valid email address is required"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:320
-#: includes/Api/Controllers/AutomationsController.php:347
-#: includes/Api/Controllers/AutomationsController.php:361
-#: includes/Api/Controllers/AutomationsController.php:373
-#: includes/Api/Controllers/AutomationsController.php:386
-#: includes/Api/Controllers/AutomationsController.php:411
-#: includes/Api/Controllers/AutomationsController.php:424
-#: includes/Api/Controllers/AutomationsController.php:452
-#: includes/Api/Controllers/AutomationsController.php:475
-#: includes/Api/Controllers/AutomationsController.php:502
-#: includes/Api/Controllers/AutomationsController.php:527
-#: includes/Api/Controllers/AutomationsController.php:561
-#: includes/Api/Controllers/AutomationsController.php:589
-#: includes/Api/Controllers/AutomationsController.php:621
-#: includes/Api/Controllers/AutomationsController.php:662
-#: includes/Api/Controllers/AutomationsController.php:692
-#: includes/Api/Controllers/AutomationsController.php:728
-#: includes/Api/Controllers/AutomationsController.php:747
+#: includes/Api/Controllers/AutomationsController.php:321
+#: includes/Api/Controllers/AutomationsController.php:348
+#: includes/Api/Controllers/AutomationsController.php:362
+#: includes/Api/Controllers/AutomationsController.php:374
+#: includes/Api/Controllers/AutomationsController.php:387
+#: includes/Api/Controllers/AutomationsController.php:412
+#: includes/Api/Controllers/AutomationsController.php:425
+#: includes/Api/Controllers/AutomationsController.php:453
+#: includes/Api/Controllers/AutomationsController.php:476
+#: includes/Api/Controllers/AutomationsController.php:503
+#: includes/Api/Controllers/AutomationsController.php:528
+#: includes/Api/Controllers/AutomationsController.php:562
+#: includes/Api/Controllers/AutomationsController.php:590
+#: includes/Api/Controllers/AutomationsController.php:622
+#: includes/Api/Controllers/AutomationsController.php:663
+#: includes/Api/Controllers/AutomationsController.php:693
+#: includes/Api/Controllers/AutomationsController.php:729
+#: includes/Api/Controllers/AutomationsController.php:748
 #: includes/Api/Controllers/AutomationTemplatesController.php:153
 msgid "Automation not found"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:331
+#: includes/Api/Controllers/AutomationsController.php:332
 #: includes/Models/Automation.php:226
 msgid "Automation name is required"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:335
+#: includes/Api/Controllers/AutomationsController.php:336
 #: includes/Models/Automation.php:230
 msgid "Trigger type is required"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:341
+#: includes/Api/Controllers/AutomationsController.php:342
 msgid "Failed to create automation"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:367
+#: includes/Api/Controllers/AutomationsController.php:368
 msgid "Failed to update automation"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:376
+#: includes/Api/Controllers/AutomationsController.php:377
 msgid "Automation updated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:430
+#: includes/Api/Controllers/AutomationsController.php:431
 msgid "Automation has validation errors"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:442
+#: includes/Api/Controllers/AutomationsController.php:443
 msgid "Automation activated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:456
+#: includes/Api/Controllers/AutomationsController.php:457
 msgid "Only active automations can be paused"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:465
+#: includes/Api/Controllers/AutomationsController.php:466
 msgid "Automation paused successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:506
+#: includes/Api/Controllers/AutomationsController.php:507
 msgid "Automation is not active"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:514
+#: includes/Api/Controllers/AutomationsController.php:515
 msgid "Contact could not be enrolled (already enrolled or re-entry not yet allowed)."
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:517
+#: includes/Api/Controllers/AutomationsController.php:518
 msgid "Contact enrolled successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:547
-#: includes/Api/Controllers/AutomationsController.php:574
-#: includes/Api/Controllers/AutomationsController.php:595
-#: includes/Api/Controllers/AutomationsController.php:607
-#: includes/Api/Controllers/AutomationsController.php:627
+#: includes/Api/Controllers/AutomationsController.php:548
+#: includes/Api/Controllers/AutomationsController.php:575
+#: includes/Api/Controllers/AutomationsController.php:596
+#: includes/Api/Controllers/AutomationsController.php:608
+#: includes/Api/Controllers/AutomationsController.php:628
 msgid "Step not found"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:568
+#: includes/Api/Controllers/AutomationsController.php:569
 msgid "Failed to create step"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:577
+#: includes/Api/Controllers/AutomationsController.php:578
 msgid "Step created successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:601
+#: includes/Api/Controllers/AutomationsController.php:602
 msgid "Failed to update step"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:610
+#: includes/Api/Controllers/AutomationsController.php:611
 msgid "Step updated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:632
+#: includes/Api/Controllers/AutomationsController.php:633
 msgid "Cannot delete trigger step. Every automation must have a trigger. You can change the trigger type in settings."
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:648
+#: includes/Api/Controllers/AutomationsController.php:649
 msgid "Failed to delete step"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:651
+#: includes/Api/Controllers/AutomationsController.php:652
 msgid "Step deleted successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:681
+#: includes/Api/Controllers/AutomationsController.php:682
 msgid "Workflow saved successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:714
+#: includes/Api/Controllers/AutomationsController.php:715
 msgid "Failed to update positions"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:717
+#: includes/Api/Controllers/AutomationsController.php:718
 msgid "Positions updated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:734
+#: includes/Api/Controllers/AutomationsController.php:735
 msgid "Failed to reorder steps"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:737
+#: includes/Api/Controllers/AutomationsController.php:738
 msgid "Steps reordered successfully"
 msgstr ""
 
 #. translators: %1$d: number of automations processed successfully, %2$d: number that failed
-#: includes/Api/Controllers/AutomationsController.php:817
+#: includes/Api/Controllers/AutomationsController.php:818
 msgid "%1$d automations processed successfully, %2$d failed"
 msgstr ""
 
 #: includes/Api/Controllers/AutomationTemplatesController.php:79
 #: includes/Api/Controllers/AutomationTemplatesController.php:90
-#: includes/Api/Controllers/CampaignsController.php:721
-#: includes/Api/Controllers/EmailTemplatesController.php:207
-#: includes/Api/Controllers/EmailTemplatesController.php:269
-#: includes/Api/Controllers/EmailTemplatesController.php:299
-#: includes/Api/Controllers/EmailTemplatesController.php:345
-#: includes/Api/Controllers/EmailTemplatesController.php:375
-#: includes/Api/Controllers/EmailTemplatesController.php:423
-#: includes/Api/Controllers/EmailTemplatesController.php:443
-#: includes/Api/Controllers/EmailTemplatesController.php:473
-#: includes/Api/Controllers/EmailTemplatesController.php:505
-#: includes/Api/Controllers/EmailTemplatesController.php:571
+#: includes/Api/Controllers/CampaignsController.php:724
+#: includes/Api/Controllers/EmailTemplatesController.php:208
+#: includes/Api/Controllers/EmailTemplatesController.php:272
+#: includes/Api/Controllers/EmailTemplatesController.php:302
+#: includes/Api/Controllers/EmailTemplatesController.php:350
+#: includes/Api/Controllers/EmailTemplatesController.php:380
+#: includes/Api/Controllers/EmailTemplatesController.php:428
+#: includes/Api/Controllers/EmailTemplatesController.php:448
+#: includes/Api/Controllers/EmailTemplatesController.php:478
+#: includes/Api/Controllers/EmailTemplatesController.php:510
+#: includes/Api/Controllers/EmailTemplatesController.php:576
 msgid "Template not found"
 msgstr ""
 
@@ -7140,80 +7140,80 @@ msgstr ""
 msgid "Template imported successfully"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:222
-#: includes/Api/Controllers/CampaignsController.php:251
-#: includes/Api/Controllers/CampaignsController.php:265
-#: includes/Api/Controllers/CampaignsController.php:289
-#: includes/Api/Controllers/CampaignsController.php:302
-#: includes/Api/Controllers/CampaignsController.php:327
-#: includes/Api/Controllers/CampaignsController.php:342
-#: includes/Api/Controllers/CampaignsController.php:421
-#: includes/Api/Controllers/CampaignsController.php:627
-#: includes/Api/Controllers/CampaignsController.php:643
+#: includes/Api/Controllers/CampaignsController.php:223
+#: includes/Api/Controllers/CampaignsController.php:252
+#: includes/Api/Controllers/CampaignsController.php:266
+#: includes/Api/Controllers/CampaignsController.php:290
+#: includes/Api/Controllers/CampaignsController.php:303
+#: includes/Api/Controllers/CampaignsController.php:328
+#: includes/Api/Controllers/CampaignsController.php:343
+#: includes/Api/Controllers/CampaignsController.php:422
+#: includes/Api/Controllers/CampaignsController.php:630
+#: includes/Api/Controllers/CampaignsController.php:646
 #: includes/Services/EmailService.php:435
 #: includes/Services/EmailService.php:785
 msgid "Campaign not found"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:233
+#: includes/Api/Controllers/CampaignsController.php:234
 msgid "Campaign name is required"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:239
-#: includes/Api/Controllers/CampaignsController.php:271
+#: includes/Api/Controllers/CampaignsController.php:240
+#: includes/Api/Controllers/CampaignsController.php:272
 msgid "A valid From email address is required"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:245
+#: includes/Api/Controllers/CampaignsController.php:246
 msgid "Failed to create campaign"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:277
+#: includes/Api/Controllers/CampaignsController.php:278
 msgid "No updatable fields were provided"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:283
+#: includes/Api/Controllers/CampaignsController.php:284
 msgid "Failed to update campaign"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:354
+#: includes/Api/Controllers/CampaignsController.php:355
 msgid "Campaign scheduled successfully"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:372
+#: includes/Api/Controllers/CampaignsController.php:373
 msgid "This campaign has already been sent. Duplicate it to send again."
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:373
+#: includes/Api/Controllers/CampaignsController.php:374
 msgid "This campaign cannot be activated."
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:425
+#: includes/Api/Controllers/CampaignsController.php:426
 msgid "Only active campaigns can be paused"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:432
+#: includes/Api/Controllers/CampaignsController.php:433
 msgid "Campaign paused successfully"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:442
+#: includes/Api/Controllers/CampaignsController.php:443
 msgid "Add an email subject before activating this campaign."
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:446
+#: includes/Api/Controllers/CampaignsController.php:447
 msgid "Add email content before activating this campaign."
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:456
+#: includes/Api/Controllers/CampaignsController.php:457
 msgid "Select at least one recipient target before activating this campaign."
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:660
+#: includes/Api/Controllers/CampaignsController.php:663
 msgid "Unknown analytics type"
 msgstr ""
 
 #. translators: %1$d: number of campaigns processed successfully, %2$d: number that failed
-#: includes/Api/Controllers/CampaignsController.php:783
+#: includes/Api/Controllers/CampaignsController.php:786
 msgid "%1$d campaigns processed successfully, %2$d failed"
 msgstr ""
 
@@ -7251,7 +7251,7 @@ msgstr ""
 
 #: includes/Api/Controllers/ContactsController.php:206
 #: includes/Services/EmailService.php:789
-#: includes/Services/EmailService.php:1529
+#: includes/Services/EmailService.php:1533
 msgid "Invalid email address"
 msgstr ""
 
@@ -7421,15 +7421,15 @@ msgstr ""
 #: includes/Api/Controllers/EmailProviderController.php:136
 #: includes/Api/Controllers/EmailProviderController.php:169
 #: includes/Api/Controllers/EmailProviderController.php:184
-#: includes/Api/Controllers/EmailProviderController.php:213
-#: includes/Api/Controllers/EmailProviderController.php:227
-#: includes/Api/Controllers/EmailProviderController.php:282
-#: includes/Api/Controllers/EmailProviderController.php:312
-#: includes/Api/Controllers/EmailProviderController.php:349
-#: includes/Api/Controllers/EmailProviderController.php:403
-#: includes/Api/Controllers/EmailProviderController.php:422
-#: includes/Api/Controllers/EmailProviderController.php:448
-#: includes/Api/Controllers/EmailProviderController.php:714
+#: includes/Api/Controllers/EmailProviderController.php:229
+#: includes/Api/Controllers/EmailProviderController.php:243
+#: includes/Api/Controllers/EmailProviderController.php:298
+#: includes/Api/Controllers/EmailProviderController.php:328
+#: includes/Api/Controllers/EmailProviderController.php:365
+#: includes/Api/Controllers/EmailProviderController.php:419
+#: includes/Api/Controllers/EmailProviderController.php:438
+#: includes/Api/Controllers/EmailProviderController.php:464
+#: includes/Api/Controllers/EmailProviderController.php:747
 msgid "Email provider not found"
 msgstr ""
 
@@ -7441,180 +7441,180 @@ msgstr ""
 msgid "Email provider created successfully"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:204
+#: includes/Api/Controllers/EmailProviderController.php:220
 msgid "Failed to update email provider"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:218
+#: includes/Api/Controllers/EmailProviderController.php:234
 msgid "Email provider updated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:234
+#: includes/Api/Controllers/EmailProviderController.php:250
 msgid "Email provider deleted successfully"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:259
-#: includes/Api/Controllers/EmailProviderController.php:287
-#: includes/Api/Controllers/EmailProviderController.php:374
+#: includes/Api/Controllers/EmailProviderController.php:275
+#: includes/Api/Controllers/EmailProviderController.php:303
+#: includes/Api/Controllers/EmailProviderController.php:390
 msgid "Invalid email provider type"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:269
+#: includes/Api/Controllers/EmailProviderController.php:285
 msgid "Connection successful! This provider is configured correctly."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:354
+#: includes/Api/Controllers/EmailProviderController.php:370
 msgid "Adding sender emails is only supported for Amazon SES connections."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:362
+#: includes/Api/Controllers/EmailProviderController.php:378
 msgid "Please provide a valid email address."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:366
+#: includes/Api/Controllers/EmailProviderController.php:382
 msgid "This email is already a sender on this connection."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:381
+#: includes/Api/Controllers/EmailProviderController.php:397
 msgid "Invalid email address! Please use a verified domain."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:391
+#: includes/Api/Controllers/EmailProviderController.php:407
 msgid "This email is already used by another connection."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:408
+#: includes/Api/Controllers/EmailProviderController.php:424
 msgid "Sender email added."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:427
+#: includes/Api/Controllers/EmailProviderController.php:443
 msgid "Removing sender emails is only supported for Amazon SES connections."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:437
+#: includes/Api/Controllers/EmailProviderController.php:453
 msgid "This email is not a manually-added sender on this connection."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:453
+#: includes/Api/Controllers/EmailProviderController.php:469
 msgid "Sender email removed."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:498
+#: includes/Api/Controllers/EmailProviderController.php:514
 msgid "Name is required"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:503
-#: includes/Api/Controllers/EmailProviderController.php:738
+#: includes/Api/Controllers/EmailProviderController.php:519
+#: includes/Api/Controllers/EmailProviderController.php:771
 msgid "A valid provider type is required"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:508
+#: includes/Api/Controllers/EmailProviderController.php:524
 msgid "Sender email is required"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:510
+#: includes/Api/Controllers/EmailProviderController.php:526
 msgid "Sender email is invalid"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:514
+#: includes/Api/Controllers/EmailProviderController.php:530
 msgid "Reply-to email is invalid"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:614
+#: includes/Api/Controllers/EmailProviderController.php:630
 msgid "SMTP host"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:627
-#: includes/Api/Controllers/EmailProviderController.php:635
+#: includes/Api/Controllers/EmailProviderController.php:643
+#: includes/Api/Controllers/EmailProviderController.php:651
 msgid "API key"
 msgstr ""
 
 #. translators: %s: comma-separated list of missing credential fields
-#: includes/Api/Controllers/EmailProviderController.php:643
+#: includes/Api/Controllers/EmailProviderController.php:659
 msgid "Missing required credentials: %s"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:762
+#: includes/Api/Controllers/EmailProviderController.php:795
 msgid "Too many test attempts. Please wait a minute and try again."
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:96
+#: includes/Api/Controllers/EmailTemplatesController.php:97
 msgid "A valid recipient email is required"
 msgstr ""
 
 #. translators: %s: email subject line
-#: includes/Api/Controllers/EmailTemplatesController.php:110
+#: includes/Api/Controllers/EmailTemplatesController.php:111
 #: includes/Services/EmailService.php:838
-#: includes/Services/EmailService.php:1570
+#: includes/Services/EmailService.php:1574
 msgid "[TEST] %s"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:115
+#: includes/Api/Controllers/EmailTemplatesController.php:116
 msgid "Template content is empty"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:128
+#: includes/Api/Controllers/EmailTemplatesController.php:129
 #: includes/Services/EmailService.php:795
-#: includes/Services/EmailService.php:1535
+#: includes/Services/EmailService.php:1539
 msgid "That address belongs to a contact who is not accepting email."
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:189
+#: includes/Api/Controllers/EmailTemplatesController.php:190
 msgid "Failed to fetch templates"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:216
+#: includes/Api/Controllers/EmailTemplatesController.php:217
 msgid "Failed to fetch template"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:232
+#: includes/Api/Controllers/EmailTemplatesController.php:233
 msgid "Template name is required"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:259
-#: includes/Api/Controllers/EmailTemplatesController.php:281
+#: includes/Api/Controllers/EmailTemplatesController.php:262
+#: includes/Api/Controllers/EmailTemplatesController.php:284
 msgid "Failed to create template"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:335
-#: includes/Api/Controllers/EmailTemplatesController.php:357
+#: includes/Api/Controllers/EmailTemplatesController.php:340
+#: includes/Api/Controllers/EmailTemplatesController.php:362
 msgid "Failed to update template"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:353
+#: includes/Api/Controllers/EmailTemplatesController.php:358
 msgid "Template updated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:383
+#: includes/Api/Controllers/EmailTemplatesController.php:388
 msgid "Cannot delete predefined templates"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:433
-#: includes/Api/Controllers/EmailTemplatesController.php:455
+#: includes/Api/Controllers/EmailTemplatesController.php:438
+#: includes/Api/Controllers/EmailTemplatesController.php:460
 msgid "Failed to toggle favorite"
 msgstr ""
 
 #. translators: %s: original template name
-#: includes/Api/Controllers/EmailTemplatesController.php:481
+#: includes/Api/Controllers/EmailTemplatesController.php:486
 msgid "%s (Copy)"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:553
+#: includes/Api/Controllers/EmailTemplatesController.php:558
 msgid "Failed to fetch predefined templates"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:582
+#: includes/Api/Controllers/EmailTemplatesController.php:587
 msgid "Failed to preview template"
 msgstr ""
 
 #: includes/Api/Controllers/ListsController.php:97
 #: includes/Api/Controllers/ListsController.php:147
-#: includes/Api/Controllers/ListsController.php:182
+#: includes/Api/Controllers/ListsController.php:188
 msgid "List not found"
 msgstr ""
 
 #: includes/Api/Controllers/ListsController.php:115
-#: includes/Api/Controllers/ListsController.php:154
+#: includes/Api/Controllers/ListsController.php:158
 msgid "List name is required"
 msgstr ""
 
@@ -7626,7 +7626,7 @@ msgstr ""
 msgid "Failed to create list"
 msgstr ""
 
-#: includes/Api/Controllers/ListsController.php:163
+#: includes/Api/Controllers/ListsController.php:169
 msgid "Failed to update list"
 msgstr ""
 
@@ -7689,12 +7689,12 @@ msgstr ""
 
 #: includes/Api/Controllers/TagsController.php:89
 #: includes/Api/Controllers/TagsController.php:133
-#: includes/Api/Controllers/TagsController.php:165
+#: includes/Api/Controllers/TagsController.php:171
 msgid "Tag not found"
 msgstr ""
 
 #: includes/Api/Controllers/TagsController.php:104
-#: includes/Api/Controllers/TagsController.php:140
+#: includes/Api/Controllers/TagsController.php:144
 msgid "Tag name is required"
 msgstr ""
 
@@ -7706,7 +7706,7 @@ msgstr ""
 msgid "Failed to create tag"
 msgstr ""
 
-#: includes/Api/Controllers/TagsController.php:149
+#: includes/Api/Controllers/TagsController.php:155
 msgid "Failed to update tag"
 msgstr ""
 
@@ -7943,7 +7943,7 @@ msgid "Email skipped: contact %1$s is %2$s."
 msgstr ""
 
 #: includes/Processors/ActionProcessor.php:112
-#: includes/Services/EmailService.php:1549
+#: includes/Services/EmailService.php:1553
 msgid "Automated Email"
 msgstr ""
 
@@ -8589,7 +8589,7 @@ msgstr ""
 msgid "Contact %1$d is not mailable (status: %2$s)"
 msgstr ""
 
-#: includes/Services/EmailService.php:1782
+#: includes/Services/EmailService.php:1786
 msgid "Unknown error occurred"
 msgstr ""
 

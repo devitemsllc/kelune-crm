@@ -1,1 +1,0 @@
-import{j as m}from"../main.BZweq4YF.js";import{A as c}from"./antd.Ihg4r4zD.js";const f=({email:r,first_name:a,last_name:o,avatar_url:s,size:n,style:e})=>{var t;const i=(t=(`${a??""} ${o??""}`.trim()||r||"?")[0])==null?void 0:t.toUpperCase();return m.jsx(c,{size:n,src:s||void 0,style:{flexShrink:0,...e},children:i})};export{f as C};

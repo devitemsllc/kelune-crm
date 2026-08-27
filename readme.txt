@@ -3,7 +3,7 @@ Contributors: devitemsllc, nazmulhudadev, aslamhasib
 Tags: crm, contacts, email marketing, marketing automation, email campaigns
 Requires at least: 6.6
 Tested up to: 7.1
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -182,6 +182,12 @@ Used to deliver email when you select SMTP as your email provider. This is not a
 
 == Changelog ==
 
+= Version: 1.0.3 - Date: 27 August, 2026 =
+* Fixed: Editing one field on a contact, tag, list or email connection no longer clears other saved details.
+* Fixed: A stray line of styling text at the top of emails built with the email designer.
+* Fixed: Email connection passwords containing special characters are now saved exactly as typed.
+* Fixed: Minor bugs and issues to enhance functionality and user experience.
+
 = Version: 1.0.2 - Date: 23 August, 2026 =
 * Added: Country and Address Line 2 fields for contact.
 * Updated: Help and upgrade links throughout the dashboard.
@@ -198,6 +204,9 @@ Used to deliver email when you select SMTP as your email provider. This is not a
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.0.3 =
+Fixes edits that could clear other saved details on a contact or email connection, and removes a stray line of styling text from designed emails.
 
 = 1.0.2 =
 Adds Country and Address Line 2 fields for contacts, updates the dashboard help and upgrade links, plus minor bug fixes.

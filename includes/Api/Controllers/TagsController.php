@@ -133,19 +133,25 @@ class TagsController extends BaseController
             return $this->errorResponse(__('Tag not found', 'kelune-crm'), 'not_found', 404);
         }
 
-        $name = sanitize_text_field($request->get_param('name'));
-        $description = sanitize_textarea_field($request->get_param('description'));
+        // Only the fields the request carried are written; an omitted field
+        // keeps its stored value.
+        $data = [];
 
-        if (empty($name)) {
-            return $this->errorResponse(__('Tag name is required', 'kelune-crm'), 'name_required');
+        if ($request->has_param('name')) {
+            $name = sanitize_text_field((string) $request->get_param('name'));
+
+            if ('' === $name) {
+                return $this->errorResponse(__('Tag name is required', 'kelune-crm'), 'name_required');
+            }
+
+            $data['name'] = $name;
         }
 
-        $updated = $this->repository->update($id, [
-            'name' => $name,
-            'description' => $description,
-        ]);
+        if ($request->has_param('description')) {
+            $data['description'] = sanitize_textarea_field((string) $request->get_param('description'));
+        }
 
-        if (!$updated) {
+        if ([] !== $data && !$this->repository->update($id, $data)) {
             return $this->errorResponse(__('Failed to update tag', 'kelune-crm'), 'update_failed', 500);
         }
 

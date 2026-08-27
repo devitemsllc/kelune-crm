@@ -6,6 +6,7 @@ namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Models\Campaign;
 use KeluneCRM\Repositories\CampaignRepository;
+use KeluneCRM\Services\EmailHtmlRenderer;
 use KeluneCRM\Services\EmailService;
 
 class CampaignsController extends BaseController
@@ -519,7 +520,9 @@ class CampaignsController extends BaseController
         }
 
         if (isset($data['email_content'])) {
-            $clean['email_content'] = wp_kses_post((string) $data['email_content']);
+            $clean['email_content'] = EmailHtmlRenderer::stripStyleArtifact(
+                wp_kses_post((string) $data['email_content'])
+            );
         }
 
         if (array_key_exists('email_provider_id', $data)) {

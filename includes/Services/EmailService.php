@@ -1400,6 +1400,8 @@ class EmailService
      */
     private function appendGlobalFooter(string $content): string
     {
+        $content = EmailHtmlRenderer::stripStyleArtifact($content);
+
         if (preg_match(self::GLOBAL_FOOTER_MARKER_PATTERN, $content, $m)) {
             $footer = EmailHtmlRenderer::colorizeAnchors($this->globalFooterContent(), $m[1]);
             return str_replace($m[0], $footer, $content);
@@ -1425,6 +1427,8 @@ class EmailService
         // An unresolved {{unsubscribe_url}} would ship as literal text, so with
         // no URL to point at, drop the tag rather than render it raw.
         $extra = ['{{unsubscribe_url}}' => $unsubscribe_url !== '' ? esc_url($unsubscribe_url) : ''];
+
+        $content = EmailHtmlRenderer::stripStyleArtifact($content);
 
         if (preg_match(self::GLOBAL_FOOTER_MARKER_PATTERN, $content, $m)) {
             $footer = $this->globalFooterContent();

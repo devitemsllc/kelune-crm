@@ -13,6 +13,7 @@ import {
   GLOBAL_FOOTER_MARKER_RE,
   EMAIL_DOC_MARKER_RE,
   colorizeAnchors,
+  stripStyleArtifact,
 } from '@/utils/emailHtml';
 
 // Injected into every preview iframe (modal + builder): margins reset so the
@@ -38,7 +39,10 @@ export const getFooterPreviewContent = (): string =>
  * a fragment (rich-text / HTML / plain-text) gets the wrapped global footer
  * appended, sized to the content width when the body is a full document.
  */
-export const resolveFooterForPreview = (html: string): string => {
+export const resolveFooterForPreview = (rawHtml: string): string => {
+  // Preview must match what the send pipeline sends, which drops the
+  // sanitizer's leftover CSS line.
+  const html = stripStyleArtifact(rawHtml);
   const marker = html.match(GLOBAL_FOOTER_MARKER_RE);
   if (marker) {
     // marker[1] is the template's footer link colour, inlined onto the footer's

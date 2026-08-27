@@ -186,14 +186,30 @@ class EmailProviderController extends BaseController
 
         $data = $request->get_json_params() ?: [];
 
-        // Merge for validation so an unchanged provider_type/sender still validates.
+        // Only changed fields arrive, so sanitize the payload merged over the
+        // stored record; absent keys keep their stored value.
         $merged = array_merge($existing->toArray(), $data);
         $validated = $this->validateInput($merged);
         if (is_wp_error($validated)) {
             return $validated;
         }
 
-        $clean = $this->sanitizeInputData($data, $existing->credentials, $existing->settings);
+        $clean = $this->sanitizeInputData($merged, $existing->credentials, $existing->settings);
+
+        // Structured blobs, not text columns: an omitted one keeps its stored
+        // value verbatim rather than round-tripping secrets through a sanitizer.
+        if (!array_key_exists('credentials', $data)) {
+            $clean['credentials'] = $existing->credentials;
+        }
+        if (!array_key_exists('settings', $data)) {
+            $clean['settings'] = $existing->settings;
+        }
+
+        // Promoting a connection to default is an explicit request, never a
+        // side effect of carrying the stored flag forward.
+        if (!array_key_exists('is_default', $data)) {
+            unset($clean['is_default']);
+        }
 
         $credentials_valid = $this->validateCredentials($clean['provider_type'], $clean['credentials']);
         if (is_wp_error($credentials_valid)) {
@@ -650,6 +666,23 @@ class EmailProviderController extends BaseController
     }
 
     /**
+     * Sanitize one credential value.
+     *
+     * Control characters are dropped so a value cannot inject a line into the
+     * SMTP conversation or an API request; every printable character is kept.
+     * A markup-aware sanitizer would silently mangle a password holding angle
+     * brackets and break authentication.
+     *
+     * @param mixed $value
+     */
+    private function sanitizeCredentialValue($value): string
+    {
+        $clean = preg_replace('/[\x00-\x1F\x7F]/', '', (string) $value);
+
+        return trim($clean ?? '');
+    }
+
+    /**
      * Sanitize provider-specific credentials, preserving unchanged secrets.
      *
      * @param mixed $raw
@@ -666,7 +699,7 @@ class EmailProviderController extends BaseController
             if ($value === '' || $value === self::SECRET_MASK) {
                 return (string) ($existing[$key] ?? '');
             }
-            return trim(sanitize_text_field((string) $value));
+            return $this->sanitizeCredentialValue($value);
         };
 
         switch ($type) {

@@ -6,6 +6,7 @@ namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Repositories\AutomationRepository;
 use KeluneCRM\Repositories\AutomationStepRepository;
+use KeluneCRM\Services\EmailHtmlRenderer;
 use KeluneCRM\Services\EmailService;
 
 class AutomationsController extends BaseController
@@ -993,7 +994,9 @@ class AutomationsController extends BaseController
                     'subject' => sanitize_text_field((string) ($config['subject'] ?? '')),
                     // Inbox preview text (preheader); display text, so header-safe.
                     'preview_text' => sanitize_text_field((string) ($config['preview_text'] ?? '')),
-                    'body' => wp_kses_post((string) ($config['body'] ?? '')),
+                    'body' => EmailHtmlRenderer::stripStyleArtifact(
+                        wp_kses_post((string) ($config['body'] ?? ''))
+                    ),
                 ];
 
                 if (isset($config['content_mode'])) {
