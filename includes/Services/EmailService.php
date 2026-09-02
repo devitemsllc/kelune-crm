@@ -152,6 +152,12 @@ class EmailService
         string $custom_reply_to = '',
         array $extras = []
     ) {
+        $to = trim($to);
+
+        if (!is_email($to)) {
+            return new \WP_Error('invalid_recipient', __('No valid recipient email address.', 'kelune-crm'));
+        }
+
         $from_email = sanitize_email($this->firstNonEmpty(
             $custom_from_email,
             $provider ? $provider->sender_email : '',
@@ -496,7 +502,7 @@ class EmailService
         foreach ($contact_ids as $contact_id) {
             $contact = $this->getContact((int) $contact_id);
 
-            if (!$contact || empty($contact['email'])) {
+            if (!$contact || !is_email((string) ($contact['email'] ?? ''))) {
                 continue;
             }
 
@@ -649,15 +655,17 @@ class EmailService
         // queued and sent, so this is the check that actually honours it. Cancel
         // the row rather than delete it, to keep an audit trail.
         if (!Contact::isSendableStatus($contact['status'] ?? null)) {
+            $reason = sprintf(
+                /* translators: %s: contact status, e.g. unsubscribed */
+                __('Not sent: the contact is %s.', 'kelune-crm'),
+                (string) ($contact['status'] ?? '')
+            );
+
             $this->db->update(
                 $this->campaignEmailsTable,
                 [
                     'status' => 'cancelled',
-                    'error_message' => sprintf(
-                        /* translators: %s: contact status, e.g. unsubscribed */
-                        __('Not sent: the contact is %s.', 'kelune-crm'),
-                        (string) ($contact['status'] ?? '')
-                    ),
+                    'error_message' => $reason,
                     'updated_at' => current_time('mysql', true),
                 ],
                 ['id' => $campaign_email_id]
@@ -665,10 +673,7 @@ class EmailService
 
             $email_log = $this->emailLogService->getByTrackingToken($email['tracking_token']);
             if ($email_log) {
-                $this->emailLogService->logEmailCancelled(
-                    (int) $email_log->id,
-                    (string) ($contact['status'] ?? '')
-                );
+                $this->emailLogService->logEmailCancelled((int) $email_log->id, $reason);
             }
 
             return new \WP_Error(
@@ -678,6 +683,37 @@ class EmailService
                     __('Contact %1$d is not mailable (status: %2$s)', 'kelune-crm'),
                     (int) $email['contact_id'],
                     (string) ($contact['status'] ?? '')
+                )
+            );
+        }
+
+        $recipient = sanitize_email((string) ($contact['email'] ?? ''));
+
+        // The address can be cleared between queueing and sending.
+        if (!is_email($recipient)) {
+            $reason = __('Not sent: the contact has no valid email address.', 'kelune-crm');
+
+            $this->db->update(
+                $this->campaignEmailsTable,
+                [
+                    'status' => 'cancelled',
+                    'error_message' => $reason,
+                    'updated_at' => current_time('mysql', true),
+                ],
+                ['id' => $campaign_email_id]
+            );
+
+            $email_log = $this->emailLogService->getByTrackingToken($email['tracking_token']);
+            if ($email_log) {
+                $this->emailLogService->logEmailCancelled((int) $email_log->id, $reason);
+            }
+
+            return new \WP_Error(
+                'contact_no_email',
+                sprintf(
+                    /* translators: %d: contact ID */
+                    __('Contact %d has no valid email address', 'kelune-crm'),
+                    (int) $email['contact_id']
                 )
             );
         }
@@ -716,7 +752,7 @@ class EmailService
         $provider = $this->resolveProvider($campaign->email_provider_id);
         $sent = $this->dispatch(
             $provider,
-            $contact['email'],
+            $recipient,
             $subject,
             $content,
             $parts['from_name'],

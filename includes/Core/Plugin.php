@@ -343,6 +343,8 @@ class Plugin
                 // surfaces (nav items, pages) only while Pro is active.
                 'pro_active' => $this->isProActive(),
                 'features' => $this->getFeatures(),
+                // An array: wp_localize_script stringifies top-level scalars.
+                'contact_required_fields' => \KeluneCRM\Support\ContactIdentity::requiredFields(),
             ];
 
             /** @var array<string, mixed> $config */

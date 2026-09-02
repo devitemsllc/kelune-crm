@@ -29,6 +29,7 @@ import { countryOptions } from '../../utils/countries';
 import { ListSelect, TagSelect } from '@/components/common/AudienceSelect';
 import type { Contact, Tag, ContactList, Note } from '@/types/models';
 import SubmitOnEnter from '../common/SubmitOnEnter';
+import { contactFieldLabel, isContactRequired } from '@/utils/contactIdentity';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -101,7 +102,12 @@ const ContactForm = ({ contact, form, onSubmit }: ContactFormProps) => {
               fieldDef.field_type === 'datetime')
           ) {
             if (value && typeof value === 'string') {
-              contactData[`custom_field__${fieldKey}`] = dayjs(value);
+              // An unreadable stored value leaves the field empty rather than
+              // rendering as an invalid date.
+              const parsed = dayjs(value);
+              contactData[`custom_field__${fieldKey}`] = parsed.isValid()
+                ? parsed
+                : undefined;
             } else {
               contactData[`custom_field__${fieldKey}`] = value;
             }
@@ -135,6 +141,21 @@ const ContactForm = ({ contact, form, onSubmit }: ContactFormProps) => {
       __('Note will be deleted when you save the contact', 'kelune-crm')
     );
   };
+
+  // A plain required rule is also what draws the field's required mark.
+  const requiredRule = (field: string) =>
+    isContactRequired(field)
+      ? [
+          {
+            required: true,
+            message: sprintf(
+              // translators: %s: field label, e.g. "First Name".
+              __('%s is required', 'kelune-crm'),
+              contactFieldLabel(field)
+            ),
+          },
+        ]
+      : [];
 
   const handleSubmit = (values: Record<string, unknown>) => {
     // Extract custom fields from form values
@@ -295,12 +316,7 @@ const ContactForm = ({ contact, form, onSubmit }: ContactFormProps) => {
           <Form.Item
             name="first_name"
             label={__('First Name', 'kelune-crm')}
-            rules={[
-              {
-                required: true,
-                message: __('Please enter first name', 'kelune-crm'),
-              },
-            ]}
+            rules={requiredRule('first_name')}
           >
             <Input placeholder={__('John', 'kelune-crm')} />
           </Form.Item>
@@ -309,12 +325,7 @@ const ContactForm = ({ contact, form, onSubmit }: ContactFormProps) => {
           <Form.Item
             name="last_name"
             label={__('Last Name', 'kelune-crm')}
-            rules={[
-              {
-                required: true,
-                message: __('Please enter last name', 'kelune-crm'),
-              },
-            ]}
+            rules={requiredRule('last_name')}
           >
             <Input placeholder={__('Doe', 'kelune-crm')} />
           </Form.Item>
@@ -325,12 +336,9 @@ const ContactForm = ({ contact, form, onSubmit }: ContactFormProps) => {
         name="email"
         label={__('Email', 'kelune-crm')}
         rules={[
+          ...requiredRule('email'),
           {
-            required: true,
-            message: __('Please enter email', 'kelune-crm'),
-          },
-          {
-            type: 'email',
+            type: 'email' as const,
             message: __('Please enter valid email', 'kelune-crm'),
           },
         ]}
@@ -340,12 +348,20 @@ const ContactForm = ({ contact, form, onSubmit }: ContactFormProps) => {
 
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name="phone" label={__('Phone', 'kelune-crm')}>
+          <Form.Item
+            name="phone"
+            label={__('Phone', 'kelune-crm')}
+            rules={requiredRule('phone')}
+          >
             <Input placeholder={__('+1 234 567 8900', 'kelune-crm')} />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="company" label={__('Company', 'kelune-crm')}>
+          <Form.Item
+            name="company"
+            label={__('Company', 'kelune-crm')}
+            rules={requiredRule('company')}
+          >
             <Input placeholder={__('ACME Inc.', 'kelune-crm')} />
           </Form.Item>
         </Col>

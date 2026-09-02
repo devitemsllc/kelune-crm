@@ -6,6 +6,7 @@ namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Models\Contact;
 use KeluneCRM\Repositories\ContactRepository;
+use KeluneCRM\Support\ContactIdentity;
 
 class ContactsController extends BaseController
 {
@@ -202,8 +203,9 @@ class ContactsController extends BaseController
         unset($data['notes'], $data['tag_ids'], $data['list_ids']);
         unset($data['deleted_note_ids']); // Not a contact column; only relevant on update
 
-        if (!$this->validateEmail((string) ($data['email'] ?? ''))) {
-            return $this->errorResponse(__('Invalid email address', 'kelune-crm'), 'invalid_email');
+        $problem = $this->checkRequiredFields($data);
+        if ($problem !== null) {
+            return $problem;
         }
 
         // Mirror the column default rather than leaving a new contact statusless.
@@ -211,8 +213,17 @@ class ContactsController extends BaseController
             $data['status'] = Contact::STATUS_ACTIVE;
         }
 
-        if ($this->repository->findByEmail((string) $data['email'])) {
+        if ($this->repository->findByEmail((string) ($data['email'] ?? ''))) {
             return $this->errorResponse(__('Email already exists', 'kelune-crm'), 'email_exists');
+        }
+
+        // No address means no unique index to catch a repeat.
+        if (trim((string) ($data['email'] ?? '')) === ''
+            && $this->repository->findAddresslessMatch(ContactIdentity::duplicateValues($data))) {
+            return $this->errorResponse(
+                __('A contact with these details already exists', 'kelune-crm'),
+                'contact_exists'
+            );
         }
 
         // Drop the fields the request didn't carry so the column defaults apply
@@ -256,6 +267,11 @@ class ContactsController extends BaseController
         }
 
         $data = $this->prepareItemForDatabase($request);
+
+        $problem = $this->checkRequiredFields($data, $contact->toArray());
+        if ($problem !== null) {
+            return $problem;
+        }
 
         $notes = isset($data['notes']) ? $data['notes'] : null;
         $tag_ids = array_key_exists('tag_ids', $data) ? $data['tag_ids'] : null;
@@ -639,6 +655,7 @@ class ContactsController extends BaseController
         }
 
         $columns = $this->importableFields();
+        $customFieldTypes = $this->customFieldTypes();
         $tagRepository = new \KeluneCRM\Repositories\TagRepository();
         $listRepository = new \KeluneCRM\Repositories\ListRepository();
 
@@ -656,19 +673,7 @@ class ContactsController extends BaseController
                 continue;
             }
 
-            $email = $this->validateEmail(sanitize_email((string) ($row['email'] ?? '')));
-            if ($email === false) {
-                $skipped++;
-                $errors[] = [
-                    'row' => $line,
-                    'email' => (string) ($row['email'] ?? ''),
-                    'message' => __('Missing or invalid email', 'kelune-crm'),
-                ];
-                continue;
-            }
-
-            // Build the sanitized contact payload from known importable fields.
-            $data = ['email' => $email];
+            $data = [];
             foreach (array_keys($columns) as $field) {
                 if ($field === 'email' || !array_key_exists($field, $row)) {
                     continue;
@@ -681,8 +686,58 @@ class ContactsController extends BaseController
                 $data[$field] = $this->sanitizeInput($row[$field], $type);
             }
 
+            $supplied = is_scalar($row['email'] ?? null) ? trim((string) $row['email']) : '';
+
+            // Judged as written: sanitize_email() edits rather than rejects, so
+            // 'A Name <a@b.com>' would import under the address 'AName@b.com'.
+            if ($supplied !== '' && !is_email($supplied)) {
+                $skipped++;
+                $errors[] = [
+                    'row' => $line,
+                    'email' => $supplied,
+                    'message' => __('Invalid email address', 'kelune-crm'),
+                ];
+                continue;
+            }
+
+            $email = $supplied === '' ? '' : sanitize_email($supplied);
+            $data['email'] = $email;
+
             try {
-                $existing = $this->repository->findByEmail($email);
+                // Without an address, matched on the duplicate-match columns so
+                // re-importing a file updates rather than repeats.
+                $existing = $email === ''
+                    ? $this->repository->findAddresslessMatch(ContactIdentity::duplicateValues($data))
+                    : $this->repository->findByEmail($email);
+
+                $customValues = $this->extractRowCustomFields($row, $customFieldTypes);
+
+                // Merged onto what is stored, so a file carrying one custom
+                // column leaves the other custom values alone.
+                if ($customValues !== []) {
+                    $storedCustom = $existing ? $existing->get('custom_fields') : null;
+                    $data['custom_fields'] = $this->sanitizeCustomFields(array_merge(
+                        is_array($storedCustom) ? $storedCustom : [],
+                        $customValues
+                    ));
+                }
+
+                // Judged against what the row leaves behind: an omitted column
+                // keeps its stored value, one carried empty blanks it.
+                $missing = ContactIdentity::missingFields(
+                    $data,
+                    $existing ? $existing->toArray() : []
+                );
+
+                if ($missing !== []) {
+                    $skipped++;
+                    $errors[] = [
+                        'row' => $line,
+                        'email' => $email,
+                        'message' => $this->requiredFieldsMessage($missing),
+                    ];
+                    continue;
+                }
 
                 if ($existing) {
                     $id = (int) $existing->getId();
@@ -760,6 +815,152 @@ class ContactsController extends BaseController
         if ($ids !== []) {
             $attach(array_values(array_unique($ids)));
         }
+    }
+
+    /**
+     * Defined custom fields, as field key => field type. An import column not
+     * listed here is ignored rather than written into the contact's JSON.
+     *
+     * @return array<string, string>
+     */
+    private function customFieldTypes(): array
+    {
+        $types = [];
+
+        foreach ((new \KeluneCRM\Repositories\CustomFieldRepository())->getAll(['per_page' => 500]) as $field) {
+            $key = (string) $field->field_key;
+
+            if ($key !== '') {
+                $types[$key] = (string) $field->field_type;
+            }
+        }
+
+        return $types;
+    }
+
+    /**
+     * Pull the custom_field__<key> columns out of an import row.
+     *
+     * @param array<array-key, mixed> $row
+     * @param array<string, string> $customFieldTypes
+     * @return array<string, string|array<int, string>>
+     */
+    private function extractRowCustomFields(array $row, array $customFieldTypes): array
+    {
+        $values = [];
+        $prefix = 'custom_field__';
+
+        foreach ($row as $column => $value) {
+            if (!is_string($column) || strpos($column, $prefix) !== 0) {
+                continue;
+            }
+
+            $key = substr($column, strlen($prefix));
+
+            if (!isset($customFieldTypes[$key]) || !is_scalar($value)) {
+                continue;
+            }
+
+            $value = trim((string) $value);
+            $type = $customFieldTypes[$key];
+
+            // Stored in the format the contact editor's date picker reads back;
+            // an unrecognised cell is left out rather than stored as text.
+            if ($type === 'date' || $type === 'datetime') {
+                $date = $this->normalizeDateValue($value, $type === 'datetime');
+
+                if ($date === null) {
+                    continue;
+                }
+
+                $values[$key] = $date;
+
+                continue;
+            }
+
+            // Checkbox cells carry their values comma-separated, like tags.
+            if ($type === 'checkbox') {
+                $values[$key] = $value === ''
+                    ? []
+                    : array_values(array_filter(
+                        array_map('trim', explode(',', $value)),
+                        static fn (string $choice): bool => $choice !== ''
+                    ));
+
+                continue;
+            }
+
+            $values[$key] = $value;
+        }
+
+        return $values;
+    }
+
+    /**
+     * Canonicalise an imported date cell, or null when it holds no recognised
+     * date. A custom date field is a calendar date, so no time zone conversion.
+     */
+    private function normalizeDateValue(string $value, bool $withTime): ?string
+    {
+        if ($value === '') {
+            return '';
+        }
+
+        foreach ($this->dateInputFormats($withTime) as $format) {
+            // '!' zeroes the parts the format omits, so a bare date lands on
+            // midnight instead of the current time.
+            $date = \DateTimeImmutable::createFromFormat('!' . $format, $value);
+
+            // createFromFormat rolls an overflowing part forward, so a parse
+            // only counts when it writes back exactly as it came in.
+            if ($date instanceof \DateTimeImmutable && $date->format($format) === $value) {
+                return $date->format($withTime ? 'Y-m-d H:i:s' : 'Y-m-d');
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Date formats an import cell is tried against, most specific first.
+     *
+     * @return list<string>
+     */
+    private function dateInputFormats(bool $withTime): array
+    {
+        $dayFirst = ['d/m/Y', 'j/n/Y', 'd-m-Y', 'j-n-Y', 'd.m.Y', 'j.n.Y', 'd/m/y', 'j/n/y'];
+        $monthFirst = ['m/d/Y', 'n/j/Y', 'm-d-Y', 'n-j-Y', 'm/d/y', 'n/j/y'];
+
+        $dates = array_merge(
+            ['Y-m-d', 'Y/m/d', 'Y.m.d'],
+            $this->siteDatePrefersDayFirst()
+                ? array_merge($dayFirst, $monthFirst)
+                : array_merge($monthFirst, $dayFirst),
+            ['d M Y', 'j M Y', 'd F Y', 'j F Y', 'M j, Y', 'F j, Y', 'M d, Y', 'F d, Y']
+        );
+
+        if (!$withTime) {
+            return $dates;
+        }
+
+        $formats = [];
+
+        foreach (['H:i:s', 'H:i', 'h:i:s A', 'h:i A', 'g:i A'] as $time) {
+            foreach ($dates as $date) {
+                $formats[] = $date . ' ' . $time;
+            }
+        }
+
+        // A datetime column may still carry a bare date; midnight is implied.
+        return array_merge($formats, $dates);
+    }
+
+    /** Whether the site writes the day before the month, as in 8/9/2026. */
+    private function siteDatePrefersDayFirst(): bool
+    {
+        $format = (string) preg_replace('/\\\\./', '', (string) get_option('date_format', 'F j, Y'));
+
+        return strcspn($format, 'dj') < strcspn($format, 'mnFM');
     }
 
     /**
@@ -971,14 +1172,72 @@ class ContactsController extends BaseController
         ];
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $stored
+     */
+    private function checkRequiredFields(array $data, array $stored = []): ?\WP_Error
+    {
+        if (ContactIdentity::hasInvalidEmail($data, $stored)) {
+            return $this->errorResponse(__('Invalid email address', 'kelune-crm'), 'invalid_email');
+        }
+
+        $missing = ContactIdentity::missingFields($data, $stored);
+
+        if ($missing === []) {
+            return null;
+        }
+
+        return $this->errorResponse($this->requiredFieldsMessage($missing), 'required_fields');
+    }
+
+    /**
+     * @param array<int, string> $fields
+     */
+    private function requiredFieldsMessage(array $fields): string
+    {
+        $available = $this->importableFields();
+
+        $labels = array_map(
+            static fn (string $field): string => (string) ($available[$field] ?? $field),
+            $fields
+        );
+
+        return sprintf(
+            /* translators: %s: comma-separated field labels, e.g. "Email, First Name". */
+            _n(
+                '%s is required',
+                'These fields are required: %s',
+                count($labels),
+                'kelune-crm'
+            ),
+            implode(', ', $labels)
+        );
+    }
+
     /** @return array<string, mixed> */
     private function getEndpointArgs(string $method): array
     {
         $args = [
+            // Not `required`: route args are built once at registration, which
+            // would freeze the filter's value. The handlers ask per request.
             'email' => [
-                'required' => $method === 'create',
-                'sanitize_callback' => 'sanitize_email',
-                'validate_callback' => fn ($param) => is_email($param),
+                'sanitize_callback' => static fn ($param): string => is_scalar($param)
+                    ? sanitize_email((string) $param)
+                    : '',
+                'validate_callback' => static function ($param): bool {
+                    // sanitize_email() runs after this and would fatal on an array.
+                    if (!is_scalar($param)) {
+                        return false;
+                    }
+
+                    $value = trim((string) $param);
+
+                    // A blank clears the address, which only some sites allow.
+                    return $value === ''
+                        ? !ContactIdentity::isEmailRequired()
+                        : (bool) is_email($value);
+                },
             ],
             'first_name' => [
                 'sanitize_callback' => 'sanitize_text_field',

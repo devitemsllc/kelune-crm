@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Kelune CRM 1.0.3\n"
+"Project-Id-Version: Kelune CRM 1.0.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/kelune-crm\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T05:55:56+00:00\n"
+"POT-Creation-Date: 2026-09-02T11:21:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: kelune-crm\n"
@@ -26,7 +26,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/segmentSortOptions.ts:9
 #: js-apps/dashboard/src/components/contacts/tagSortOptions.ts:9
 #: js-apps/dashboard/src/pages/Analytics.tsx:66
-#: js-apps/dashboard/src/pages/Contacts.tsx:732
+#: js-apps/dashboard/src/pages/Contacts.tsx:751
 #: js-apps/dashboard/src/pages/Lists.tsx:191
 #: js-apps/dashboard/src/pages/Lists.tsx:245
 #: js-apps/dashboard/src/pages/Segments.tsx:218
@@ -39,7 +39,7 @@ msgid "Contacts"
 msgstr ""
 
 #: js-apps/dashboard/src/App.tsx:192
-#: js-apps/dashboard/src/pages/Contacts.tsx:730
+#: js-apps/dashboard/src/pages/Contacts.tsx:749
 #: includes/Admin/AdminMenu.php:38
 msgid "All Contacts"
 msgstr ""
@@ -47,42 +47,42 @@ msgstr ""
 #: js-apps/dashboard/src/App.tsx:196
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:531
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:109
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:274
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:278
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:25
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:106
-#: js-apps/dashboard/src/pages/Contacts.tsx:446
-#: js-apps/dashboard/src/pages/Contacts.tsx:586
-#: js-apps/dashboard/src/pages/Contacts.tsx:625
-#: js-apps/dashboard/src/pages/Contacts.tsx:801
+#: js-apps/dashboard/src/pages/Contacts.tsx:460
+#: js-apps/dashboard/src/pages/Contacts.tsx:601
+#: js-apps/dashboard/src/pages/Contacts.tsx:644
+#: js-apps/dashboard/src/pages/Contacts.tsx:820
 #: js-apps/dashboard/src/pages/Lists.tsx:309
 #: js-apps/dashboard/src/pages/SetupWizard.tsx:114
 #: includes/Admin/AdminMenu.php:39
-#: includes/Api/Controllers/ContactsController.php:622
+#: includes/Api/Controllers/ContactsController.php:638
 msgid "Lists"
 msgstr ""
 
 #: js-apps/dashboard/src/App.tsx:200
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:541
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:116
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:278
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:282
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:26
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:107
-#: js-apps/dashboard/src/pages/Contacts.tsx:465
-#: js-apps/dashboard/src/pages/Contacts.tsx:587
-#: js-apps/dashboard/src/pages/Contacts.tsx:635
-#: js-apps/dashboard/src/pages/Contacts.tsx:806
+#: js-apps/dashboard/src/pages/Contacts.tsx:479
+#: js-apps/dashboard/src/pages/Contacts.tsx:602
+#: js-apps/dashboard/src/pages/Contacts.tsx:654
+#: js-apps/dashboard/src/pages/Contacts.tsx:825
 #: js-apps/dashboard/src/pages/SetupWizard.tsx:115
 #: js-apps/dashboard/src/pages/Tags.tsx:247
 #: includes/Admin/AdminMenu.php:40
-#: includes/Api/Controllers/ContactsController.php:621
+#: includes/Api/Controllers/ContactsController.php:637
 msgid "Tags"
 msgstr ""
 
 #: js-apps/dashboard/src/App.tsx:204
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:82
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:735
-#: js-apps/dashboard/src/pages/Contacts.tsx:811
-#: js-apps/dashboard/src/pages/Contacts.tsx:813
+#: js-apps/dashboard/src/pages/Contacts.tsx:830
+#: js-apps/dashboard/src/pages/Contacts.tsx:832
 #: js-apps/dashboard/src/pages/Segments.tsx:391
 #: includes/Admin/AdminMenu.php:46
 msgid "Segments"
@@ -378,7 +378,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/actionTypeOptions.tsx:33
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:316
-#: js-apps/dashboard/src/pages/Contacts.tsx:755
+#: js-apps/dashboard/src/pages/Contacts.tsx:774
 #: js-apps/dashboard/src/pages/SmartLinks.tsx:506
 msgid "Add Tags"
 msgstr ""
@@ -455,8 +455,8 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/ABTestConfig.tsx:328
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:658
 #: js-apps/dashboard/src/components/email-templates/FooterSettingsModal.tsx:59
-#: js-apps/dashboard/src/pages/Contacts.tsx:846
-#: js-apps/dashboard/src/pages/Contacts.tsx:854
+#: js-apps/dashboard/src/pages/Contacts.tsx:865
+#: js-apps/dashboard/src/pages/Contacts.tsx:873
 msgid "Save"
 msgstr ""
 
@@ -547,7 +547,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationCanvas.tsx:188
 #: js-apps/dashboard/src/components/automations/TemplatePreviewModal.tsx:39
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:78
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:60
 msgid "Step"
 msgstr ""
 
@@ -634,7 +634,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldForm.tsx:77
 #: js-apps/dashboard/src/components/email-templates/TemplateInfoModal.tsx:34
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:533
-#: js-apps/dashboard/src/pages/Contacts.tsx:822
+#: js-apps/dashboard/src/pages/Contacts.tsx:841
 #: js-apps/dashboard/src/pages/Lists.tsx:341
 #: js-apps/dashboard/src/pages/Segments.tsx:424
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:722
@@ -649,7 +649,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldForm.tsx:78
 #: js-apps/dashboard/src/components/email-templates/TemplateInfoModal.tsx:34
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:534
-#: js-apps/dashboard/src/pages/Contacts.tsx:823
+#: js-apps/dashboard/src/pages/Contacts.tsx:842
 #: js-apps/dashboard/src/pages/Lists.tsx:342
 #: js-apps/dashboard/src/pages/Segments.tsx:425
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:722
@@ -698,9 +698,9 @@ msgstr ""
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:33
 #: js-apps/dashboard/src/components/campaigns/CampaignAnalytics.tsx:295
 #: js-apps/dashboard/src/components/campaigns/campaignSortOptions.ts:10
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:27
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:35
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:123
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:258
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:262
 #: js-apps/dashboard/src/components/contacts/contactSortOptions.ts:13
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:22
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:158
@@ -722,10 +722,10 @@ msgstr ""
 #: js-apps/dashboard/src/pages/Campaigns.tsx:417
 #: js-apps/dashboard/src/pages/Campaigns.tsx:430
 #: js-apps/dashboard/src/pages/Campaigns.tsx:442
-#: js-apps/dashboard/src/pages/Contacts.tsx:484
-#: js-apps/dashboard/src/pages/Contacts.tsx:588
-#: js-apps/dashboard/src/pages/Contacts.tsx:619
-#: js-apps/dashboard/src/pages/Contacts.tsx:653
+#: js-apps/dashboard/src/pages/Contacts.tsx:498
+#: js-apps/dashboard/src/pages/Contacts.tsx:603
+#: js-apps/dashboard/src/pages/Contacts.tsx:638
+#: js-apps/dashboard/src/pages/Contacts.tsx:672
 #: js-apps/dashboard/src/pages/EmailLogs.tsx:238
 #: js-apps/dashboard/src/pages/EmailLogs.tsx:314
 #: js-apps/dashboard/src/pages/EmailLogs.tsx:340
@@ -740,7 +740,8 @@ msgstr ""
 #: js-apps/dashboard/src/pages/SmartLinks.tsx:364
 #: js-apps/dashboard/src/pages/SmartLinks.tsx:383
 #: js-apps/dashboard/src/pages/SmartLinks.tsx:541
-#: includes/Api/Controllers/ContactsController.php:785
+#: js-apps/dashboard/src/utils/contactIdentity.ts:21
+#: includes/Api/Controllers/ContactsController.php:986
 #: includes/Api/Controllers/EmailLogsController.php:534
 msgid "Status"
 msgstr ""
@@ -956,7 +957,6 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/SendStepTestEmail.tsx:49
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:676
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:203
 msgid "Please enter email"
 msgstr ""
 
@@ -968,31 +968,34 @@ msgid "Please enter a valid email"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:22
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:17
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:179
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:25
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:196
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:12
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:93
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:281
-#: includes/Api/Controllers/ContactsController.php:775
+#: js-apps/dashboard/src/utils/contactIdentity.ts:11
+#: includes/Api/Controllers/ContactsController.php:976
 msgid "First Name"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:23
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:18
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:189
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:26
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:201
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:13
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:94
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:288
-#: includes/Api/Controllers/ContactsController.php:776
+#: js-apps/dashboard/src/utils/contactIdentity.ts:12
+#: includes/Api/Controllers/ContactsController.php:977
 msgid "Last Name"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:24
 #: js-apps/dashboard/src/components/automations/TemplatePreviewModal.tsx:45
 #: js-apps/dashboard/src/components/common/EmailContentEditor.tsx:93
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:301
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:23
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:347
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:106
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:200
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:207
 #: js-apps/dashboard/src/components/contacts/contactSortOptions.ts:10
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:11
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldForm.tsx:65
@@ -1002,96 +1005,104 @@ msgstr ""
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:274
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:276
 #: js-apps/dashboard/src/pages/EmailLogs.tsx:216
-#: includes/Api/Controllers/ContactsController.php:774
+#: js-apps/dashboard/src/utils/contactIdentity.ts:10
+#: includes/Api/Controllers/ContactsController.php:975
 msgid "Email"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:25
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:20
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:28
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:129
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:215
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:219
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:15
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldForm.tsx:67
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:32
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:96
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:260
-#: js-apps/dashboard/src/pages/Contacts.tsx:497
-#: js-apps/dashboard/src/pages/Contacts.tsx:590
-#: includes/Api/Controllers/ContactsController.php:778
+#: js-apps/dashboard/src/pages/Contacts.tsx:511
+#: js-apps/dashboard/src/pages/Contacts.tsx:605
+#: js-apps/dashboard/src/utils/contactIdentity.ts:14
+#: includes/Api/Controllers/ContactsController.php:979
 msgid "Phone"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:26
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:19
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:27
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:126
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:220
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:224
 #: js-apps/dashboard/src/components/contacts/contactSortOptions.ts:11
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:14
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:95
-#: js-apps/dashboard/src/pages/Contacts.tsx:491
-#: js-apps/dashboard/src/pages/Contacts.tsx:589
-#: includes/Api/Controllers/ContactsController.php:777
+#: js-apps/dashboard/src/pages/Contacts.tsx:505
+#: js-apps/dashboard/src/pages/Contacts.tsx:604
+#: js-apps/dashboard/src/utils/contactIdentity.ts:13
+#: includes/Api/Controllers/ContactsController.php:978
 msgid "Company"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:27
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:132
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:226
-#: js-apps/dashboard/src/pages/Contacts.tsx:503
-#: js-apps/dashboard/src/pages/Contacts.tsx:591
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:230
+#: js-apps/dashboard/src/pages/Contacts.tsx:517
+#: js-apps/dashboard/src/pages/Contacts.tsx:606
 msgid "Address"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:28
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:22
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:230
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:30
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:234
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:17
-#: includes/Api/Controllers/ContactsController.php:780
+#: js-apps/dashboard/src/utils/contactIdentity.ts:16
+#: includes/Api/Controllers/ContactsController.php:981
 msgid "Address Line 2"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:29
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:23
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:31
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:141
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:236
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:240
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:18
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:97
-#: js-apps/dashboard/src/pages/Contacts.tsx:509
-#: js-apps/dashboard/src/pages/Contacts.tsx:592
-#: includes/Api/Controllers/ContactsController.php:781
+#: js-apps/dashboard/src/pages/Contacts.tsx:523
+#: js-apps/dashboard/src/pages/Contacts.tsx:607
+#: js-apps/dashboard/src/utils/contactIdentity.ts:17
+#: includes/Api/Controllers/ContactsController.php:982
 msgid "City"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:30
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:241
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:245
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:98
-#: js-apps/dashboard/src/pages/Contacts.tsx:515
-#: includes/Api/Controllers/ContactsController.php:782
+#: js-apps/dashboard/src/pages/Contacts.tsx:529
+#: js-apps/dashboard/src/utils/contactIdentity.ts:18
+#: includes/Api/Controllers/ContactsController.php:983
 msgid "State"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:31
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:25
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:33
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:147
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:246
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:250
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:20
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:100
-#: js-apps/dashboard/src/pages/Contacts.tsx:521
-#: js-apps/dashboard/src/pages/Contacts.tsx:594
-#: includes/Api/Controllers/ContactsController.php:783
+#: js-apps/dashboard/src/pages/Contacts.tsx:535
+#: js-apps/dashboard/src/pages/Contacts.tsx:609
+#: js-apps/dashboard/src/utils/contactIdentity.ts:20
+#: includes/Api/Controllers/ContactsController.php:984
 msgid "Postal Code"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:32
 #: js-apps/dashboard/src/components/campaigns/CampaignAnalytics.tsx:81
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:26
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:34
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:150
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:252
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:256
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:21
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:99
-#: js-apps/dashboard/src/pages/Contacts.tsx:527
-#: js-apps/dashboard/src/pages/Contacts.tsx:595
-#: includes/Api/Controllers/ContactsController.php:784
+#: js-apps/dashboard/src/pages/Contacts.tsx:541
+#: js-apps/dashboard/src/pages/Contacts.tsx:610
+#: js-apps/dashboard/src/utils/contactIdentity.ts:19
+#: includes/Api/Controllers/ContactsController.php:985
 msgid "Country"
 msgstr ""
 
@@ -1110,7 +1121,7 @@ msgid "Default Fields"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:238
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:321
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:325
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:367
 #: js-apps/dashboard/src/config/settingsNav.tsx:27
 msgid "Custom Fields"
@@ -1401,7 +1412,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:512
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:216
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:190
-#: js-apps/dashboard/src/pages/Contacts.tsx:757
+#: js-apps/dashboard/src/pages/Contacts.tsx:776
 msgid "Select tags"
 msgstr ""
 
@@ -1475,7 +1486,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:618
 #: js-apps/dashboard/src/components/automations/TriggerFields.tsx:36
-#: js-apps/dashboard/src/pages/Contacts.tsx:680
+#: js-apps/dashboard/src/pages/Contacts.tsx:699
 #: js-apps/dashboard/src/pages/Tags.tsx:162
 msgid "Tag"
 msgstr ""
@@ -1492,7 +1503,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:632
 #: js-apps/dashboard/src/components/automations/TriggerFields.tsx:49
-#: js-apps/dashboard/src/pages/Contacts.tsx:666
+#: js-apps/dashboard/src/pages/Contacts.tsx:685
 #: js-apps/dashboard/src/pages/Lists.tsx:178
 msgid "List"
 msgstr ""
@@ -1768,7 +1779,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:393
 #: js-apps/dashboard/src/pages/Automations.tsx:376
 #: js-apps/dashboard/src/pages/Campaigns.tsx:393
-#: js-apps/dashboard/src/pages/Contacts.tsx:559
+#: js-apps/dashboard/src/pages/Contacts.tsx:574
 #: js-apps/dashboard/src/pages/EmailLogs.tsx:295
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:276
 #: js-apps/dashboard/src/pages/Lists.tsx:226
@@ -1995,8 +2006,8 @@ msgstr ""
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:288
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:530
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:398
-#: js-apps/dashboard/src/pages/Contacts.tsx:567
-#: js-apps/dashboard/src/pages/Contacts.tsx:832
+#: js-apps/dashboard/src/pages/Contacts.tsx:582
+#: js-apps/dashboard/src/pages/Contacts.tsx:851
 #: js-apps/dashboard/src/pages/Lists.tsx:231
 #: js-apps/dashboard/src/pages/Segments.tsx:280
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:516
@@ -2016,8 +2027,8 @@ msgstr ""
 #: js-apps/dashboard/src/pages/Automations.tsx:524
 #: js-apps/dashboard/src/pages/Campaigns.tsx:305
 #: js-apps/dashboard/src/pages/Campaigns.tsx:522
-#: js-apps/dashboard/src/pages/Contacts.tsx:421
-#: js-apps/dashboard/src/pages/Contacts.tsx:792
+#: js-apps/dashboard/src/pages/Contacts.tsx:425
+#: js-apps/dashboard/src/pages/Contacts.tsx:811
 #: js-apps/dashboard/src/pages/EmailLogs.tsx:304
 #: js-apps/dashboard/src/pages/EmailLogs.tsx:486
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:211
@@ -2328,7 +2339,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:375
 #: js-apps/dashboard/src/pages/Automations.tsx:358
 #: js-apps/dashboard/src/pages/Campaigns.tsx:375
-#: js-apps/dashboard/src/pages/Contacts.tsx:550
+#: js-apps/dashboard/src/pages/Contacts.tsx:564
 #: js-apps/dashboard/src/pages/EmailLogs.tsx:286
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:258
 #: js-apps/dashboard/src/pages/Lists.tsx:208
@@ -2663,27 +2674,27 @@ msgid "Are you sure you want to archive?"
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/ActionConfirm.tsx:44
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:308
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:312
 #: js-apps/dashboard/src/pages/License.tsx:138
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:831
 msgid "Yes"
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/ActionConfirm.tsx:44
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:308
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:312
 #: js-apps/dashboard/src/pages/License.tsx:138
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:832
 msgid "No"
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/AudienceSelect.tsx:8
-#: js-apps/dashboard/src/pages/Contacts.tsx:855
+#: js-apps/dashboard/src/pages/Contacts.tsx:874
 msgid "Select tags..."
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/AudienceSelect.tsx:9
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:59
-#: js-apps/dashboard/src/pages/Contacts.tsx:330
+#: js-apps/dashboard/src/pages/Contacts.tsx:334
 msgid "Failed to load tags"
 msgstr ""
 
@@ -2693,13 +2704,13 @@ msgid "Deleted tag (#%d)"
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/AudienceSelect.tsx:14
-#: js-apps/dashboard/src/pages/Contacts.tsx:847
+#: js-apps/dashboard/src/pages/Contacts.tsx:866
 msgid "Select lists..."
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/AudienceSelect.tsx:15
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:38
-#: js-apps/dashboard/src/pages/Contacts.tsx:367
+#: js-apps/dashboard/src/pages/Contacts.tsx:371
 msgid "Failed to load lists"
 msgstr ""
 
@@ -2838,154 +2849,161 @@ msgstr ""
 msgid "Upload"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:16
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:22
 msgid "Email (required)"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:21
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:29
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:16
-#: includes/Api/Controllers/ContactsController.php:779
+#: js-apps/dashboard/src/utils/contactIdentity.ts:15
+#: includes/Api/Controllers/ContactsController.php:980
 msgid "Address Line 1"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:24
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:32
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:144
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:19
-#: js-apps/dashboard/src/pages/Contacts.tsx:593
+#: js-apps/dashboard/src/pages/Contacts.tsx:608
 msgid "State/Province"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:28
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:36
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:153
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:263
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:267
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:23
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:102
-#: js-apps/dashboard/src/pages/Contacts.tsx:534
-#: js-apps/dashboard/src/pages/Contacts.tsx:596
-#: includes/Api/Controllers/ContactsController.php:786
+#: js-apps/dashboard/src/pages/Contacts.tsx:548
+#: js-apps/dashboard/src/pages/Contacts.tsx:611
+#: includes/Api/Controllers/ContactsController.php:987
 msgid "Source"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:29
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:37
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:158
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:24
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:103
-#: js-apps/dashboard/src/pages/Contacts.tsx:543
-#: js-apps/dashboard/src/pages/Contacts.tsx:597
-#: includes/Api/Controllers/ContactsController.php:787
+#: js-apps/dashboard/src/pages/Contacts.tsx:557
+#: js-apps/dashboard/src/pages/Contacts.tsx:612
+#: includes/Api/Controllers/ContactsController.php:988
 msgid "Lead Score"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:32
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:40
 msgid "Lists (comma-separated names)"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:36
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:44
 msgid "Tags (comma-separated names)"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:114
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:147
 msgid "The file needs a header row and at least one data row"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:160
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:163
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:193
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:196
 msgid "Failed to read file"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:176
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:214
 msgid "Map a column to Email before importing"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:193
-msgid "No rows with an email to import"
+#. translators: %s: comma-separated field labels, e.g. "Email, First Name".
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:235
+msgid "No rows have every required field filled in: %s"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:206
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:248
 msgid "Import failed"
 msgstr ""
 
 #. translators: %d: number of rows to import
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:220
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:262
 msgid "Import %d row"
 msgid_plural "Import %d rows"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:220
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:262
 #: js-apps/dashboard/src/pages/SmartLinks.tsx:548
 msgid "Done"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:223
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:265
 msgid "CSV Column"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:229
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:271
 msgid "Sample"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:237
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:279
 msgid "Maps To"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:243
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:285
 msgid "-- Ignore Column --"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:254
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:296
 msgid "Import Contacts"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:256
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:298
 msgid "Upload File"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:257
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:299
 msgid "Map Fields"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:258
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:300
 msgid "Result"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:262
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:304
 msgid "Upload a CSV or Excel file whose first row contains column headers. Contacts are matched by email — existing contacts are updated, new emails are created."
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:268
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:310
 msgid "Click or drag file to upload"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:271
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:313
 msgid "CSV or Excel (.csv, .xlsx, .xls)"
 msgstr ""
 
-#. translators: %s: uploaded file name
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:279
-msgid "Reviewing %s. Match each CSV column to the contact field it belongs to using the dropdowns below — any column left as \"Ignore Column\" is skipped. Email is required so contacts can be matched: existing contacts are updated and new emails are created."
+#. translators: %1$s: uploaded file name, %2$s: comma-separated field labels.
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:322
+msgid "Reviewing %1$s. Match each CSV column to the contact field it belongs to using the dropdowns below — any column left as \"Ignore Column\" is skipped. Rows are matched on email, so existing contacts are updated and new addresses created. Required fields: %2$s."
+msgstr ""
+
+#. translators: %1$s: uploaded file name, %2$s: comma-separated field labels.
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:325
+msgid "Reviewing %1$s. Match each CSV column to the contact field it belongs to using the dropdowns below — any column left as \"Ignore Column\" is skipped. With no Email column there is nothing to match on, so every row is added as a new contact. Required fields: %2$s."
 msgstr ""
 
 #. translators: %1$d: total rows, %2$d: mapped column count, %3$d: total columns
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:287
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:333
 msgid "%1$d rows · %2$d of %3$d columns mapped"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:290
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:336
 msgid "Import complete"
 msgstr ""
 
 #. translators: %1$d: created count, %2$d: updated count, %3$d: skipped count
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:292
-#: includes/Api/Controllers/ContactsController.php:725
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:338
+#: includes/Api/Controllers/ContactsController.php:780
 msgid "%1$d created, %2$d updated, %3$d skipped"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:295
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:341
 msgid "Row"
 msgstr ""
 
-#: js-apps/dashboard/src/components/common/ImportModal.tsx:306
+#: js-apps/dashboard/src/components/common/ImportModal.tsx:352
 msgid "Issue"
 msgstr ""
 
@@ -3097,7 +3115,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:465
 #: js-apps/dashboard/src/pages/Automations.tsx:461
 #: js-apps/dashboard/src/pages/Campaigns.tsx:460
-#: js-apps/dashboard/src/pages/Contacts.tsx:699
+#: js-apps/dashboard/src/pages/Contacts.tsx:718
 #: js-apps/dashboard/src/pages/EmailLogs.tsx:424
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:343
 #: js-apps/dashboard/src/pages/Lists.tsx:284
@@ -3155,7 +3173,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:428
 #: js-apps/dashboard/src/pages/Automations.tsx:405
 #: js-apps/dashboard/src/pages/Campaigns.tsx:423
-#: js-apps/dashboard/src/pages/Contacts.tsx:598
+#: js-apps/dashboard/src/pages/Contacts.tsx:613
 #: js-apps/dashboard/src/pages/EmailLogs.tsx:320
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:304
 #: js-apps/dashboard/src/pages/Lists.tsx:247
@@ -3198,7 +3216,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:237
 #: js-apps/dashboard/src/pages/settings/CronMonitor.tsx:55
-#: includes/Services/EmailService.php:1826
+#: includes/Services/EmailService.php:1862
 msgid "Unknown"
 msgstr ""
 
@@ -3206,108 +3224,106 @@ msgstr ""
 msgid "No emails sent yet"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:81
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:87
 msgid "Note will be deleted when you save the contact"
 msgstr ""
 
+#. translators: %s: field label, e.g. "First Name".
 #. translators: %s: custom field label
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:143
+#. translators: %s: comma-separated field labels, e.g. "Email, First Name".
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:96
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:335
+#: includes/Api/Controllers/ContactsController.php:1208
+msgid "%s is required"
+msgid_plural "These fields are required: %s"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: custom field label
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:160
 msgid "Select %s"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:182
-msgid "Please enter first name"
-msgstr ""
-
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:185
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:197
 msgid "John"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:192
-msgid "Please enter last name"
-msgstr ""
-
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:195
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:202
 msgid "Doe"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:207
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:211
 msgid "Please enter valid email"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:210
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:214
 msgid "john@example.com"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:216
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:220
 msgid "+1 234 567 8900"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:221
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:225
 msgid "ACME Inc."
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:227
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:231
 msgid "123 Main St"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:231
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:235
 msgid "Apt 4B"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:237
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:241
 msgid "New York"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:242
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:246
 msgid "NY"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:247
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:251
 msgid "10001"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:253
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:257
 msgid "Select a country"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:265
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:269
 #: js-apps/dashboard/src/pages/Lists.tsx:20
 msgid "Manual"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:266
-#: js-apps/dashboard/src/pages/Contacts.tsx:611
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:270
+#: js-apps/dashboard/src/pages/Contacts.tsx:630
 msgid "Import"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:267
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:271
 msgid "Form"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:268
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:272
 msgid "API"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:284
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:288
 msgid "Existing Notes"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:308
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:312
 msgid "Delete this note?"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:315
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:319
 msgid "Add New Note"
 msgstr ""
 
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:316
+#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:320
 msgid "Add a new note..."
-msgstr ""
-
-#. translators: %s: custom field label
-#: js-apps/dashboard/src/components/contacts/ContactForm.tsx:331
-msgid "%s is required"
 msgstr ""
 
 #: js-apps/dashboard/src/components/contacts/contactSortOptions.ts:8
@@ -3335,7 +3351,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:27
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:214
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:104
-#: includes/Api/Controllers/ContactsController.php:623
+#: includes/Api/Controllers/ContactsController.php:639
 #: includes/Api/Controllers/EmailLogsController.php:546
 msgid "Created At"
 msgstr ""
@@ -3357,7 +3373,7 @@ msgid "Export Contacts"
 msgstr ""
 
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:96
-#: js-apps/dashboard/src/pages/Contacts.tsx:605
+#: js-apps/dashboard/src/pages/Contacts.tsx:624
 #: js-apps/dashboard/src/pages/EmailLogs.tsx:326
 #: js-apps/dashboard/src/pages/Segments.tsx:185
 msgid "Export"
@@ -3642,105 +3658,113 @@ msgstr ""
 msgid "Search custom fields..."
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:37
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:12
 msgid "Choices"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:39
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:19
+msgid "Add at least one option"
+msgstr ""
+
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:24
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:781
 msgid "Options"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:39
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:24
 msgid "Add at least one option for users to choose from"
 msgstr ""
 
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:31
+msgid "Enter an option or remove it"
+msgstr ""
+
 #. translators: %d: option number
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:44
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:36
 msgid "Option %d"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:48
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:41
 msgid "Add Choice"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:58
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:50
 msgid "Number Options"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:60
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:52
 msgid "Minimum Value"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:60
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:52
 msgid "Optional minimum allowed value"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:61
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:53
 msgid "Enter minimum"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:69
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:56
 msgid "Maximum Value"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:69
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:56
 msgid "Optional maximum allowed value"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:70
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:57
 msgid "Enter maximum"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:78
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:60
 msgid "Increment value (e.g., 0.01 for decimals)"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:79
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:61
 msgid "Enter step value"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:92
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:66
 msgid "Text Options"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:94
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:68
 msgid "Placeholder"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:94
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:68
 msgid "Hint text shown when field is empty"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:95
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:69
 msgid "Enter placeholder text"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:103
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:72
 msgid "Maximum Length"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:103
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:72
 msgid "Optional character limit"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:104
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:73
 msgid "Enter max length"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:117
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:78
 msgid "Additional Options"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:119
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:80
 msgid "Help Text"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:119
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:80
 msgid "Additional guidance displayed below the field"
 msgstr ""
 
-#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:120
+#: js-apps/dashboard/src/components/custom-fields/FieldTypeConfig.tsx:81
 msgid "Enter help text"
 msgstr ""
 
@@ -4414,7 +4438,7 @@ msgid "Number of days"
 msgstr ""
 
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:234
-#: js-apps/dashboard/src/pages/Contacts.tsx:769
+#: js-apps/dashboard/src/pages/Contacts.tsx:788
 msgid "Select status"
 msgstr ""
 
@@ -4656,8 +4680,8 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:142
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:27
-#: js-apps/dashboard/src/pages/Contacts.tsx:733
-#: js-apps/dashboard/src/pages/Contacts.tsx:821
+#: js-apps/dashboard/src/pages/Contacts.tsx:752
+#: js-apps/dashboard/src/pages/Contacts.tsx:840
 msgid "Create Contact"
 msgstr ""
 
@@ -4911,7 +4935,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:408
 #: js-apps/dashboard/src/pages/Automations.tsx:389
 #: js-apps/dashboard/src/pages/Campaigns.tsx:408
-#: js-apps/dashboard/src/pages/Contacts.tsx:577
+#: js-apps/dashboard/src/pages/Contacts.tsx:592
 #: js-apps/dashboard/src/pages/EmailTemplates.tsx:294
 #: js-apps/dashboard/src/pages/Segments.tsx:290
 msgid "More actions"
@@ -5231,152 +5255,152 @@ msgstr ""
 msgid "Search campaigns..."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:170
-#: js-apps/dashboard/src/pages/Contacts.tsx:181
+#: js-apps/dashboard/src/pages/Contacts.tsx:174
+#: js-apps/dashboard/src/pages/Contacts.tsx:185
 msgid "Failed to load contact details"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:187
-#: includes/Api/Controllers/ContactsController.php:331
+#: js-apps/dashboard/src/pages/Contacts.tsx:191
+#: includes/Api/Controllers/ContactsController.php:347
 msgid "Contact deleted successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:190
-#: includes/Api/Controllers/ContactsController.php:326
+#: js-apps/dashboard/src/pages/Contacts.tsx:194
+#: includes/Api/Controllers/ContactsController.php:342
 msgid "Failed to delete contact"
 msgstr ""
 
 #. translators: %d: number of contacts deleted
-#: js-apps/dashboard/src/pages/Contacts.tsx:200
+#: js-apps/dashboard/src/pages/Contacts.tsx:204
 msgid "%d contact deleted"
 msgid_plural "%d contacts deleted"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:205
+#: js-apps/dashboard/src/pages/Contacts.tsx:209
 msgid "Failed to delete contacts"
 msgstr ""
 
 #. translators: %d: number of contacts updated
-#: js-apps/dashboard/src/pages/Contacts.tsx:218
+#: js-apps/dashboard/src/pages/Contacts.tsx:222
 msgid "%d contact updated"
 msgid_plural "%d contacts updated"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:223
+#: js-apps/dashboard/src/pages/Contacts.tsx:227
 msgid "Failed to update contacts"
 msgstr ""
 
 #. translators: %d: number of contacts tags were added to
-#: js-apps/dashboard/src/pages/Contacts.tsx:236
+#: js-apps/dashboard/src/pages/Contacts.tsx:240
 msgid "Tags added to %d contact"
 msgid_plural "Tags added to %d contacts"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:241
-#: includes/Api/Controllers/ContactsController.php:350
-#: includes/Processors/ActionProcessor.php:290
+#: js-apps/dashboard/src/pages/Contacts.tsx:245
+#: includes/Api/Controllers/ContactsController.php:366
+#: includes/Processors/ActionProcessor.php:303
 msgid "Failed to add tags"
 msgstr ""
 
 #. translators: %d: number of contacts enrolled
-#: js-apps/dashboard/src/pages/Contacts.tsx:259
+#: js-apps/dashboard/src/pages/Contacts.tsx:263
 msgid "Enrolled %d contact"
 msgid_plural "Enrolled %d contacts"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of contacts skipped (already enrolled)
-#: js-apps/dashboard/src/pages/Contacts.tsx:263
+#: js-apps/dashboard/src/pages/Contacts.tsx:267
 msgid "(%d already enrolled)"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:267
+#: js-apps/dashboard/src/pages/Contacts.tsx:271
 msgid "No contacts enrolled — they may already be enrolled."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:273
+#: js-apps/dashboard/src/pages/Contacts.tsx:277
 msgid "Failed to enroll contacts"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:298
+#: js-apps/dashboard/src/pages/Contacts.tsx:302
 msgid "Contact updated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:302
+#: js-apps/dashboard/src/pages/Contacts.tsx:306
 msgid "Contact created successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:308
+#: js-apps/dashboard/src/pages/Contacts.tsx:312
 msgid "Failed to save contact"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:342
+#: js-apps/dashboard/src/pages/Contacts.tsx:346
 msgid "Tags updated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:347
+#: js-apps/dashboard/src/pages/Contacts.tsx:351
 msgid "Failed to update tags"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:379
+#: js-apps/dashboard/src/pages/Contacts.tsx:383
 msgid "Lists updated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:384
+#: js-apps/dashboard/src/pages/Contacts.tsx:388
 msgid "Failed to update lists"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:399
-#: js-apps/dashboard/src/pages/Contacts.tsx:846
+#: js-apps/dashboard/src/pages/Contacts.tsx:403
+#: js-apps/dashboard/src/pages/Contacts.tsx:865
 msgid "Manage Lists"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:407
-#: js-apps/dashboard/src/pages/Contacts.tsx:854
+#: js-apps/dashboard/src/pages/Contacts.tsx:411
+#: js-apps/dashboard/src/pages/Contacts.tsx:873
 msgid "Manage Tags"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:427
+#: js-apps/dashboard/src/pages/Contacts.tsx:441
 msgid "Contact"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:436
+#: js-apps/dashboard/src/pages/Contacts.tsx:450
 msgid "(no name)"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:564
+#: js-apps/dashboard/src/pages/Contacts.tsx:579
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:513
 msgid "View"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:737
+#: js-apps/dashboard/src/pages/Contacts.tsx:756
 msgid "Search contacts..."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:767
+#: js-apps/dashboard/src/pages/Contacts.tsx:786
 msgid "Update Status"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:779
+#: js-apps/dashboard/src/pages/Contacts.tsx:798
 msgid "Enroll in Automation"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:781
+#: js-apps/dashboard/src/pages/Contacts.tsx:800
 msgid "Select automation"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:813
+#: js-apps/dashboard/src/pages/Contacts.tsx:832
 msgid "Upgrade to Kelune CRM Pro to build dynamic segments with the query builder and auto-refresh."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:820
+#: js-apps/dashboard/src/pages/Contacts.tsx:839
 msgid "Edit Contact"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:827
+#: js-apps/dashboard/src/pages/Contacts.tsx:846
 msgid "Contact Details"
 msgstr ""
 
@@ -7150,8 +7174,8 @@ msgstr ""
 #: includes/Api/Controllers/CampaignsController.php:422
 #: includes/Api/Controllers/CampaignsController.php:630
 #: includes/Api/Controllers/CampaignsController.php:646
-#: includes/Services/EmailService.php:435
-#: includes/Services/EmailService.php:785
+#: includes/Services/EmailService.php:441
+#: includes/Services/EmailService.php:821
 msgid "Campaign not found"
 msgstr ""
 
@@ -7243,94 +7267,95 @@ msgstr ""
 msgid "This unsubscribe link is invalid or has expired. Please try again or contact us."
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:184
-#: includes/Api/Controllers/ContactsController.php:255
-#: includes/Api/Controllers/ContactsController.php:320
+#: includes/Api/Controllers/ContactsController.php:185
+#: includes/Api/Controllers/ContactsController.php:266
+#: includes/Api/Controllers/ContactsController.php:336
 msgid "Contact not found"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:206
-#: includes/Services/EmailService.php:789
-#: includes/Services/EmailService.php:1533
-msgid "Invalid email address"
-msgstr ""
-
-#: includes/Api/Controllers/ContactsController.php:215
+#: includes/Api/Controllers/ContactsController.php:217
 msgid "Email already exists"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:226
-#: includes/Api/Controllers/ContactsController.php:700
+#: includes/Api/Controllers/ContactsController.php:224
+msgid "A contact with these details already exists"
+msgstr ""
+
+#: includes/Api/Controllers/ContactsController.php:237
+#: includes/Api/Controllers/ContactsController.php:755
 msgid "Failed to create contact"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:275
+#: includes/Api/Controllers/ContactsController.php:291
 msgid "Failed to update contact"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:353
+#: includes/Api/Controllers/ContactsController.php:369
 msgid "Tags added successfully"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:364
-#: includes/Processors/ActionProcessor.php:330
+#: includes/Api/Controllers/ContactsController.php:380
+#: includes/Processors/ActionProcessor.php:343
 msgid "Failed to remove tags"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:367
+#: includes/Api/Controllers/ContactsController.php:383
 msgid "Tags removed successfully"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:396
+#: includes/Api/Controllers/ContactsController.php:412
 msgid "Note content is required"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:402
+#: includes/Api/Controllers/ContactsController.php:418
 msgid "Failed to add note"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:405
+#: includes/Api/Controllers/ContactsController.php:421
 msgid "Note added successfully"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:426
-#: includes/Api/Controllers/ContactsController.php:477
+#: includes/Api/Controllers/ContactsController.php:442
+#: includes/Api/Controllers/ContactsController.php:493
 msgid "Invalid contact IDs"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:430
+#: includes/Api/Controllers/ContactsController.php:446
 msgid "No fields to update"
 msgstr ""
 
 #. translators: %s: rejected field name
-#: includes/Api/Controllers/ContactsController.php:440
+#: includes/Api/Controllers/ContactsController.php:456
 msgid "The field \"%s\" cannot be bulk updated"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:446
+#: includes/Api/Controllers/ContactsController.php:462
 msgid "Invalid contact status"
 msgstr ""
 
 #. translators: %d: number of contacts updated
-#: includes/Api/Controllers/ContactsController.php:468
+#: includes/Api/Controllers/ContactsController.php:484
 msgid "%d contacts updated"
 msgstr ""
 
 #. translators: %d: number of contacts deleted
-#: includes/Api/Controllers/ContactsController.php:490
+#: includes/Api/Controllers/ContactsController.php:506
 msgid "%d contacts deleted"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:638
+#: includes/Api/Controllers/ContactsController.php:654
 msgid "No rows to import"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:655
+#: includes/Api/Controllers/ContactsController.php:672
 msgid "Invalid row"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:665
-msgid "Missing or invalid email"
+#: includes/Api/Controllers/ContactsController.php:698
+#: includes/Api/Controllers/ContactsController.php:1182
+#: includes/Services/EmailService.php:825
+#: includes/Services/EmailService.php:1569
+msgid "Invalid email address"
 msgstr ""
 
 #: includes/Api/Controllers/CustomFieldsController.php:102
@@ -7544,8 +7569,8 @@ msgstr ""
 
 #. translators: %s: email subject line
 #: includes/Api/Controllers/EmailTemplatesController.php:111
-#: includes/Services/EmailService.php:838
-#: includes/Services/EmailService.php:1574
+#: includes/Services/EmailService.php:874
+#: includes/Services/EmailService.php:1610
 msgid "[TEST] %s"
 msgstr ""
 
@@ -7554,8 +7579,8 @@ msgid "Template content is empty"
 msgstr ""
 
 #: includes/Api/Controllers/EmailTemplatesController.php:129
-#: includes/Services/EmailService.php:795
-#: includes/Services/EmailService.php:1539
+#: includes/Services/EmailService.php:831
+#: includes/Services/EmailService.php:1575
 msgid "That address belongs to a contact who is not accepting email."
 msgstr ""
 
@@ -7837,8 +7862,7 @@ msgstr ""
 
 #. translators: %s: contact status, e.g. unsubscribed
 #: includes/Handlers/ContactStatusSweeper.php:90
-#: includes/Services/EmailLogService.php:96
-#: includes/Services/EmailService.php:658
+#: includes/Services/EmailService.php:660
 msgid "Not sent: the contact is %s."
 msgstr ""
 
@@ -7854,15 +7878,15 @@ msgstr ""
 msgid "Empty payload"
 msgstr ""
 
-#: includes/Handlers/WebhookHandler.php:115
-msgid "Email is required"
+#: includes/Handlers/WebhookHandler.php:121
+msgid "A valid email is required"
 msgstr ""
 
-#: includes/Handlers/WebhookHandler.php:143
+#: includes/Handlers/WebhookHandler.php:151
 msgid "Webhook processed successfully"
 msgstr ""
 
-#: includes/Handlers/WebhookHandler.php:226
+#: includes/Handlers/WebhookHandler.php:234
 msgid "Contact not found and the create_contact action is not allowed for this webhook."
 msgstr ""
 
@@ -7942,61 +7966,66 @@ msgstr ""
 msgid "Email skipped: contact %1$s is %2$s."
 msgstr ""
 
-#: includes/Processors/ActionProcessor.php:112
-#: includes/Services/EmailService.php:1553
+#. translators: %d: contact ID
+#: includes/Processors/ActionProcessor.php:109
+msgid "Email skipped: contact %d has no valid email address."
+msgstr ""
+
+#: includes/Processors/ActionProcessor.php:125
+#: includes/Services/EmailService.php:1589
 msgid "Automated Email"
 msgstr ""
 
 #. translators: %s: recipient email address
-#: includes/Processors/ActionProcessor.php:235
+#: includes/Processors/ActionProcessor.php:248
 msgid "Email sent to %s"
 msgstr ""
 
-#: includes/Processors/ActionProcessor.php:241
-#: includes/Services/EmailLogService.php:458
+#: includes/Processors/ActionProcessor.php:254
+#: includes/Services/EmailLogService.php:453
 msgid "Failed to send email"
 msgstr ""
 
 #. translators: %1$s: recipient email address, %2$s: error message
-#: includes/Processors/ActionProcessor.php:250
+#: includes/Processors/ActionProcessor.php:263
 msgid "Failed to send email to %1$s: %2$s"
 msgstr ""
 
-#: includes/Processors/ActionProcessor.php:266
-#: includes/Processors/ActionProcessor.php:306
+#: includes/Processors/ActionProcessor.php:279
+#: includes/Processors/ActionProcessor.php:319
 msgid "No tags specified"
 msgstr ""
 
 #. translators: %d: number of tags
-#: includes/Processors/ActionProcessor.php:285
+#: includes/Processors/ActionProcessor.php:298
 msgid "Added %d tag(s)"
 msgstr ""
 
 #. translators: %d: number of tags
-#: includes/Processors/ActionProcessor.php:325
+#: includes/Processors/ActionProcessor.php:338
 msgid "Removed %d tag(s)"
 msgstr ""
 
-#: includes/Processors/ActionProcessor.php:346
-#: includes/Processors/ActionProcessor.php:386
+#: includes/Processors/ActionProcessor.php:359
+#: includes/Processors/ActionProcessor.php:399
 msgid "No lists specified"
 msgstr ""
 
 #. translators: %d: number of lists
-#: includes/Processors/ActionProcessor.php:365
+#: includes/Processors/ActionProcessor.php:378
 msgid "Added to %d list(s)"
 msgstr ""
 
-#: includes/Processors/ActionProcessor.php:370
+#: includes/Processors/ActionProcessor.php:383
 msgid "Failed to add to lists"
 msgstr ""
 
 #. translators: %d: number of lists
-#: includes/Processors/ActionProcessor.php:405
+#: includes/Processors/ActionProcessor.php:418
 msgid "Removed from %d list(s)"
 msgstr ""
 
-#: includes/Processors/ActionProcessor.php:410
+#: includes/Processors/ActionProcessor.php:423
 msgid "Failed to remove from lists"
 msgstr ""
 
@@ -8547,49 +8576,66 @@ msgstr ""
 msgid "Contact not found."
 msgstr ""
 
-#: includes/Services/EmailLogService.php:373
+#: includes/Services/EmailLogService.php:93
+msgid "Not sent."
+msgstr ""
+
+#: includes/Services/EmailLogService.php:368
 msgid "Original email log not found"
 msgstr ""
 
-#: includes/Services/EmailLogService.php:384
+#: includes/Services/EmailLogService.php:379
 msgid "That contact is not accepting email."
 msgstr ""
 
-#: includes/Services/EmailLogService.php:413
+#: includes/Services/EmailLogService.php:408
 msgid "Failed to queue the email for resending"
 msgstr ""
 
-#: includes/Services/EmailService.php:235
+#: includes/Services/EmailService.php:158
+msgid "No valid recipient email address."
+msgstr ""
+
+#: includes/Services/EmailService.php:241
 msgid "Email sending failed"
 msgstr ""
 
-#: includes/Services/EmailService.php:254
+#: includes/Services/EmailService.php:260
 msgid "Unknown email provider type."
 msgstr ""
 
 #. translators: %s: message-assembly error
-#: includes/Services/EmailService.php:368
+#: includes/Services/EmailService.php:374
 msgid "Failed to assemble email: %s"
 msgstr ""
 
-#: includes/Services/EmailService.php:458
+#: includes/Services/EmailService.php:464
 msgid "This campaign's recipients include no mailable contacts."
 msgstr ""
 
-#: includes/Services/EmailService.php:638
+#: includes/Services/EmailService.php:644
 msgid "Campaign email not found"
 msgstr ""
 
-#: includes/Services/EmailService.php:645
+#: includes/Services/EmailService.php:651
 msgid "Campaign or contact not found"
 msgstr ""
 
 #. translators: %1$d: contact ID, %2$s: contact status
-#: includes/Services/EmailService.php:678
+#: includes/Services/EmailService.php:683
 msgid "Contact %1$d is not mailable (status: %2$s)"
 msgstr ""
 
-#: includes/Services/EmailService.php:1786
+#: includes/Services/EmailService.php:694
+msgid "Not sent: the contact has no valid email address."
+msgstr ""
+
+#. translators: %d: contact ID
+#: includes/Services/EmailService.php:715
+msgid "Contact %d has no valid email address"
+msgstr ""
+
+#: includes/Services/EmailService.php:1822
 msgid "Unknown error occurred"
 msgstr ""
 

@@ -111,11 +111,19 @@ class WebhookHandler
         $normalized = $this->normalizer->normalize($payload);
 
         $data = isset($normalized['data']) ? $normalized['data'] : $normalized;
-        if (empty($data['email'])) {
-            $message = __('Email is required', 'kelune-crm');
+        $supplied = isset($data['email']) && is_scalar($data['email'])
+            ? trim((string) $data['email'])
+            : '';
+
+        // Judged as sent: sanitize_email() edits rather than rejects, so
+        // 'A Name <a@b.com>' would be accepted and stored as 'AName@b.com'.
+        if (!is_email($supplied)) {
+            $message = __('A valid email is required', 'kelune-crm');
             $this->logRequest($webhook->id, $request, 400, ['error' => $message], $ip_address, $start_time, $message);
             return new WP_Error('validation_error', $message, ['status' => 400]);
         }
+
+        $data['email'] = sanitize_email($supplied);
 
         // Apply default lists and tags ONLY if not provided in payload
         $defaultLists = !empty($webhook->default_lists) ? (is_array($webhook->default_lists) ? $webhook->default_lists : json_decode($webhook->default_lists, true)) : [];

@@ -405,7 +405,10 @@ class CampaignRepository
         foreach (array_chunk($ids, 5000) as $chunk) {
             $placeholders = implode(',', array_fill(0, count($chunk), '%d'));
             $query = $this->db->prepare(
-                "SELECT id FROM {$this->contactsTable} WHERE status = 'active' AND id IN ({$placeholders})",
+                "SELECT id FROM {$this->contactsTable}
+                WHERE status = 'active'
+                AND email IS NOT NULL AND email <> ''
+                AND id IN ({$placeholders})",
                 $chunk
             );
 

@@ -98,7 +98,20 @@ class ActionProcessor
             ];
         }
 
-        $to = $contact->get('email');
+        $to = sanitize_email((string) $contact->get('email'));
+
+        // Not mailable is a final answer, like the status gate above.
+        if (!is_email($to)) {
+            return [
+                'success' => true,
+                'message' => sprintf(
+                    /* translators: %d: contact ID */
+                    __('Email skipped: contact %d has no valid email address.', 'kelune-crm'),
+                    (int) $contact->getId()
+                ),
+            ];
+        }
+
         $subject = (string) ($config['subject'] ?? '');
         $body = (string) ($config['body'] ?? '');
 

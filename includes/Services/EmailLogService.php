@@ -81,21 +81,16 @@ class EmailLogService
     }
 
     /**
-     * Log email as cancelled — queued, then withheld at send time because the
-     * contact is no longer mailable (unsubscribed, bounced, …).
+     * Log email as cancelled — queued, then withheld at send time.
      *
      * @param int $log_id
-     * @param string $contact_status The status that blocked the send.
+     * @param string $reason Why the send was withheld, as a complete sentence.
      * @return bool
      */
-    public function logEmailCancelled($log_id, string $contact_status = ''): bool
+    public function logEmailCancelled($log_id, string $reason = ''): bool
     {
         return $this->repository->updateStatus($log_id, 'cancelled', [
-            'error_message' => sprintf(
-                /* translators: %s: contact status, e.g. unsubscribed */
-                __('Not sent: the contact is %s.', 'kelune-crm'),
-                $contact_status
-            ),
+            'error_message' => $reason !== '' ? $reason : __('Not sent.', 'kelune-crm'),
         ]);
     }
 

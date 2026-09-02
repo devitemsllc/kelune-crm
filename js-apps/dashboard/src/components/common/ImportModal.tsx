@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Modal,
   Upload,
@@ -22,6 +22,16 @@ import ModalFooter from './ModalFooter';
 import { parseCsv } from '../../utils/csv';
 import api from '../../services/api';
 import { getErrorMessage } from '@/utils/getErrorMessage';
+import {
+  contactRequiredFields,
+  contactRequiredLabels,
+  isContactRequired,
+} from '@/utils/contactIdentity';
+import {
+  customFieldKey,
+  fetchCustomFields,
+  type CustomFieldDef,
+} from '@/utils/customFields';
 
 const { Dragger } = Upload;
 const { Step } = Steps;
@@ -33,9 +43,15 @@ interface ImportModalProps {
   onSuccess: () => void;
 }
 
-// Contact fields a CSV column can map to. `email` is required to identify rows.
+// Contact fields a CSV column can map to. Rows are matched on `email`, so
+// mapping it updates existing contacts instead of duplicating them.
 const CONTACT_FIELDS: { value: string; label: string }[] = [
-  { value: 'email', label: __('Email (required)', 'kelune-crm') },
+  {
+    value: 'email',
+    label: isContactRequired('email')
+      ? __('Email (required)', 'kelune-crm')
+      : __('Email', 'kelune-crm'),
+  },
   { value: 'first_name', label: __('First Name', 'kelune-crm') },
   { value: 'last_name', label: __('Last Name', 'kelune-crm') },
   { value: 'company', label: __('Company', 'kelune-crm') },
@@ -111,10 +127,18 @@ const HEADER_ALIASES: Record<string, string> = {
   list: 'lists',
 };
 
-const guessField = (header: string): string => {
+const guessField = (header: string, customFields: CustomFieldDef[]): string => {
   const key = normalize(header);
   if (HEADER_ALIASES[key]) return HEADER_ALIASES[key];
-  return CONTACT_FIELDS.some((f) => f.value === key) ? key : IGNORE;
+  if (CONTACT_FIELDS.some((f) => f.value === key)) return key;
+
+  // Matched on key or label, so a sheet headed with the visible label maps.
+  const custom = customFields.find(
+    (field) =>
+      normalize(field.field_key) === key || normalize(field.field_label) === key
+  );
+
+  return custom ? customFieldKey(custom) : IGNORE;
 };
 
 interface ImportResult {
@@ -134,6 +158,32 @@ const ImportModal = ({ visible, onClose, onSuccess }: ImportModalProps) => {
   const [mapping, setMapping] = useState<Record<number, string>>({});
   const [importing, setImporting] = useState(false);
   const [result, setResult] = useState<ImportResult | null>(null);
+  const [customFields, setCustomFields] = useState<CustomFieldDef[]>([]);
+  const [customFieldsLoaded, setCustomFieldsLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!visible || customFieldsLoaded) {
+      return;
+    }
+    fetchCustomFields()
+      .then(setCustomFields)
+      .catch((error) => {
+        // The core fields still map; only the custom ones go missing.
+        console.error('Failed to load custom fields:', error);
+      })
+      .finally(() => setCustomFieldsLoaded(true));
+  }, [visible, customFieldsLoaded]);
+
+  const mappableFields = useMemo(
+    () => [
+      ...CONTACT_FIELDS,
+      ...customFields.map((field) => ({
+        value: customFieldKey(field),
+        label: field.field_label,
+      })),
+    ],
+    [customFields]
+  );
 
   const resetModal = () => {
     setCurrentStep(0);
@@ -159,7 +209,7 @@ const ImportModal = ({ visible, onClose, onSuccess }: ImportModalProps) => {
     const autoMapping: Record<number, string> = {};
     const used = new Set<string>();
     parsedHeaders.forEach((header, index) => {
-      const guessed = guessField(header);
+      const guessed = guessField(header, customFields);
       // Don't map two columns onto the same field automatically.
       if (guessed !== IGNORE && !used.has(guessed)) {
         autoMapping[index] = guessed;
@@ -212,13 +262,16 @@ const ImportModal = ({ visible, onClose, onSuccess }: ImportModalProps) => {
     return false; // Prevent automatic upload.
   };
 
-  const emailMapped = Object.values(mapping).includes('email');
-  const mappedCount = Object.values(mapping).filter(
-    (v) => v && v !== IGNORE
-  ).length;
+  const requiredFields = contactRequiredFields();
+  const mappedFields = Object.values(mapping);
+  const emailMapped = mappedFields.includes('email');
+  // Every row is written with an email, so an unmapped Email column blanks it.
+  // Any other required column left unmapped keeps its stored value.
+  const canImport = !requiredFields.includes('email') || emailMapped;
+  const mappedCount = mappedFields.filter((v) => v && v !== IGNORE).length;
 
   const handleImport = async () => {
-    if (!emailMapped) {
+    if (!canImport) {
       message.error(__('Map a column to Email before importing', 'kelune-crm'));
       return;
     }
@@ -235,10 +288,22 @@ const ImportModal = ({ visible, onClose, onSuccess }: ImportModalProps) => {
         });
         return obj;
       })
-      .filter((obj) => obj.email);
+      // A mapped column left empty blanks the stored value, so the row is
+      // rejected server-side anyway; dropping it keeps the error list clean.
+      .filter((obj) =>
+        requiredFields.every(
+          (field) => !mappedFields.includes(field) || obj[field]
+        )
+      );
 
     if (rows.length === 0) {
-      message.error(__('No rows with an email to import', 'kelune-crm'));
+      message.error(
+        sprintf(
+          // translators: %s: comma-separated field labels, e.g. "Email, First Name".
+          __('No rows have every required field filled in: %s', 'kelune-crm'),
+          contactRequiredLabels()
+        )
+      );
       return;
     }
 
@@ -315,7 +380,7 @@ const ImportModal = ({ visible, onClose, onSuccess }: ImportModalProps) => {
               value: IGNORE,
               label: __('-- Ignore Column --', 'kelune-crm'),
             },
-            ...CONTACT_FIELDS.map((f) => ({
+            ...mappableFields.map((f) => ({
               value: f.value,
               label: f.label,
               // Disable a field already taken by another column.
@@ -379,15 +444,28 @@ const ImportModal = ({ visible, onClose, onSuccess }: ImportModalProps) => {
       {currentStep === 1 && (
         <div>
           <Alert
-            message={sprintf(
-              /* translators: %s: uploaded file name */
-              __(
-                'Reviewing %s. Match each CSV column to the contact field it belongs to using the dropdowns below — any column left as "Ignore Column" is skipped. Email is required so contacts can be matched: existing contacts are updated and new emails are created.',
-                'kelune-crm'
-              ),
-              fileName
-            )}
-            type={emailMapped ? 'success' : 'warning'}
+            message={
+              emailMapped
+                ? sprintf(
+                    /* translators: %1$s: uploaded file name, %2$s: comma-separated field labels. */
+                    __(
+                      'Reviewing %1$s. Match each CSV column to the contact field it belongs to using the dropdowns below — any column left as "Ignore Column" is skipped. Rows are matched on email, so existing contacts are updated and new addresses created. Required fields: %2$s.',
+                      'kelune-crm'
+                    ),
+                    fileName,
+                    contactRequiredLabels()
+                  )
+                : sprintf(
+                    /* translators: %1$s: uploaded file name, %2$s: comma-separated field labels. */
+                    __(
+                      'Reviewing %1$s. Match each CSV column to the contact field it belongs to using the dropdowns below — any column left as "Ignore Column" is skipped. With no Email column there is nothing to match on, so every row is added as a new contact. Required fields: %2$s.',
+                      'kelune-crm'
+                    ),
+                    fileName,
+                    contactRequiredLabels()
+                  )
+            }
+            type={canImport ? 'success' : 'warning'}
             style={{ marginBottom: 16, border: 'none' }}
           />
           <Table

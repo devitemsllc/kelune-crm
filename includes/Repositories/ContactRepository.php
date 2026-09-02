@@ -65,6 +65,12 @@ class ContactRepository
             $row['custom_fields'] = json_decode($row['custom_fields'], true);
         }
 
+        // An absent address is NULL in the column but '' above it;
+        // normalizeEmail() converts back on the way in.
+        if (array_key_exists('email', $row)) {
+            $row['email'] = (string) $row['email'];
+        }
+
         return new Contact($row);
     }
 
@@ -76,9 +82,82 @@ class ContactRepository
         ));
     }
 
+    /**
+     * An absent address is stored as NULL, never '': the unique index admits
+     * many NULLs but only one empty string.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    private function normalizeEmail(array $data): array
+    {
+        if (!array_key_exists('email', $data)) {
+            return $data;
+        }
+
+        $email = is_string($data['email']) ? sanitize_email($data['email']) : '';
+        $data['email'] = $email !== '' ? $email : null;
+
+        return $data;
+    }
+
+    /**
+     * The address-less contact matching every one of $values, or null. Addressed
+     * rows are excluded: matching on a name would merge two people sharing one.
+     *
+     * @param array<string, mixed> $values Column => value; unknown columns are ignored.
+     */
+    public function findAddresslessMatch(array $values): ?\KeluneCRM\Models\Contact
+    {
+        $conditions = [];
+        $params = [];
+
+        foreach ($values as $column => $value) {
+            // Column names come from a filter: whitelisted before interpolation.
+            if ($column === 'email' || !in_array($column, \KeluneCRM\Support\ContactFields::STANDARD, true)) {
+                continue;
+            }
+
+            $normalized = is_scalar($value) ? trim((string) $value) : '';
+
+            if ($normalized === '') {
+                return null;
+            }
+
+            $conditions[] = "{$column} = %s";
+            $params[] = $normalized;
+        }
+
+        if ($conditions === []) {
+            return null;
+        }
+
+        $query = $this->db->prepare(
+            "SELECT * FROM {$this->tableName} WHERE email IS NULL AND "
+                . implode(' AND ', $conditions)
+                // Oldest wins, so pre-existing duplicates resolve stably.
+                . ' ORDER BY id ASC LIMIT 1',
+            $params
+        );
+
+        if (!$query) {
+            return null;
+        }
+
+        return $this->hydrate($this->db->get_row($query, ARRAY_A));
+    }
+
     /** @param string $email */
     public function findByEmail($email): ?\KeluneCRM\Models\Contact
     {
+        $email = sanitize_email($email);
+
+        // A blank lookup must never resolve to a contact: a legacy '' row
+        // would otherwise match every address-less caller.
+        if (!is_email($email)) {
+            return null;
+        }
+
         return $this->hydrate($this->db->get_row(
             $this->db->prepare("SELECT * FROM {$this->tableName} WHERE email = %s", $email),
             ARRAY_A
@@ -137,12 +216,17 @@ class ContactRepository
             ARRAY_A
         ) ?: [];
 
-        return array_map(function ($row): \KeluneCRM\Models\Contact {
-            if (isset($row['custom_fields']) && !empty($row['custom_fields'])) {
-                $row['custom_fields'] = json_decode($row['custom_fields'], true);
+        $contacts = [];
+
+        foreach ($results as $row) {
+            $contact = $this->hydrate($row);
+
+            if ($contact !== null) {
+                $contacts[] = $contact;
             }
-            return new Contact($row);
-        }, $results);
+        }
+
+        return $contacts;
     }
 
     /**
@@ -160,6 +244,7 @@ class ContactRepository
     {
         $data = $contact->toArray();
         unset($data['id']);
+        $data = $this->normalizeEmail($data);
 
         if (isset($data['custom_fields']) && is_array($data['custom_fields'])) {
             $data['custom_fields'] = json_encode($data['custom_fields']);
@@ -183,6 +268,7 @@ class ContactRepository
         $data = $contact->toArray();
         $id = (int) $data['id'];
         unset($data['id']);
+        $data = $this->normalizeEmail($data);
 
         if (isset($data['custom_fields']) && is_array($data['custom_fields'])) {
             $data['custom_fields'] = json_encode($data['custom_fields']);
@@ -668,12 +754,17 @@ class ContactRepository
             ARRAY_A
         ) ?: [];
 
-        return array_map(function ($row): \KeluneCRM\Models\Contact {
-            if (isset($row['custom_fields']) && !empty($row['custom_fields'])) {
-                $row['custom_fields'] = json_decode($row['custom_fields'], true);
+        $contacts = [];
+
+        foreach ($results as $row) {
+            $contact = $this->hydrate($row);
+
+            if ($contact !== null) {
+                $contacts[] = $contact;
             }
-            return new Contact($row);
-        }, $results);
+        }
+
+        return $contacts;
     }
 
     /** @param array<string, mixed> $filters */

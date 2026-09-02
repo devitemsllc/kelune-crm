@@ -99,6 +99,12 @@ import type {
 import type { Key } from 'react';
 import { timeDiff, timeFormat } from '../utils/time';
 import { countryName } from '../utils/countries';
+import {
+  customFieldDisplayValue,
+  customFieldKey,
+  fetchCustomFields,
+} from '../utils/customFields';
+import type { CustomFieldDef } from '../utils/customFields';
 
 const { Text } = Typography;
 
@@ -209,6 +215,7 @@ const Contacts = () => {
   // manual automation has no automatic trigger, so this bulk action is the way
   // to start it for chosen contacts.
   const [manualAutomations, setManualAutomations] = useState<Automation[]>([]);
+  const [customFields, setCustomFields] = useState<CustomFieldDef[]>([]);
 
   const loadContacts = useCallback(() => {
     dispatch(
@@ -247,11 +254,12 @@ const Contacts = () => {
 
   const loadTagsAndLists = useCallback(async () => {
     try {
-      const [tagsResponse, listsResponse, automationsResponse] =
+      const [tagsResponse, listsResponse, automationsResponse, fields] =
         await Promise.all([
           api.tags.getAll(),
           api.lists.getAll(),
           api.automations.getAll({ per_page: 100, status: 'active' }),
+          fetchCustomFields(),
         ]);
       // Normalise ids to numbers (API may send strings) so they match the
       // numeric filter/select values and id lookups below.
@@ -271,8 +279,12 @@ const Contacts = () => {
       setManualAutomations(
         automations.filter((a) => a.trigger_type === 'manual')
       );
+      setCustomFields(fields);
     } catch (error) {
-      console.error('Failed to load tags, lists and automations:', error);
+      console.error(
+        'Failed to load tags, lists, automations and custom fields:',
+        error
+      );
     }
   }, []);
 
@@ -606,6 +618,19 @@ const Contacts = () => {
     },
   ];
 
+  // One column per custom field, off by default — a site may define many.
+  const customFieldColumns: VisibleColumn[] = customFields.map((field) => {
+    const key = customFieldKey(field);
+
+    return {
+      title: field.field_label,
+      key,
+      visible: visibleColumns[key] ?? false,
+      render: (_: unknown, record: Contact) =>
+        customFieldDisplayValue(record.custom_fields?.[field.field_key]) || '-',
+    };
+  });
+
   const allColumns: VisibleColumn[] = [
     {
       title: __('Contact', 'kelune-crm'),
@@ -780,6 +805,7 @@ const Contacts = () => {
           '-'
         ),
     },
+    ...customFieldColumns,
     {
       title: __('Actions', 'kelune-crm'),
       key: 'actions',
@@ -843,6 +869,10 @@ const Contacts = () => {
     { key: 'source', label: __('Source', 'kelune-crm') },
     { key: 'lead_score', label: __('Lead Score', 'kelune-crm') },
     { key: 'created', label: __('Created Date', 'kelune-crm') },
+    ...customFields.map((field) => ({
+      key: customFieldKey(field),
+      label: field.field_label,
+    })),
   ];
 
   // "More" menu on the page header (Export / Import).

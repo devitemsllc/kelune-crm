@@ -3,7 +3,7 @@ Contributors: devitemsllc, nazmulhudadev, aslamhasib
 Tags: crm, contacts, email marketing, marketing automation, email campaigns
 Requires at least: 6.6
 Tested up to: 7.1
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -182,6 +182,12 @@ Used to deliver email when you select SMTP as your email provider. This is not a
 
 == Changelog ==
 
+= Version: 1.0.4 - Date: 2 September, 2026 =
+* Added: Custom fields can be mapped when importing contacts, and shown as columns on the Contacts list.
+* Added: Support for contacts without an email address, for sites that identify people by other details.
+* Fixed: Custom field settings such as placeholder, limits and help text are now saved.
+* Fixed: Minor bugs and issues to enhance functionality and user experience.
+
 = Version: 1.0.3 - Date: 27 August, 2026 =
 * Fixed: Editing one field on a contact, tag, list or email connection no longer clears other saved details.
 * Fixed: A stray line of styling text at the top of emails built with the email designer.
@@ -204,6 +210,9 @@ Used to deliver email when you select SMTP as your email provider. This is not a
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.0.4 =
+Adds custom fields to contact import and the Contacts list. The database updates automatically on the first admin page load after upgrading.
 
 = 1.0.3 =
 Fixes edits that could clear other saved details on a contact or email connection, and removes a stray line of styling text from designed emails.

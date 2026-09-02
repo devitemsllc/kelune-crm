@@ -6,12 +6,15 @@ namespace KeluneCRM\Database;
 
 class Migrator
 {
+    private \wpdb $db;
+
     private string $tablePrefix;
 
     private string $charsetCollate;
 
     public function __construct(\wpdb $wpdb)
     {
+        $this->db = $wpdb;
         $this->tablePrefix = $wpdb->prefix . 'kelune_crm_';
         $this->charsetCollate = $wpdb->get_charset_collate();
     }
@@ -57,6 +60,47 @@ class Migrator
         $this->createEmailTemplatesTable();
         $this->createEmailLogsTable();
         $this->createEmailProvidersTable();
+
+        $this->nullContactEmailColumn();
+    }
+
+    /**
+     * Make `contacts.email` nullable and turn any stored blank into NULL: the
+     * unique index permits many NULLs but only one empty string. Applied
+     * directly because dbDelta never relaxes NOT NULL nor touches rows.
+     */
+    private function nullContactEmailColumn(): void
+    {
+        $tableName = $this->tablePrefix . 'contacts';
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema read on a custom table; no WP API.
+        $column = $this->db->get_row(
+            $this->db->prepare('SHOW COLUMNS FROM %i LIKE %s', $tableName, 'email'),
+            ARRAY_A
+        );
+
+        if (!is_array($column)) {
+            return;
+        }
+
+        if (strtoupper((string) ($column['Null'] ?? '')) !== 'YES') {
+            $alter = $this->db->prepare(
+                'ALTER TABLE %i MODIFY COLUMN email VARCHAR(255) NULL DEFAULT NULL',
+                $tableName
+            );
+
+            if ($alter) {
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Schema change on a custom table; identifier is prepared.
+                $this->db->query($alter);
+            }
+        }
+
+        $blanks = $this->db->prepare("UPDATE %i SET email = NULL WHERE email = ''", $tableName);
+
+        if ($blanks) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Data fix on a custom table; identifier is prepared.
+            $this->db->query($blanks);
+        }
     }
 
     private function createContactsTable(): void
@@ -66,7 +110,7 @@ class Migrator
         $sql = "CREATE TABLE {$tableName} (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             user_id BIGINT UNSIGNED NULL,
-            email VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NULL DEFAULT NULL,
             first_name VARCHAR(50) DEFAULT '',
             last_name VARCHAR(50) DEFAULT '',
             company VARCHAR(100) DEFAULT '',

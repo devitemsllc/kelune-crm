@@ -56,6 +56,8 @@ export interface KeluneCRMGlobal {
   pro_active?: boolean | string;
   /** Per-feature flag map (Pro features). Absent/false → gated in the UI. */
   features?: Partial<Record<FeatureKey, boolean>>;
+  /** Contact columns that must be filled in. Defaults to `['email']`. */
+  contact_required_fields?: string[];
   /**
    * Email the license activation form starts on — the one last used, else the
    * site admin address. Contributed by Pro through `kelune_crm_dashboard_config`,
