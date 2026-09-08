@@ -11,6 +11,7 @@ import useScreens from '@hooks/useScreens';
 import { useSetupWizard } from '@hooks/useSetupWizard';
 import { useLicense } from '@hooks/useLicense';
 import api from '@/services/api';
+import { CAP, can } from '@/utils/capabilities';
 import LicenseStep from '@/components/setup-wizard/LicenseStep';
 import WelcomeStep from '@/components/setup-wizard/WelcomeStep';
 import ItemsStep from '@/components/setup-wizard/ItemsStep';
@@ -50,9 +51,13 @@ const SetupWizard = () => {
 
   const { colorBgContainer, borderRadiusLG } = token;
 
-  // Pro prepends a license step, which shifts every later index by one.
+  // Pro prepends a license step and the Lists/Tags steps are capability-bound,
+  // so the finish index is whatever the steps add up to.
   const withLicense = isLicenseRequired();
-  const finishStep = withLicense ? 4 : 3;
+  const withLists = can(CAP.CREATE_LISTS);
+  const withTags = can(CAP.CREATE_TAGS);
+  const finishStep =
+    1 + (withLicense ? 1 : 0) + (withLists ? 1 : 0) + (withTags ? 1 : 0);
 
   // An unlicensed Pro install is pinned to the license step regardless of the
   // stored progress: installing Pro part-way through the wizard would otherwise
@@ -69,23 +74,32 @@ const SetupWizard = () => {
   // id from '0' into a real id, so the seeding below shows it).
   const loadData = useCallback(async () => {
     setFetching(true);
-    try {
-      const [lists, tags] = await Promise.all([
-        api.lists.getAll({ per_page: 100, orderby: 'id', order: 'ASC' }),
-        api.tags.getAll({ per_page: 100, orderby: 'id', order: 'ASC' }),
-      ]);
-      setListsData(
-        (lists.data ?? []).map((item) => ({ id: item.id, name: item.name }))
-      );
-      setTagsData(
-        (tags.data ?? []).map((item) => ({ id: item.id, name: item.name }))
-      );
-    } catch {
-      setListsData([]);
-      setTagsData([]);
-    } finally {
-      setFetching(false);
-    }
+    // Settled, not all: one refusal must not blank the step that did load.
+    const [lists, tags] = await Promise.allSettled([
+      can(CAP.VIEW_LISTS)
+        ? api.lists.getAll({ per_page: 100, orderby: 'id', order: 'ASC' })
+        : Promise.reject(),
+      can(CAP.VIEW_TAGS)
+        ? api.tags.getAll({ per_page: 100, orderby: 'id', order: 'ASC' })
+        : Promise.reject(),
+    ]);
+    setListsData(
+      lists.status === 'fulfilled'
+        ? (lists.value.data ?? []).map((item) => ({
+            id: item.id,
+            name: item.name,
+          }))
+        : []
+    );
+    setTagsData(
+      tags.status === 'fulfilled'
+        ? (tags.value.data ?? []).map((item) => ({
+            id: item.id,
+            name: item.name,
+          }))
+        : []
+    );
+    setFetching(false);
   }, []);
 
   useEffect(() => {
@@ -151,8 +165,8 @@ const SetupWizard = () => {
   const stepTitles = [
     ...(withLicense ? [__('License', 'kelune-crm')] : []),
     __('Welcome', 'kelune-crm'),
-    __('Lists', 'kelune-crm'),
-    __('Tags', 'kelune-crm'),
+    ...(withLists ? [__('Lists', 'kelune-crm')] : []),
+    ...(withTags ? [__('Tags', 'kelune-crm')] : []),
     __('Finished', 'kelune-crm'),
   ];
   const stepItems = stepTitles.map((title) => ({
@@ -175,55 +189,63 @@ const SetupWizard = () => {
       nextStep={nextStep}
       skipSetup={skipSetup}
     />,
-    <ItemsStep
-      key="step-1"
-      form={listsForm}
-      existingData={listsData}
-      api={api.lists}
-      title={__('Contact Lists', 'kelune-crm')}
-      description={__(
-        'Just enter the name of each list and click Save & Next!',
-        'kelune-crm'
-      )}
-      placeholder={(index) =>
-        // translators: %d: row number
-        `${__('e.g. List', 'kelune-crm')} ${index}`
-      }
-      addLabel={__('Add More List', 'kelune-crm')}
-      requiredMessage={__(
-        'At least one list name is required to save.',
-        'kelune-crm'
-      )}
-      savedMessage={__('Lists saved successfully', 'kelune-crm')}
-      setIsLoading={setIsSubLoading}
-      nextStep={nextStep}
-      prevStep={prevStep}
-      skipSetup={skipSetup}
-      reloadData={loadData}
-    />,
-    <ItemsStep
-      key="step-2"
-      form={tagsForm}
-      existingData={tagsData}
-      api={api.tags}
-      title={__('Contact Tags', 'kelune-crm')}
-      description={__(
-        'Just enter the name of each tag and click Save & Next!',
-        'kelune-crm'
-      )}
-      placeholder={(index) => `${__('e.g. Tag', 'kelune-crm')} ${index}`}
-      addLabel={__('Add More Tag', 'kelune-crm')}
-      requiredMessage={__(
-        'At least one tag name is required to save.',
-        'kelune-crm'
-      )}
-      savedMessage={__('Tags saved successfully', 'kelune-crm')}
-      setIsLoading={setIsSubLoading}
-      nextStep={nextStep}
-      prevStep={prevStep}
-      skipSetup={skipSetup}
-      reloadData={loadData}
-    />,
+    ...(withLists
+      ? [
+          <ItemsStep
+            key="step-1"
+            form={listsForm}
+            existingData={listsData}
+            api={api.lists}
+            title={__('Contact Lists', 'kelune-crm')}
+            description={__(
+              'Just enter the name of each list and click Save & Next!',
+              'kelune-crm'
+            )}
+            placeholder={(index) =>
+              // translators: %d: row number
+              `${__('e.g. List', 'kelune-crm')} ${index}`
+            }
+            addLabel={__('Add More List', 'kelune-crm')}
+            requiredMessage={__(
+              'At least one list name is required to save.',
+              'kelune-crm'
+            )}
+            savedMessage={__('Lists saved successfully', 'kelune-crm')}
+            setIsLoading={setIsSubLoading}
+            nextStep={nextStep}
+            prevStep={prevStep}
+            skipSetup={skipSetup}
+            reloadData={loadData}
+          />,
+        ]
+      : []),
+    ...(withTags
+      ? [
+          <ItemsStep
+            key="step-2"
+            form={tagsForm}
+            existingData={tagsData}
+            api={api.tags}
+            title={__('Contact Tags', 'kelune-crm')}
+            description={__(
+              'Just enter the name of each tag and click Save & Next!',
+              'kelune-crm'
+            )}
+            placeholder={(index) => `${__('e.g. Tag', 'kelune-crm')} ${index}`}
+            addLabel={__('Add More Tag', 'kelune-crm')}
+            requiredMessage={__(
+              'At least one tag name is required to save.',
+              'kelune-crm'
+            )}
+            savedMessage={__('Tags saved successfully', 'kelune-crm')}
+            setIsLoading={setIsSubLoading}
+            nextStep={nextStep}
+            prevStep={prevStep}
+            skipSetup={skipSetup}
+            reloadData={loadData}
+          />,
+        ]
+      : []),
     <FinishedStep key="step-3" onDone={leaveWizard} />,
   ];
 

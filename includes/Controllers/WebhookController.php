@@ -6,6 +6,7 @@ namespace KeluneCRM\Controllers;
 
 use KeluneCRM\Api\Controllers\BaseController;
 use KeluneCRM\Repositories\IncomingWebhookRepository;
+use KeluneCRM\Support\Capabilities;
 use WP_REST_Request;
 
 if (!defined('ABSPATH')) {
@@ -15,6 +16,12 @@ if (!defined('ABSPATH')) {
 class WebhookController extends BaseController
 {
     protected string $restBase = 'webhooks';
+
+    protected string $readCapability = Capabilities::MANAGE_WEBHOOKS;
+
+    protected string $writeCapability = Capabilities::MANAGE_WEBHOOKS;
+
+    protected string $deleteCapability = Capabilities::MANAGE_WEBHOOKS;
     private \KeluneCRM\Repositories\IncomingWebhookRepository $repository;
 
     public function __construct()

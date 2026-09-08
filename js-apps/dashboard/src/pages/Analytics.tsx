@@ -35,10 +35,11 @@ const Analytics: React.FC = () => {
   const range = useSelector((s) => s.analytics.range);
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Derive the active tab from the router sub-route (/analytics/<tab>).
+  // Derive the active tab from the router sub-route (/analytics/<tab>); an
+  // unknown one falls back to Overview rather than an empty tab body.
   useEffect(() => {
-    const sub = location.pathname.split('/')[2];
-    setActiveTab(sub || 'overview');
+    const sub = location.pathname.split('/')[2] ?? '';
+    setActiveTab(sub in TAB_PATHS ? sub : 'overview');
   }, [location.pathname]);
 
   const handleRangeChange: RangePickerProps['onChange'] = (dates) => {

@@ -5,64 +5,109 @@ declare(strict_types=1);
 namespace KeluneCRM\Admin;
 
 use KeluneCRM\Support\BrandMark;
+use KeluneCRM\Support\Capabilities;
 
 class AdminMenu
 {
     private string $menuSlug = 'kelune-crm';
 
-    private string $capability = 'manage_options';
+    /** Settings hosts several sections; the row shows for any one of them. */
+    private const SETTINGS_CAPABILITIES = [
+        Capabilities::MANAGE_SETTINGS,
+        Capabilities::MANAGE_CUSTOM_FIELDS,
+        Capabilities::MANAGE_EMAIL_PROVIDERS,
+        Capabilities::MANAGE_WEBHOOKS,
+        Capabilities::MANAGE_ROLES,
+        Capabilities::VIEW_SMART_LINKS,
+    ];
+
+    private string $capability = Capabilities::ACCESS;
 
     /**
-     * Single source of truth for both the WordPress admin menu and the admin
-     * bar menu. Each entry:
-     *   - hash: URL hash appended to the shared admin page ('' = bare slug,
-     *           which loads the app with no hash → React redirects to #/dashboard).
-     *   - title: translated label.
-     *   - separator: whether a divider rule is drawn above this item.
-     *   - indent: whether the item is visually nested (extra left padding +
-     *             smaller font) so it reads as a child of Contacts.
+     * Single source of truth for both the WordPress admin menu and the admin bar
+     * menu. `hash` is appended to the shared admin page ('' = the bare slug, which
+     * loads the app with no hash); `separator` and `indent` drive the divider and
+     * nesting styling enqueued separately; a row whose `capability` the user lacks
+     * — any one of several, when it is a list — is dropped.
      *
-     * @return array<int, array{hash: string, title: string, separator: bool, indent: bool}>
+     * @return array<int, array{hash: string, title: string, separator: bool, indent: bool, capability: string|array<int, string>}>
      */
     private function menuItems(): array
     {
-        // The bare-slug first item is Dashboard (loads the app with no hash →
-        // React redirects to #/dashboard). "Contacts" and "Emails" are clickable
-        // section headers; the indented rows beneath them are their children.
-        // "#/contacts-group" and "#/emails-group" are thin redirect routes
-        // (→ /contacts and → /email-templates) so each header has its own slug
-        // distinct from the "All Contacts" / "Templates" child beneath it.
-        $items = [
-            ['hash' => '', 'title' => __('Dashboard', 'kelune-crm'), 'separator' => false, 'indent' => false],
-            ['hash' => '#/contacts-group', 'title' => __('Contacts', 'kelune-crm'), 'separator' => true, 'indent' => false],
-            ['hash' => '#/contacts', 'title' => __('All Contacts', 'kelune-crm'), 'separator' => false, 'indent' => true],
-            ['hash' => '#/contacts/lists', 'title' => __('Lists', 'kelune-crm'), 'separator' => false, 'indent' => true],
-            ['hash' => '#/contacts/tags', 'title' => __('Tags', 'kelune-crm'), 'separator' => false, 'indent' => true],
+        // "#/contacts-group" and "#/emails-group" are thin redirect routes, so each
+        // clickable section header owns a slug distinct from the "All Contacts" /
+        // "Templates" child indented beneath it.
+
+        // Segments are Pro: the row, and the header's claim on it, exist only
+        // while the add-on is active (it flips `kelune_crm_pro_active`).
+        $proActive = (bool) apply_filters('kelune_crm_pro_active', false);
+
+        // Like Settings, the "Contacts" header shows for any row it groups.
+        $contactsCapabilities = [
+            Capabilities::VIEW_CONTACTS,
+            Capabilities::VIEW_LISTS,
+            Capabilities::VIEW_TAGS,
         ];
 
-        // Segments are a Pro feature; the submenu row appears only when the Pro
-        // add-on is active (it flips the `kelune_crm_pro_active` filter).
-        if ((bool) apply_filters('kelune_crm_pro_active', false)) {
-            $items[] = ['hash' => '#/contacts/segments', 'title' => __('Segments', 'kelune-crm'), 'separator' => false, 'indent' => true];
+        if ($proActive) {
+            $contactsCapabilities[] = Capabilities::VIEW_SEGMENTS;
+        }
+
+        $items = [
+            ['hash' => '', 'title' => __('Dashboard', 'kelune-crm'), 'separator' => false, 'indent' => false, 'capability' => Capabilities::VIEW_ANALYTICS],
+            ['hash' => '#/contacts-group', 'title' => __('Contacts', 'kelune-crm'), 'separator' => true, 'indent' => false, 'capability' => $contactsCapabilities],
+            ['hash' => '#/contacts', 'title' => __('All Contacts', 'kelune-crm'), 'separator' => false, 'indent' => true, 'capability' => Capabilities::VIEW_CONTACTS],
+            ['hash' => '#/contacts/lists', 'title' => __('Lists', 'kelune-crm'), 'separator' => false, 'indent' => true, 'capability' => Capabilities::VIEW_LISTS],
+            ['hash' => '#/contacts/tags', 'title' => __('Tags', 'kelune-crm'), 'separator' => false, 'indent' => true, 'capability' => Capabilities::VIEW_TAGS],
+        ];
+
+        if ($proActive) {
+            $items[] = ['hash' => '#/contacts/segments', 'title' => __('Segments', 'kelune-crm'), 'separator' => false, 'indent' => true, 'capability' => Capabilities::VIEW_SEGMENTS];
         }
 
         $items = array_merge($items, [
-            ['hash' => '#/campaigns', 'title' => __('Campaigns', 'kelune-crm'), 'separator' => true, 'indent' => false],
-            ['hash' => '#/automations', 'title' => __('Automations', 'kelune-crm'), 'separator' => false, 'indent' => false],
-            ['hash' => '#/emails-group', 'title' => __('Emails', 'kelune-crm'), 'separator' => true, 'indent' => false],
-            ['hash' => '#/email-templates', 'title' => __('Templates', 'kelune-crm'), 'separator' => false, 'indent' => true],
-            ['hash' => '#/email-logs', 'title' => __('Logs', 'kelune-crm'), 'separator' => false, 'indent' => true],
-            ['hash' => '#/analytics', 'title' => __('Analytics', 'kelune-crm'), 'separator' => true, 'indent' => false],
-            ['hash' => '#/settings', 'title' => __('Settings', 'kelune-crm'), 'separator' => false, 'indent' => false],
+            ['hash' => '#/campaigns', 'title' => __('Campaigns', 'kelune-crm'), 'separator' => true, 'indent' => false, 'capability' => Capabilities::VIEW_CAMPAIGNS],
+            ['hash' => '#/automations', 'title' => __('Automations', 'kelune-crm'), 'separator' => false, 'indent' => false, 'capability' => Capabilities::VIEW_AUTOMATIONS],
+            ['hash' => '#/emails-group', 'title' => __('Emails', 'kelune-crm'), 'separator' => true, 'indent' => false, 'capability' => [Capabilities::VIEW_EMAIL_TEMPLATES, Capabilities::VIEW_EMAIL_LOGS]],
+            ['hash' => '#/email-templates', 'title' => __('Templates', 'kelune-crm'), 'separator' => false, 'indent' => true, 'capability' => Capabilities::VIEW_EMAIL_TEMPLATES],
+            ['hash' => '#/email-logs', 'title' => __('Logs', 'kelune-crm'), 'separator' => false, 'indent' => true, 'capability' => Capabilities::VIEW_EMAIL_LOGS],
+            ['hash' => '#/analytics', 'title' => __('Analytics', 'kelune-crm'), 'separator' => true, 'indent' => false, 'capability' => Capabilities::VIEW_ANALYTICS],
+            ['hash' => '#/settings', 'title' => __('Settings', 'kelune-crm'), 'separator' => false, 'indent' => false, 'capability' => self::SETTINGS_CAPABILITIES],
         ]);
 
         // The license belongs to the Pro add-on; without it there is nothing to
         // activate, so the row only exists while Pro is active.
-        if ((bool) apply_filters('kelune_crm_pro_active', false)) {
-            $items[] = ['hash' => '#/license', 'title' => __('License', 'kelune-crm'), 'separator' => true, 'indent' => false];
+        if ($proActive) {
+            $items[] = ['hash' => '#/license', 'title' => __('License', 'kelune-crm'), 'separator' => true, 'indent' => false, 'capability' => Capabilities::MANAGE_SETTINGS];
+        }
+
+        $items = array_values(array_filter($items, fn (array $item): bool => $this->canSee($item['capability'])));
+
+        // The first row must own the bare slug, or WordPress prepends its own
+        // duplicate of the parent; without Dashboard the next row takes that slot.
+        if ($items !== []) {
+            $items[0]['hash'] = '';
+            $items[0]['separator'] = false;
+            $items[0]['indent'] = false;
         }
 
         return $items;
+    }
+
+    /**
+     * An array of capabilities means any one of them is enough.
+     *
+     * @param string|array<int, string> $capability
+     */
+    private function canSee(string|array $capability): bool
+    {
+        foreach ((array) $capability as $cap) {
+            if (current_user_can($cap)) {
+                return true;
+            }
+        }
+
+        return current_user_can('manage_options');
     }
 
     public function register(): void
@@ -100,7 +145,7 @@ class AdminMenu
      */
     public function registerAdminBar(\WP_Admin_Bar $wpAdminBar): void
     {
-        if (!current_user_can($this->capability)) {
+        if (!$this->canSee($this->capability)) {
             return;
         }
 
@@ -183,9 +228,11 @@ class AdminMenu
     {
         $selector = '#adminmenu #toplevel_page_' . $this->menuSlug . ' div.wp-menu-image';
 
+        // wp-admin sets `box-sizing:border-box` globally, which would fold the
+        // vertical padding into the 18px and squash the mask flat.
         return '@supports ((-webkit-mask-image:url("")) or (mask-image:url(""))){'
             . $selector . '::before{'
-            . 'content:"";width:18px;height:18px;padding:8px 0;'
+            . 'content:"";box-sizing:content-box;width:18px;height:18px;padding:8px 0;'
             . 'background-color:currentColor;'
             . $this->maskDeclarations(18)
             . '}}';
@@ -202,7 +249,7 @@ class AdminMenu
         return '@supports ((-webkit-mask-image:url("")) or (mask-image:url(""))){'
             . $selector . '{width:16px;height:16px;margin-right:6px;}'
             . $selector . '::before{'
-            . 'content:"";display:block;width:16px;height:16px;padding:0;top:4px;'
+            . 'content:"";display:block;box-sizing:content-box;width:16px;height:16px;padding:0;top:4px;'
             . 'background-color:currentColor;'
             . $this->maskDeclarations(16)
             . '}}';

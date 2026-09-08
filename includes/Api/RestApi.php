@@ -16,6 +16,7 @@ use KeluneCRM\Api\Controllers\EmailProviderController;
 use KeluneCRM\Api\Controllers\EmailTemplatesController;
 use KeluneCRM\Api\Controllers\ListsController;
 use KeluneCRM\Api\Controllers\OptinController;
+use KeluneCRM\Api\Controllers\RolesController;
 use KeluneCRM\Api\Controllers\SettingsController;
 use KeluneCRM\Api\Controllers\TagsController;
 use KeluneCRM\Api\Controllers\ToolsController;
@@ -50,6 +51,7 @@ class RestApi
             'automation_templates' => new AutomationTemplatesController(),
             'analytics' => new AnalyticsController(),
             'settings' => new SettingsController(),
+            'roles' => new RolesController(),
             'lists' => new ListsController(),
             'tags' => new TagsController(),
             'custom_fields' => new CustomFieldsController(),
@@ -81,135 +83,5 @@ class RestApi
                 $controller->registerRoutes($this->namespace);
             }
         }
-
-        $this->registerUtilityRoutes();
-    }
-
-    private function registerUtilityRoutes(): void
-    {
-        register_rest_route($this->namespace, '/import', [
-            'methods' => 'POST',
-            'callback' => [$this, 'handleImport'],
-            'permission_callback' => [$this, 'checkPermission'],
-        ]);
-
-        register_rest_route($this->namespace, '/export', [
-            'methods' => 'POST',
-            'callback' => [$this, 'handleExport'],
-            'permission_callback' => [$this, 'checkPermission'],
-        ]);
-
-        register_rest_route($this->namespace, '/batch', [
-            'methods' => 'POST',
-            'callback' => [$this, 'handleBatch'],
-            'permission_callback' => [$this, 'checkPermission'],
-        ]);
-    }
-
-    public function handleImport(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
-    {
-        $type = $request->get_param('type');
-        $data = $request->get_param('data');
-        $options = $request->get_param('options') ?? [];
-
-        switch ($type) {
-            case 'contacts':
-                return $this->importContacts($data, $options);
-            case 'campaigns':
-                return $this->importCampaigns($data, $options);
-            default:
-                return new \WP_Error('invalid_type', __('Invalid import type', 'kelune-crm'), ['status' => 400]);
-        }
-    }
-
-    public function handleExport(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
-    {
-        $type = $request->get_param('type');
-        $filters = $request->get_param('filters') ?? [];
-        $format = $request->get_param('format') ?? 'csv';
-
-        switch ($type) {
-            case 'contacts':
-                return $this->exportContacts($filters, $format);
-            case 'campaigns':
-                return $this->exportCampaigns($filters, $format);
-            default:
-                return new \WP_Error('invalid_type', __('Invalid export type', 'kelune-crm'), ['status' => 400]);
-        }
-    }
-
-    public function handleBatch(\WP_REST_Request $request): \WP_REST_Response
-    {
-        $operations = $request->get_param('operations');
-        $results = [];
-
-        foreach ($operations as $operation) {
-            $method = $operation['method'] ?? 'GET';
-            $endpoint = $operation['endpoint'];
-            $data = $operation['data'] ?? [];
-
-            $internal_request = new \WP_REST_Request($method);
-            $internal_request->set_route($this->namespace . '/' . $endpoint);
-            $internal_request->set_body_params($data);
-
-            $response = rest_do_request($internal_request);
-            $results[] = [
-                'id' => $operation['id'] ?? null,
-                'status' => $response->get_status(),
-                'data' => $response->get_data(),
-            ];
-        }
-
-        return rest_ensure_response([
-            'results' => $results,
-            'success' => count(array_filter($results, fn (array $r): bool => $r['status'] < 400)) === count($results),
-        ]);
-    }
-
-    private function importContacts(mixed $data, mixed $options): \WP_REST_Response
-    {
-        return rest_ensure_response([
-            'imported' => 0,
-            'updated' => 0,
-            'failed' => 0,
-            'errors' => [],
-        ]);
-    }
-
-    /** @param array<string, mixed> $filters */
-    private function exportContacts($filters, string $format): \WP_REST_Response
-    {
-        return rest_ensure_response([
-            'file_url' => '',
-            'total' => 0,
-        ]);
-    }
-
-    private function importCampaigns(mixed $data, mixed $options): \WP_REST_Response
-    {
-        return rest_ensure_response([
-            'imported' => 0,
-            'failed' => 0,
-            'errors' => [],
-        ]);
-    }
-
-    /** @param array<string, mixed> $filters */
-    private function exportCampaigns($filters, string $format): \WP_REST_Response
-    {
-        return rest_ensure_response([
-            'file_url' => '',
-            'total' => 0,
-        ]);
-    }
-
-    public function checkPermission(\WP_REST_Request $request): bool
-    {
-        $nonce = $request->get_header('X-WP-Nonce');
-        if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
-            return false;
-        }
-
-        return current_user_can('manage_options');
     }
 }

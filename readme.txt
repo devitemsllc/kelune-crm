@@ -3,7 +3,7 @@ Contributors: devitemsllc, nazmulhudadev, aslamhasib
 Tags: crm, contacts, email marketing, marketing automation, email campaigns
 Requires at least: 6.6
 Tested up to: 7.1
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -35,6 +35,7 @@ Every feature in the Free Features list below is included and fully functional. 
 * **Incoming Webhooks** — create/update contacts and manage tags/lists from external systems.
 * **Double Opt-in** — confirmation flow and per-contact subscription status.
 * **Contact Import** — bring your audience in from CSV or Excel (.xlsx, .xls) files.
+* **Roles & Permissions** — control what each team member can see and do, using built-in, custom or your existing WordPress roles.
 * **Settings** — business identity, global email and footer, WordPress user sync, signup/comment opt-in, and email-provider configuration.
 
 == 🔥 Pro Features (Kelune CRM Pro) ==
@@ -110,6 +111,10 @@ You can also set up nothing at all. Kelune CRM then hands email to WordPress, so
 
 In your own WordPress database, in custom `kelune_crm_*` tables. Nothing is sent anywhere unless you enable an external service.
 
+= Can I give my team access without making them administrators? =
+
+Yes. Under Settings → Roles & Permissions you get CRM Manager, CRM Agent and CRM Viewer ready to use, you can build your own roles, and you can grant CRM permissions to roles you already have such as Editor or Author. A user sees only the parts of the CRM their role allows, and administrators always keep full access.
+
 = Is any functionality locked behind a license? =
 
 No. Everything shipped in this plugin is free and fully functional. The Pro features listed in the description come from a separate add-on plugin, Kelune CRM Pro, which is not required for this plugin to work.
@@ -182,6 +187,12 @@ Used to deliver email when you select SMTP as your email provider. This is not a
 
 == Changelog ==
 
+= Version: 1.0.5 - Date: 8 September, 2026 =
+* Added: Roles and permissions, with built-in CRM Manager, CRM Agent and CRM Viewer roles ready to use.
+* Added: Custom roles, CRM permissions for your existing WordPress roles, and several roles per user.
+* Updated: Menus, pages and actions now appear only for users whose role allows them.
+* Fixed: Minor bugs and issues to enhance functionality and user experience.
+
 = Version: 1.0.4 - Date: 2 September, 2026 =
 * Added: Custom fields can be mapped when importing contacts, and shown as columns on the Contacts list.
 * Added: Support for contacts without an email address, for sites that identify people by other details.
@@ -210,6 +221,9 @@ Used to deliver email when you select SMTP as your email provider. This is not a
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.0.5 =
+Adds roles and permissions: control what each role can see and do, including the WordPress roles you already use. Administrators keep full access.
 
 = 1.0.4 =
 Adds custom fields to contact import and the Contacts list. The database updates automatically on the first admin page load after upgrading.

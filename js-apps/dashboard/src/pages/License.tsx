@@ -29,6 +29,7 @@ import useScreens from '@hooks/useScreens';
 import { useLicense } from '@hooks/useLicense';
 import api from '@/services/api';
 import ActivateForm from '@components/license/ActivateForm';
+import { CAP, can } from '@utils/capabilities';
 import { getErrorMessage } from '@utils/getErrorMessage';
 import { calendarFormat } from '@utils/time';
 import { SITE_HOME_URL, SUPPORT_URL } from '@utils/links';
@@ -225,30 +226,35 @@ const License = () => {
                             size="small"
                             className="kelune-crm-cc-license-table"
                           />
-                          <Popconfirm
-                            title={__('Deactivate license', 'kelune-crm')}
-                            description={__(
-                              'Are you sure want to deactivate license?',
-                              'kelune-crm'
-                            )}
-                            onConfirm={handleDeactivate}
-                            okText={__('Yes', 'kelune-crm')}
-                            cancelText={__('No', 'kelune-crm')}
-                            icon={
-                              <InfoCircleOutlined
-                                style={{ color: '#ff4d4f' }}
-                              />
-                            }
-                            overlayStyle={{ maxWidth: '300px' }}
-                          >
-                            <Button
-                              color="danger"
-                              variant="solid"
-                              style={{ marginTop: '24px' }}
+                          {/* An invalid license keeps everyone on this page, so
+                              the details show to whoever is locked out; releasing
+                              the key stays with settings. */}
+                          {can(CAP.MANAGE_SETTINGS) ? (
+                            <Popconfirm
+                              title={__('Deactivate license', 'kelune-crm')}
+                              description={__(
+                                'Are you sure want to deactivate license?',
+                                'kelune-crm'
+                              )}
+                              onConfirm={handleDeactivate}
+                              okText={__('Yes', 'kelune-crm')}
+                              cancelText={__('No', 'kelune-crm')}
+                              icon={
+                                <InfoCircleOutlined
+                                  style={{ color: '#ff4d4f' }}
+                                />
+                              }
+                              overlayStyle={{ maxWidth: '300px' }}
                             >
-                              {__('Deactivate License', 'kelune-crm')}
-                            </Button>
-                          </Popconfirm>
+                              <Button
+                                color="danger"
+                                variant="solid"
+                                style={{ marginTop: '24px' }}
+                              >
+                                {__('Deactivate License', 'kelune-crm')}
+                              </Button>
+                            </Popconfirm>
+                          ) : null}
                         </>
                       ) : (
                         <ActivateForm setIsLoading={setIsLoading} />

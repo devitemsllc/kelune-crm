@@ -7,6 +7,7 @@ namespace KeluneCRM\Api\Controllers;
 use KeluneCRM\Repositories\AutomationRepository;
 use KeluneCRM\Repositories\AutomationStepRepository;
 use KeluneCRM\Services\AutomationTemplateService;
+use KeluneCRM\Support\Capabilities;
 
 /**
  * REST controller for the automation template library ("Use a Template").
@@ -24,6 +25,12 @@ use KeluneCRM\Services\AutomationTemplateService;
 class AutomationTemplatesController extends BaseController
 {
     protected string $restBase = 'automations';
+
+    protected string $readCapability = Capabilities::VIEW_AUTOMATIONS;
+
+    protected string $writeCapability = Capabilities::CREATE_AUTOMATIONS;
+
+    protected string $deleteCapability = Capabilities::CREATE_AUTOMATIONS;
     private AutomationRepository $repository;
     private AutomationStepRepository $stepRepository;
     private AutomationTemplateService $templateService;

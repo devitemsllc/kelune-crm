@@ -30,6 +30,7 @@ import {
 } from '../store/slices/globalLoadingSlice';
 import api from '../services/api';
 import ActionConfirm from '../components/common/ActionConfirm';
+import { CAP, can } from '../utils/capabilities';
 import ModalFooter from '../components/common/ModalFooter';
 import BulkActionsBar from '../components/common/BulkActionsBar';
 import type { BulkActionValue } from '../components/common/BulkActionsBar';
@@ -343,27 +344,31 @@ const Lists = () => {
       align: 'right',
       render: (_, record) => (
         <Space>
-          <Tooltip title={__('Edit', 'kelune-crm')}>
-            <Button
-              shape="default"
-              size="small"
-              icon={<EditOutlined />}
-              onClick={() => handleEdit(record)}
-            />
-          </Tooltip>
-          <ActionConfirm
-            action="delete"
-            onConfirm={() => handleDelete(record.id)}
-          >
-            <Tooltip title={__('Delete', 'kelune-crm')}>
+          {can(CAP.EDIT_LISTS) ? (
+            <Tooltip title={__('Edit', 'kelune-crm')}>
               <Button
                 shape="default"
                 size="small"
-                danger
-                icon={<DeleteOutlined />}
+                icon={<EditOutlined />}
+                onClick={() => handleEdit(record)}
               />
             </Tooltip>
-          </ActionConfirm>
+          ) : null}
+          {can(CAP.DELETE_LISTS) ? (
+            <ActionConfirm
+              action="delete"
+              onConfirm={() => handleDelete(record.id)}
+            >
+              <Tooltip title={__('Delete', 'kelune-crm')}>
+                <Button
+                  shape="default"
+                  size="small"
+                  danger
+                  icon={<DeleteOutlined />}
+                />
+              </Tooltip>
+            </ActionConfirm>
+          ) : null}
         </Space>
       ),
     },
@@ -451,14 +456,30 @@ const Lists = () => {
       sortOrder: DEFAULT_SORT.order,
     }));
 
+  // With no bulk actions the row checkboxes go too — selecting leads nowhere.
+  const bulkActions = can(CAP.DELETE_LISTS)
+    ? [
+        {
+          value: 'delete',
+          label: __('Delete', 'kelune-crm'),
+          danger: true,
+          confirm: 'delete' as const,
+        },
+      ]
+    : [];
+
   return (
     <div className="kelune-crm-cc-lists-container">
       <ListPageHeader
         title={__('Lists', 'kelune-crm')}
-        primaryAction={{
-          label: __('Create List', 'kelune-crm'),
-          onClick: handleCreate,
-        }}
+        primaryAction={
+          can(CAP.CREATE_LISTS)
+            ? {
+                label: __('Create List', 'kelune-crm'),
+                onClick: handleCreate,
+              }
+            : undefined
+        }
         onReload={loadLists}
       />
 
@@ -508,20 +529,13 @@ const Lists = () => {
 
       <BulkActionsBar
         selectedCount={selectedRowKeys.length}
-        actions={[
-          {
-            value: 'delete',
-            label: __('Delete', 'kelune-crm'),
-            danger: true,
-            confirm: 'delete',
-          },
-        ]}
+        actions={bulkActions}
         onConfirm={handleBulkAction}
         onClear={() => setSelectedRowKeys([])}
       />
 
       <Table
-        rowSelection={rowSelection}
+        rowSelection={bulkActions.length > 0 ? rowSelection : undefined}
         columns={columns}
         dataSource={items}
         rowKey="id"

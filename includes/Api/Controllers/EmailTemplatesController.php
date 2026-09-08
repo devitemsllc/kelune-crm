@@ -6,15 +6,27 @@ namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Repositories\EmailTemplateRepository;
 use KeluneCRM\Services\EmailHtmlRenderer;
+use KeluneCRM\Support\Capabilities;
 
 class EmailTemplatesController extends BaseController
 {
     protected string $restBase = 'email-templates';
+
+    protected string $readCapability = Capabilities::VIEW_EMAIL_TEMPLATES;
+
+    protected string $writeCapability = Capabilities::EDIT_EMAIL_TEMPLATES;
+
+    protected string $deleteCapability = Capabilities::DELETE_EMAIL_TEMPLATES;
     private \KeluneCRM\Repositories\EmailTemplateRepository $repository;
 
     public function __construct()
     {
         $this->repository = new EmailTemplateRepository();
+    }
+
+    public function checkCreatePermission(\WP_REST_Request $request): bool
+    {
+        return $this->userCan(Capabilities::CREATE_EMAIL_TEMPLATES);
     }
 
     public function registerRoutes(string $namespace): void
@@ -30,7 +42,7 @@ class EmailTemplatesController extends BaseController
             [
                 'methods' => \WP_REST_Server::CREATABLE,
                 'callback' => [$this, 'createItem'],
-                'permission_callback' => [$this, 'checkWritePermission'],
+                'permission_callback' => [$this, 'checkCreatePermission'],
             ],
         ]);
 
@@ -61,7 +73,7 @@ class EmailTemplatesController extends BaseController
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>[\d]+)/duplicate', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'duplicate'],
-            'permission_callback' => [$this, 'checkWritePermission'],
+            'permission_callback' => [$this, 'checkCreatePermission'],
         ]);
 
         register_rest_route($namespace, '/' . $this->restBase . '/predefined', [
@@ -91,7 +103,8 @@ class EmailTemplatesController extends BaseController
      */
     public function sendTestEmail(\WP_REST_Request $request)
     {
-        $to = sanitize_email((string) $request->get_param('to'));
+        $recipient = $request->get_param('to');
+        $to = is_scalar($recipient) ? sanitize_email((string) $recipient) : '';
         if (empty($to) || !is_email($to)) {
             return $this->errorResponse(
                 __('A valid recipient email is required', 'kelune-crm'),

@@ -6,17 +6,39 @@ namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Models\Contact;
 use KeluneCRM\Repositories\ContactRepository;
+use KeluneCRM\Support\Capabilities;
 use KeluneCRM\Support\ContactIdentity;
 
 class ContactsController extends BaseController
 {
     protected string $restBase = 'contacts';
 
+    protected string $readCapability = Capabilities::VIEW_CONTACTS;
+
+    protected string $writeCapability = Capabilities::EDIT_CONTACTS;
+
+    protected string $deleteCapability = Capabilities::DELETE_CONTACTS;
+
     private \KeluneCRM\Repositories\ContactRepository $repository;
 
     public function __construct()
     {
         $this->repository = new ContactRepository();
+    }
+
+    public function checkCreatePermission(\WP_REST_Request $request): bool
+    {
+        return $this->userCan(Capabilities::CREATE_CONTACTS);
+    }
+
+    public function checkImportPermission(\WP_REST_Request $request): bool
+    {
+        return $this->userCan(Capabilities::IMPORT_CONTACTS);
+    }
+
+    public function checkExportPermission(\WP_REST_Request $request): bool
+    {
+        return $this->userCan(Capabilities::EXPORT_CONTACTS);
     }
 
     public function registerRoutes(string $namespace): void
@@ -34,7 +56,7 @@ class ContactsController extends BaseController
             [
                 'methods' => \WP_REST_Server::CREATABLE,
                 'callback' => [$this, 'createItem'],
-                'permission_callback' => [$this, 'checkWritePermission'],
+                'permission_callback' => [$this, 'checkCreatePermission'],
                 'args' => $this->getEndpointArgs('create'),
             ],
         ]);
@@ -117,7 +139,7 @@ class ContactsController extends BaseController
         register_rest_route($namespace, '/' . $this->restBase . '/export', [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'exportCsv'],
-            'permission_callback' => [$this, 'checkReadPermission'],
+            'permission_callback' => [$this, 'checkExportPermission'],
             'args' => [
                 'search' => ['sanitize_callback' => 'sanitize_text_field'],
                 'status' => [
@@ -138,7 +160,7 @@ class ContactsController extends BaseController
         register_rest_route($namespace, '/' . $this->restBase . '/import', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'importItems'],
-            'permission_callback' => [$this, 'checkWritePermission'],
+            'permission_callback' => [$this, 'checkImportPermission'],
         ]);
     }
 

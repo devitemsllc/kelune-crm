@@ -6,6 +6,6 @@
  */
 
 return array(
-    'js'  => 'main.B9c3WurH.js',
+    'js'  => 'main.DMiLiBYy.js',
     'css' => 'main.Da5BuTkZ.css',
 );

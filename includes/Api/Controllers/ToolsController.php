@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Services\CronMonitorService;
+use KeluneCRM\Support\Capabilities;
 
 /**
  * Diagnostic endpoints behind Settings → Cron Monitor.
@@ -12,6 +13,12 @@ use KeluneCRM\Services\CronMonitorService;
 class ToolsController extends BaseController
 {
     protected string $restBase = 'tools';
+
+    protected string $readCapability = Capabilities::MANAGE_SETTINGS;
+
+    protected string $writeCapability = Capabilities::MANAGE_SETTINGS;
+
+    protected string $deleteCapability = Capabilities::MANAGE_SETTINGS;
 
     private CronMonitorService $cronMonitor;
 

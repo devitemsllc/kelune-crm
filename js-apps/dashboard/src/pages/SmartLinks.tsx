@@ -42,6 +42,7 @@ import api from '../services/api';
 import ActionConfirm from '../components/common/ActionConfirm';
 import ModalFooter from '../components/common/ModalFooter';
 import BulkActionsBar from '../components/common/BulkActionsBar';
+import { CAP, can } from '../utils/capabilities';
 import type { BulkActionValue } from '../components/common/BulkActionsBar';
 import {
   ListPageHeader,
@@ -213,20 +214,23 @@ const SmartLinks = () => {
 
   const loadTagsListsAutomations = useCallback(async () => {
     try {
+      // Each request is optional; one refusal must not take the rest.
       const [tagsRes, listsRes, automationsRes] = await Promise.all([
-        api.tags.getAll(),
-        api.lists.getAll(),
-        api.automations.getAll({ status: 'active' }),
+        can(CAP.VIEW_TAGS) ? api.tags.getAll().catch(() => null) : null,
+        can(CAP.VIEW_LISTS) ? api.lists.getAll().catch(() => null) : null,
+        can(CAP.VIEW_AUTOMATIONS)
+          ? api.automations.getAll({ status: 'active' }).catch(() => null)
+          : null,
       ]);
       // Normalise ids to numbers (API may send strings) so they match the
       // numeric Select option values below.
       setTags(
-        (tagsRes.data || []).map((tag) => ({ ...tag, id: Number(tag.id) }))
+        (tagsRes?.data || []).map((tag) => ({ ...tag, id: Number(tag.id) }))
       );
       setLists(
-        (listsRes.data || []).map((list) => ({ ...list, id: Number(list.id) }))
+        (listsRes?.data || []).map((list) => ({ ...list, id: Number(list.id) }))
       );
-      const automationsData = automationsRes.data?.data || [];
+      const automationsData = automationsRes?.data?.data || [];
       setAutomations(
         automationsData.map((auto: Automation) => ({
           ...auto,
@@ -522,27 +526,31 @@ const SmartLinks = () => {
       align: 'right',
       render: (_, record) => (
         <Space>
-          <Tooltip title={__('Edit', 'kelune-crm')}>
-            <Button
-              shape="default"
-              size="small"
-              icon={<EditOutlined />}
-              onClick={() => handleEdit(record)}
-            />
-          </Tooltip>
-          <ActionConfirm
-            action="delete"
-            onConfirm={() => handleDelete(record.id)}
-          >
-            <Tooltip title={__('Delete', 'kelune-crm')}>
+          {can(CAP.EDIT_SMART_LINKS) ? (
+            <Tooltip title={__('Edit', 'kelune-crm')}>
               <Button
                 shape="default"
                 size="small"
-                danger
-                icon={<DeleteOutlined />}
+                icon={<EditOutlined />}
+                onClick={() => handleEdit(record)}
               />
             </Tooltip>
-          </ActionConfirm>
+          ) : null}
+          {can(CAP.DELETE_SMART_LINKS) ? (
+            <ActionConfirm
+              action="delete"
+              onConfirm={() => handleDelete(record.id)}
+            >
+              <Tooltip title={__('Delete', 'kelune-crm')}>
+                <Button
+                  shape="default"
+                  size="small"
+                  danger
+                  icon={<DeleteOutlined />}
+                />
+              </Tooltip>
+            </ActionConfirm>
+          ) : null}
         </Space>
       ),
     },
@@ -653,14 +661,30 @@ const SmartLinks = () => {
       sortOrder: DEFAULT_SORT.order,
     }));
 
+  // With no bulk actions the row checkboxes go too — selecting leads nowhere.
+  const bulkActions = can(CAP.DELETE_SMART_LINKS)
+    ? [
+        {
+          value: 'delete',
+          label: __('Delete', 'kelune-crm'),
+          danger: true,
+          confirm: 'delete' as const,
+        },
+      ]
+    : [];
+
   return (
     <div className="kelune-crm-cc-smart-links-container">
       <ListPageHeader
         title={__('Smart Links', 'kelune-crm')}
-        primaryAction={{
-          label: __('Create Smart Link', 'kelune-crm'),
-          onClick: handleCreate,
-        }}
+        primaryAction={
+          can(CAP.CREATE_SMART_LINKS)
+            ? {
+                label: __('Create Smart Link', 'kelune-crm'),
+                onClick: handleCreate,
+              }
+            : undefined
+        }
         onReload={loadSmartLinks}
       />
 
@@ -711,20 +735,13 @@ const SmartLinks = () => {
 
       <BulkActionsBar
         selectedCount={selectedRowKeys.length}
-        actions={[
-          {
-            value: 'delete',
-            label: __('Delete', 'kelune-crm'),
-            danger: true,
-            confirm: 'delete',
-          },
-        ]}
+        actions={bulkActions}
         onConfirm={handleBulkAction}
         onClear={() => setSelectedRowKeys([])}
       />
 
       <Table
-        rowSelection={rowSelection}
+        rowSelection={bulkActions.length > 0 ? rowSelection : undefined}
         columns={columns}
         dataSource={items}
         rowKey="id"

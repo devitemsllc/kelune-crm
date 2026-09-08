@@ -39,8 +39,11 @@ class ErrorBoundary extends React.Component<
       return (
         <ErrorState
           status="500"
-          title="500"
-          subTitle={__('Sorry, something went wrong.', 'kelune-crm')}
+          title={__('Internal error', 'kelune-crm')}
+          subTitle={__(
+            'Sorry, an unexpected error stopped this page from loading.',
+            'kelune-crm'
+          )}
           extra={
             <Button type="primary" onClick={this.handleReload}>
               {__('Reload', 'kelune-crm')}

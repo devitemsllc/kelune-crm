@@ -22,6 +22,7 @@ import EmailLogStats from '../components/email-logs/EmailLogStats';
 import EmailLogDetail from '../components/email-logs/EmailLogDetail';
 import ActionConfirm from '../components/common/ActionConfirm';
 import BulkActionsBar from '../components/common/BulkActionsBar';
+import { CAP, can } from '../utils/capabilities';
 import type { BulkActionValue } from '../components/common/BulkActionsBar';
 import {
   ListPageHeader,
@@ -447,23 +448,27 @@ const EmailLogs = () => {
               icon={<SendOutlined />}
               onClick={() => handleResend(record)}
               disabled={
-                record.status === 'queued' || record.status === 'sending'
+                !can(CAP.SEND_CAMPAIGNS) ||
+                record.status === 'queued' ||
+                record.status === 'sending'
               }
             />
           </Tooltip>
-          <ActionConfirm
-            action="delete"
-            onConfirm={() => handleDelete(record.id)}
-          >
-            <Tooltip title={__('Delete', 'kelune-crm')}>
-              <Button
-                shape="default"
-                size="small"
-                danger
-                icon={<DeleteOutlined />}
-              />
-            </Tooltip>
-          </ActionConfirm>
+          {can(CAP.DELETE_EMAIL_LOGS) ? (
+            <ActionConfirm
+              action="delete"
+              onConfirm={() => handleDelete(record.id)}
+            >
+              <Tooltip title={__('Delete', 'kelune-crm')}>
+                <Button
+                  shape="default"
+                  size="small"
+                  danger
+                  icon={<DeleteOutlined />}
+                />
+              </Tooltip>
+            </ActionConfirm>
+          ) : null}
         </Space>
       ),
     },
@@ -484,14 +489,16 @@ const EmailLogs = () => {
     { key: 'created', label: __('Created Date', 'kelune-crm') },
   ];
 
-  const moreItems: MenuProps['items'] = [
-    {
-      key: 'export',
-      icon: <DownloadOutlined />,
-      label: __('Export', 'kelune-crm'),
-      onClick: handleExport,
-    },
-  ];
+  const moreItems: MenuProps['items'] = can(CAP.EXPORT_EMAIL_LOGS)
+    ? [
+        {
+          key: 'export',
+          icon: <DownloadOutlined />,
+          label: __('Export', 'kelune-crm'),
+          onClick: handleExport,
+        },
+      ]
+    : [];
 
   // Filter drill-down config + value bag for the reusable ListFilterMenu.
   const filterMenuGroups: FilterMenuGroup[] = [
@@ -633,6 +640,18 @@ const EmailLogs = () => {
       sortOrder: DEFAULT_SORT.order,
     }));
 
+  // With no bulk actions the row checkboxes go too — selecting leads nowhere.
+  const bulkActions = can(CAP.DELETE_EMAIL_LOGS)
+    ? [
+        {
+          value: 'delete',
+          label: __('Delete', 'kelune-crm'),
+          danger: true,
+          confirm: 'delete' as const,
+        },
+      ]
+    : [];
+
   return (
     <div className="kelune-crm-cc-email-logs-container">
       <ListPageHeader
@@ -699,20 +718,13 @@ const EmailLogs = () => {
 
       <BulkActionsBar
         selectedCount={selectedRowKeys.length}
-        actions={[
-          {
-            value: 'delete',
-            label: __('Delete', 'kelune-crm'),
-            danger: true,
-            confirm: 'delete',
-          },
-        ]}
+        actions={bulkActions}
         onConfirm={handleBulkAction}
         onClear={() => setSelectedRowKeys([])}
       />
 
       <Table
-        rowSelection={rowSelection}
+        rowSelection={bulkActions.length > 0 ? rowSelection : undefined}
         columns={columns}
         dataSource={items}
         rowKey="id"

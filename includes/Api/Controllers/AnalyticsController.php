@@ -10,11 +10,18 @@ use KeluneCRM\Repositories\ContactRepository;
 use KeluneCRM\Repositories\EmailLogRepository;
 use KeluneCRM\Repositories\EmailTemplateRepository;
 use KeluneCRM\Repositories\TagRepository;
+use KeluneCRM\Support\Capabilities;
 use KeluneCRM\Support\DateBucketer;
 
 class AnalyticsController extends BaseController
 {
     protected string $restBase = 'analytics';
+
+    protected string $readCapability = Capabilities::VIEW_ANALYTICS;
+
+    protected string $writeCapability = Capabilities::VIEW_ANALYTICS;
+
+    protected string $deleteCapability = Capabilities::VIEW_ANALYTICS;
 
     public function registerRoutes(string $namespace): void
     {

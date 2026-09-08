@@ -10,8 +10,8 @@ import PageLoader from '@components/common/PageLoader';
  * answer is in — rendering first would flash the dashboard before the gate can
  * redirect an unlicensed install to /license.
  *
- * With Pro inactive the route does not exist, so nothing is requested and the
- * children render immediately.
+ * When no license is required, nothing is requested and the children render
+ * immediately.
  */
 const LicenseLoader = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
@@ -21,6 +21,7 @@ const LicenseLoader = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!required) {
+      dispatch(setLicenseLoaded());
       return;
     }
 

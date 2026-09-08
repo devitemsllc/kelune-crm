@@ -27,10 +27,6 @@ import {
   MoreOutlined,
   EditOutlined,
   EyeOutlined,
-  TagsOutlined,
-  UnorderedListOutlined,
-  ApartmentOutlined,
-  TeamOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
@@ -83,6 +79,10 @@ import {
 import BulkActionsBar from '../components/common/BulkActionsBar';
 import type { BulkActionValue } from '../components/common/BulkActionsBar';
 import ModalFooter from '../components/common/ModalFooter';
+import { CAP, can } from '../utils/capabilities';
+import { allContactTabs, getContactTabs } from '../config/contactTabs';
+import NoPermission from '../components/common/NoPermission';
+import NotFound from './NotFound';
 import Lists from './Lists';
 import Tags from './Tags';
 import Segments from './Segments';
@@ -174,7 +174,6 @@ const Contacts = () => {
     useState<Contact | null>(null);
   const [availableLists, setAvailableLists] = useState<ContactList[]>([]);
   const [selectedLists, setSelectedLists] = useState<ID[]>([]);
-  const [activeTab, setActiveTab] = useState('contacts');
 
   // Persisted view-state: search, filters, page/limit and visible columns are
   // all kept in localStorage so they survive reloads and direct visits.
@@ -218,6 +217,10 @@ const Contacts = () => {
   const [customFields, setCustomFields] = useState<CustomFieldDef[]>([]);
 
   const loadContacts = useCallback(() => {
+    if (!can(CAP.VIEW_CONTACTS)) {
+      return;
+    }
+
     dispatch(
       fetchContacts({
         page: view.page,
@@ -246,35 +249,44 @@ const Contacts = () => {
     loadContacts();
   }, [loadContacts]);
 
-  // Sync active tab with the router sub-route (/contacts/<tab>).
-  useEffect(() => {
-    const sub = location.pathname.split('/')[2];
-    setActiveTab(sub || 'contacts');
-  }, [location.pathname]);
+  const allowedTabs = getContactTabs();
+  const requestedTab = location.pathname.split('/')[2] || 'contacts';
+  const knownTab = allContactTabs().some((tab) => tab.key === requestedTab);
+  const activeTab = allowedTabs.some((tab) => tab.key === requestedTab)
+    ? requestedTab
+    : undefined;
 
   const loadTagsAndLists = useCallback(async () => {
     try {
+      // Each request is optional; one refusal must not take the rest.
       const [tagsResponse, listsResponse, automationsResponse, fields] =
         await Promise.all([
-          api.tags.getAll(),
-          api.lists.getAll(),
-          api.automations.getAll({ per_page: 100, status: 'active' }),
+          can(CAP.VIEW_TAGS) ? api.tags.getAll().catch(() => null) : null,
+          can(CAP.VIEW_LISTS) ? api.lists.getAll().catch(() => null) : null,
+          can(CAP.VIEW_AUTOMATIONS)
+            ? api.automations
+                .getAll({ per_page: 100, status: 'active' })
+                .catch(() => null)
+            : null,
           fetchCustomFields(),
         ]);
       // Normalise ids to numbers (API may send strings) so they match the
       // numeric filter/select values and id lookups below.
       setAllTags(
-        (tagsResponse.data || []).map((tag) => ({ ...tag, id: Number(tag.id) }))
+        (tagsResponse?.data || []).map((tag) => ({
+          ...tag,
+          id: Number(tag.id),
+        }))
       );
       setAllLists(
-        (listsResponse.data || []).map((list) => ({
+        (listsResponse?.data || []).map((list) => ({
           ...list,
           id: Number(list.id),
         }))
       );
       // Only manual-trigger automations are offered for bulk enrolment; the
       // rest enrol themselves via their own events.
-      const automations = (automationsResponse.data?.data ??
+      const automations = (automationsResponse?.data?.data ??
         []) as Automation[];
       setManualAutomations(
         automations.filter((a) => a.trigger_type === 'manual')
@@ -583,39 +595,49 @@ const Contacts = () => {
   // Row action menu items. The Delete item embeds an inline ActionConfirm; the
   // Dropdown is kept open (see openMenuId guard) so the confirm anchor survives.
   const rowMenuItems = (record: Contact): MenuProps['items'] => [
-    {
-      key: 'lists',
-      label: <span>{__('Manage Lists', 'kelune-crm')}</span>,
-      onClick: () => {
-        setOpenMenuId(null);
-        handleManageLists(record);
-      },
-    },
-    {
-      key: 'tags',
-      label: <span>{__('Manage Tags', 'kelune-crm')}</span>,
-      onClick: () => {
-        setOpenMenuId(null);
-        handleManageTags(record);
-      },
-    },
-    { type: 'divider' },
-    {
-      key: 'delete',
-      danger: true,
-      label: (
-        <ActionConfirm
-          action="delete"
-          onConfirm={() => {
-            setOpenMenuId(null);
-            handleDelete(record.id);
-          }}
-          onCancel={() => setOpenMenuId(null)}
-        >
-          <span>{__('Delete', 'kelune-crm')}</span>
-        </ActionConfirm>
-      ),
-    },
+    ...(can(CAP.EDIT_CONTACTS)
+      ? [
+          {
+            key: 'lists',
+            label: <span>{__('Manage Lists', 'kelune-crm')}</span>,
+            onClick: () => {
+              setOpenMenuId(null);
+              handleManageLists(record);
+            },
+          },
+          {
+            key: 'tags',
+            label: <span>{__('Manage Tags', 'kelune-crm')}</span>,
+            onClick: () => {
+              setOpenMenuId(null);
+              handleManageTags(record);
+            },
+          },
+        ]
+      : []),
+    ...(can(CAP.EDIT_CONTACTS) && can(CAP.DELETE_CONTACTS)
+      ? [{ type: 'divider' as const }]
+      : []),
+    ...(can(CAP.DELETE_CONTACTS)
+      ? [
+          {
+            key: 'delete',
+            danger: true,
+            label: (
+              <ActionConfirm
+                action="delete"
+                onConfirm={() => {
+                  setOpenMenuId(null);
+                  handleDelete(record.id);
+                }}
+                onCancel={() => setOpenMenuId(null)}
+              >
+                <span>{__('Delete', 'kelune-crm')}</span>
+              </ActionConfirm>
+            ),
+          },
+        ]
+      : []),
   ];
 
   // One column per custom field, off by default — a site may define many.
@@ -821,31 +843,35 @@ const Contacts = () => {
               onClick={() => handleView(record)}
             />
           </Tooltip>
-          <Tooltip title={__('Edit', 'kelune-crm')}>
-            <Button
-              shape="default"
-              size="small"
-              icon={<EditOutlined />}
-              onClick={() => handleEdit(record)}
-            />
-          </Tooltip>
-          <Dropdown
-            menu={{ items: rowMenuItems(record) }}
-            trigger={['click']}
-            overlayClassName="kelune-crm-cc-confirm-dropdown"
-            open={openMenuId === record.id}
-            onOpenChange={(nextOpen, info) => {
-              // Ignore menu-item clicks (source 'menu') so an inline confirm
-              // can show without the dropdown closing under it.
-              if (info.source === 'trigger' || nextOpen) {
-                setOpenMenuId(nextOpen ? record.id : null);
-              }
-            }}
-          >
-            <Tooltip title={__('More actions', 'kelune-crm')}>
-              <Button shape="default" size="small" icon={<MoreOutlined />} />
+          {can(CAP.EDIT_CONTACTS) ? (
+            <Tooltip title={__('Edit', 'kelune-crm')}>
+              <Button
+                shape="default"
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => handleEdit(record)}
+              />
             </Tooltip>
-          </Dropdown>
+          ) : null}
+          {rowMenuItems(record)?.length ? (
+            <Dropdown
+              menu={{ items: rowMenuItems(record) }}
+              trigger={['click']}
+              overlayClassName="kelune-crm-cc-confirm-dropdown"
+              open={openMenuId === record.id}
+              onOpenChange={(nextOpen, info) => {
+                // Ignore menu-item clicks (source 'menu') so an inline confirm
+                // can show without the dropdown closing under it.
+                if (info.source === 'trigger' || nextOpen) {
+                  setOpenMenuId(nextOpen ? record.id : null);
+                }
+              }}
+            >
+              <Tooltip title={__('More actions', 'kelune-crm')}>
+                <Button shape="default" size="small" icon={<MoreOutlined />} />
+              </Tooltip>
+            </Dropdown>
+          ) : null}
         </Space>
       ),
     },
@@ -875,20 +901,82 @@ const Contacts = () => {
     })),
   ];
 
-  // "More" menu on the page header (Export / Import).
+  // "More" menu on the page header, each entry behind its own permission.
   const moreItems: MenuProps['items'] = [
-    {
-      key: 'export',
-      icon: <DownloadOutlined />,
-      label: __('Export', 'kelune-crm'),
-      onClick: handleExport,
-    },
-    {
-      key: 'import',
-      icon: <UploadOutlined />,
-      label: __('Import', 'kelune-crm'),
-      onClick: () => setImportModalVisible(true),
-    },
+    ...(can(CAP.EXPORT_CONTACTS)
+      ? [
+          {
+            key: 'export',
+            icon: <DownloadOutlined />,
+            label: __('Export', 'kelune-crm'),
+            onClick: handleExport,
+          },
+        ]
+      : []),
+    ...(can(CAP.IMPORT_CONTACTS)
+      ? [
+          {
+            key: 'import',
+            icon: <UploadOutlined />,
+            label: __('Import', 'kelune-crm'),
+            onClick: () => setImportModalVisible(true),
+          },
+        ]
+      : []),
+  ];
+
+  // With no bulk actions the row checkboxes go too — selecting leads nowhere.
+  const bulkActions = [
+    ...(can(CAP.EDIT_CONTACTS)
+      ? [
+          {
+            value: 'add_tags',
+            label: __('Add Tags', 'kelune-crm'),
+            secondary: {
+              placeholder: __('Select tags', 'kelune-crm'),
+              mode: 'multiple' as const,
+              options: allTags.map((tag) => ({
+                value: tag.id,
+                label: tag.name ?? '',
+              })),
+            },
+          },
+          {
+            value: 'update_status',
+            label: __('Update Status', 'kelune-crm'),
+            secondary: {
+              placeholder: __('Select status', 'kelune-crm'),
+              options: CONTACT_STATUS_OPTIONS,
+            },
+          },
+        ]
+      : []),
+    // Offered only when a manual-trigger automation exists to enrol into.
+    ...(can(CAP.EDIT_CONTACTS) && manualAutomations.length > 0
+      ? [
+          {
+            value: 'enroll',
+            label: __('Enroll in Automation', 'kelune-crm'),
+            secondary: {
+              placeholder: __('Select automation', 'kelune-crm'),
+              options: manualAutomations.map((a) => ({
+                value: Number(a.id),
+                label: a.name ?? '',
+              })),
+            },
+          },
+        ]
+      : []),
+    ...(can(CAP.DELETE_CONTACTS)
+      ? [
+          {
+            value: 'delete',
+            label: __('Delete', 'kelune-crm'),
+            danger: true,
+            confirm: 'delete' as const,
+          },
+        ]
+      : []),
   ];
 
   // Filter drill-down config + value bag for the reusable ListFilterMenu.
@@ -1018,186 +1106,147 @@ const Contacts = () => {
       sortOrder: DEFAULT_SORT.order,
     }));
 
-  return (
-    <div className="kelune-crm-cc-contacts-container">
-      <Tabs activeKey={activeTab} tabBarStyle={{ marginBottom: 24 }}>
-        <Tabs.TabPane
-          tab={
-            <Link to="/contacts" style={{ color: 'inherit' }}>
-              <TeamOutlined /> {__('All Contacts', 'kelune-crm')}
-            </Link>
+  // A sub-route the role cannot open answers with the notice rather than
+  // bouncing to a page it did not ask for. Both states take the whole page:
+  // the tab they belong to is not in the bar.
+  if (!knownTab) {
+    return <NotFound />;
+  }
+
+  if (!activeTab) {
+    return <NoPermission />;
+  }
+
+  // Tab bodies keyed as in the shared config; a single permitted tab renders
+  // its body bare, with no bar above it.
+  const tabContent: Record<string, React.ReactNode> = {
+    contacts: (
+      <>
+        <ListPageHeader
+          title={__('Contacts', 'kelune-crm')}
+          primaryAction={
+            can(CAP.CREATE_CONTACTS)
+              ? {
+                  label: __('Create Contact', 'kelune-crm'),
+                  onClick: handleCreate,
+                }
+              : undefined
           }
-          key="contacts"
-        >
-          <ListPageHeader
-            title={__('Contacts', 'kelune-crm')}
-            primaryAction={{
-              label: __('Create Contact', 'kelune-crm'),
-              onClick: handleCreate,
-            }}
-            onReload={handleReload}
-            moreItems={moreItems}
-          />
+          onReload={handleReload}
+          moreItems={moreItems}
+        />
 
-          <ListFilterCard
-            search={filters.search}
-            onSearchChange={(term) =>
-              setFilters((prev) => ({ ...prev, search: term }))
-            }
-            searchPlaceholder={__('Search contacts...', 'kelune-crm')}
-            filterGroups={activeFilterGroups}
-            onClearAll={hasFilters || sortActive ? clearAll : undefined}
-            controls={
-              <>
-                <ListFilterMenu
-                  groups={filterMenuGroups}
-                  value={filterMenuValue}
-                  onChange={(next) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      status: next.status as string,
-                      lists: next.lists as ID[],
-                      tags: next.tags as ID[],
-                    }))
-                  }
-                />
-                <ListSort
-                  value={{ field: view.sortField, order: view.sortOrder }}
-                  options={SORT_OPTIONS}
-                  defaultSort={DEFAULT_SORT}
-                  chronologicalFields={CHRONOLOGICAL_FIELDS}
-                  numericFields={NUMERIC_FIELDS}
-                  onChange={(next) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      sortField: next.field,
-                      sortOrder: next.order,
-                    }))
-                  }
-                />
-                <ColumnsButton
-                  visible={visibleColumns}
-                  onChange={setVisibleColumns}
-                  options={columnOptions}
-                  onReset={() =>
-                    setVisibleColumns({ ...DEFAULT_VISIBLE_COLUMNS })
-                  }
-                />
-              </>
-            }
-          />
-
-          <BulkActionsBar
-            selectedCount={selectedRowKeys.length}
-            actions={[
-              {
-                value: 'add_tags',
-                label: __('Add Tags', 'kelune-crm'),
-                secondary: {
-                  placeholder: __('Select tags', 'kelune-crm'),
-                  mode: 'multiple',
-                  options: allTags.map((tag) => ({
-                    value: tag.id,
-                    label: tag.name ?? '',
-                  })),
-                },
-              },
-              {
-                value: 'update_status',
-                label: __('Update Status', 'kelune-crm'),
-                secondary: {
-                  placeholder: __('Select status', 'kelune-crm'),
-                  options: CONTACT_STATUS_OPTIONS,
-                },
-              },
-              // Offered only when a manual-trigger automation exists to enrol
-              // into — otherwise there is nothing to pick.
-              ...(manualAutomations.length > 0
-                ? [
-                    {
-                      value: 'enroll',
-                      label: __('Enroll in Automation', 'kelune-crm'),
-                      secondary: {
-                        placeholder: __('Select automation', 'kelune-crm'),
-                        options: manualAutomations.map((a) => ({
-                          value: Number(a.id),
-                          label: a.name ?? '',
-                        })),
-                      },
-                    },
-                  ]
-                : []),
-              {
-                value: 'delete',
-                label: __('Delete', 'kelune-crm'),
-                danger: true,
-                confirm: 'delete',
-              },
-            ]}
-            onConfirm={handleBulkAction}
-            onClear={() => setSelectedRowKeys([])}
-          />
-
-          <Table
-            rowSelection={rowSelection}
-            columns={columns}
-            dataSource={items}
-            rowKey="id"
-            loading={loading}
-            scroll={{ x: 'max-content' }}
-            pagination={false}
-            footer={() => (
-              <ListTableFooter
-                page={view.page}
-                perPage={view.perPage}
-                total={pagination.total}
-                onChange={(nextPage, nextSize) =>
-                  updateView({ page: nextPage, perPage: nextSize })
+        <ListFilterCard
+          search={filters.search}
+          onSearchChange={(term) =>
+            setFilters((prev) => ({ ...prev, search: term }))
+          }
+          searchPlaceholder={__('Search contacts...', 'kelune-crm')}
+          filterGroups={activeFilterGroups}
+          onClearAll={hasFilters || sortActive ? clearAll : undefined}
+          controls={
+            <>
+              <ListFilterMenu
+                groups={filterMenuGroups}
+                value={filterMenuValue}
+                onChange={(next) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    status: next.status as string,
+                    lists: next.lists as ID[],
+                    tags: next.tags as ID[],
+                  }))
                 }
               />
-            )}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          tab={
-            <Link to="/contacts/lists" style={{ color: 'inherit' }}>
-              <UnorderedListOutlined /> {__('Lists', 'kelune-crm')}
-            </Link>
+              <ListSort
+                value={{ field: view.sortField, order: view.sortOrder }}
+                options={SORT_OPTIONS}
+                defaultSort={DEFAULT_SORT}
+                chronologicalFields={CHRONOLOGICAL_FIELDS}
+                numericFields={NUMERIC_FIELDS}
+                onChange={(next) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    sortField: next.field,
+                    sortOrder: next.order,
+                  }))
+                }
+              />
+              <ColumnsButton
+                visible={visibleColumns}
+                onChange={setVisibleColumns}
+                options={columnOptions}
+                onReset={() =>
+                  setVisibleColumns({ ...DEFAULT_VISIBLE_COLUMNS })
+                }
+              />
+            </>
           }
-          key="lists"
-        >
-          <Lists />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          tab={
-            <Link to="/contacts/tags" style={{ color: 'inherit' }}>
-              <TagsOutlined /> {__('Tags', 'kelune-crm')}
-            </Link>
-          }
-          key="tags"
-        >
-          <Tags />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          tab={
-            <Link to="/contacts/segments" style={{ color: 'inherit' }}>
-              <ApartmentOutlined /> {__('Segments', 'kelune-crm')}
-            </Link>
-          }
-          key="segments"
-        >
-          <ProFeatureGate
-            feature="segments"
-            title={__('Segments', 'kelune-crm')}
-            description={__(
-              'Upgrade to Kelune CRM Pro to build dynamic segments with the query builder and auto-refresh.',
-              'kelune-crm'
-            )}
-          >
-            <Segments />
-          </ProFeatureGate>
-        </Tabs.TabPane>
-      </Tabs>
+        />
+
+        <BulkActionsBar
+          selectedCount={selectedRowKeys.length}
+          actions={bulkActions}
+          onConfirm={handleBulkAction}
+          onClear={() => setSelectedRowKeys([])}
+        />
+
+        <Table
+          rowSelection={bulkActions.length > 0 ? rowSelection : undefined}
+          columns={columns}
+          dataSource={items}
+          rowKey="id"
+          loading={loading}
+          scroll={{ x: 'max-content' }}
+          pagination={false}
+          footer={() => (
+            <ListTableFooter
+              page={view.page}
+              perPage={view.perPage}
+              total={pagination.total}
+              onChange={(nextPage, nextSize) =>
+                updateView({ page: nextPage, perPage: nextSize })
+              }
+            />
+          )}
+        />
+      </>
+    ),
+    lists: <Lists />,
+    tags: <Tags />,
+    segments: (
+      <ProFeatureGate
+        feature="segments"
+        title={__('Segments', 'kelune-crm')}
+        description={__(
+          'Upgrade to Kelune CRM Pro to build dynamic segments with the query builder and auto-refresh.',
+          'kelune-crm'
+        )}
+      >
+        <Segments />
+      </ProFeatureGate>
+    ),
+  };
+
+  return (
+    <div className="kelune-crm-cc-contacts-container">
+      {allowedTabs.length > 1 ? (
+        <Tabs
+          activeKey={activeTab}
+          tabBarStyle={{ marginBottom: 24 }}
+          items={allowedTabs.map(({ key, path, icon, label }) => ({
+            key,
+            label: (
+              <Link to={path} style={{ color: 'inherit' }}>
+                {icon} {label()}
+              </Link>
+            ),
+            children: tabContent[key],
+          }))}
+        />
+      ) : (
+        tabContent[activeTab]
+      )}
 
       <Drawer
         destroyOnHidden
@@ -1236,17 +1285,19 @@ const Contacts = () => {
         onClose={() => setDetailVisible(false)}
         styles={{ body: { padding: '8px 20px 20px 20px' } }}
         extra={
-          <Button
-            size="small"
-            icon={<EditOutlined />}
-            onClick={() => {
-              setEditingContact(selectedContact);
-              setDetailVisible(false);
-              setDrawerVisible(true);
-            }}
-          >
-            {__('Edit', 'kelune-crm')}
-          </Button>
+          can(CAP.EDIT_CONTACTS) ? (
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              onClick={() => {
+                setEditingContact(selectedContact);
+                setDetailVisible(false);
+                setDrawerVisible(true);
+              }}
+            >
+              {__('Edit', 'kelune-crm')}
+            </Button>
+          ) : null
         }
       >
         <ContactDetail contact={selectedContact} />

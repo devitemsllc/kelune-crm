@@ -105,6 +105,10 @@ class SettingsService
             // contact's email to a third party (Automattic), so it is opt-in.
             'use_gravatar_service' => false,
 
+            // Whether a WordPress user may hold several roles at once. Off by
+            // default, matching the single-role user editor WordPress ships.
+            'multiple_user_roles_enabled' => false,
+
             // First-run setup wizard progress. `setup_wizard_step` is the
             // 0-based step the user is on; `setup_wizard_finished` flips true
             // once the wizard is completed or skipped so it never shows again.

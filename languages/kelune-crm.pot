@@ -2,156 +2,165 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Kelune CRM 1.0.4\n"
+"Project-Id-Version: Kelune CRM 1.0.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/kelune-crm\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-02T11:21:08+00:00\n"
+"POT-Creation-Date: 2026-09-08T05:56:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: kelune-crm\n"
 
-#: js-apps/dashboard/src/App.tsx:179
-#: includes/Admin/AdminMenu.php:36
+#: js-apps/dashboard/src/App.tsx:244
+#: includes/Admin/AdminMenu.php:57
 #: kelune-crm.php:93
 msgid "Dashboard"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:186
+#: js-apps/dashboard/src/App.tsx:251
 #: js-apps/dashboard/src/components/campaigns/ABTestConfig.tsx:230
 #: js-apps/dashboard/src/components/contacts/listSortOptions.ts:11
 #: js-apps/dashboard/src/components/contacts/segmentSortOptions.ts:9
 #: js-apps/dashboard/src/components/contacts/tagSortOptions.ts:9
-#: js-apps/dashboard/src/pages/Analytics.tsx:66
-#: js-apps/dashboard/src/pages/Contacts.tsx:751
-#: js-apps/dashboard/src/pages/Lists.tsx:191
-#: js-apps/dashboard/src/pages/Lists.tsx:245
-#: js-apps/dashboard/src/pages/Segments.tsx:218
-#: js-apps/dashboard/src/pages/Segments.tsx:299
-#: js-apps/dashboard/src/pages/Tags.tsx:175
-#: js-apps/dashboard/src/pages/Tags.tsx:211
-#: includes/Admin/AdminMenu.php:37
+#: js-apps/dashboard/src/pages/Analytics.tsx:67
+#: js-apps/dashboard/src/pages/Contacts.tsx:845
+#: js-apps/dashboard/src/pages/Lists.tsx:192
+#: js-apps/dashboard/src/pages/Lists.tsx:246
+#: js-apps/dashboard/src/pages/Segments.tsx:227
+#: js-apps/dashboard/src/pages/Segments.tsx:308
+#: js-apps/dashboard/src/pages/Tags.tsx:176
+#: js-apps/dashboard/src/pages/Tags.tsx:212
+#: includes/Admin/AdminMenu.php:58
+#: includes/Support/Capabilities.php:96
 #: kelune-crm.php:94
 msgid "Contacts"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:192
-#: js-apps/dashboard/src/pages/Contacts.tsx:749
-#: includes/Admin/AdminMenu.php:38
+#: js-apps/dashboard/src/App.tsx:257
+#: js-apps/dashboard/src/config/contactTabs.tsx:12
+#: includes/Admin/AdminMenu.php:59
 msgid "All Contacts"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:196
+#: js-apps/dashboard/src/App.tsx:261
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:531
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:109
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:278
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:25
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:106
-#: js-apps/dashboard/src/pages/Contacts.tsx:460
-#: js-apps/dashboard/src/pages/Contacts.tsx:601
-#: js-apps/dashboard/src/pages/Contacts.tsx:644
-#: js-apps/dashboard/src/pages/Contacts.tsx:820
-#: js-apps/dashboard/src/pages/Lists.tsx:309
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:114
-#: includes/Admin/AdminMenu.php:39
-#: includes/Api/Controllers/ContactsController.php:638
+#: js-apps/dashboard/src/config/contactTabs.tsx:19
+#: js-apps/dashboard/src/pages/Contacts.tsx:485
+#: js-apps/dashboard/src/pages/Contacts.tsx:626
+#: js-apps/dashboard/src/pages/Contacts.tsx:730
+#: js-apps/dashboard/src/pages/Lists.tsx:321
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:125
+#: includes/Admin/AdminMenu.php:60
+#: includes/Api/Controllers/ContactsController.php:660
+#: includes/Support/Capabilities.php:109
 msgid "Lists"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:200
+#: js-apps/dashboard/src/App.tsx:265
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:541
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:116
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:282
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:26
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:107
-#: js-apps/dashboard/src/pages/Contacts.tsx:479
-#: js-apps/dashboard/src/pages/Contacts.tsx:602
-#: js-apps/dashboard/src/pages/Contacts.tsx:654
-#: js-apps/dashboard/src/pages/Contacts.tsx:825
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:115
-#: js-apps/dashboard/src/pages/Tags.tsx:247
-#: includes/Admin/AdminMenu.php:40
-#: includes/Api/Controllers/ContactsController.php:637
+#: js-apps/dashboard/src/config/contactTabs.tsx:26
+#: js-apps/dashboard/src/pages/Contacts.tsx:504
+#: js-apps/dashboard/src/pages/Contacts.tsx:627
+#: js-apps/dashboard/src/pages/Contacts.tsx:740
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:126
+#: js-apps/dashboard/src/pages/Tags.tsx:259
+#: includes/Admin/AdminMenu.php:61
+#: includes/Api/Controllers/ContactsController.php:659
+#: includes/Support/Capabilities.php:120
 msgid "Tags"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:204
+#: js-apps/dashboard/src/App.tsx:269
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:82
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:735
-#: js-apps/dashboard/src/pages/Contacts.tsx:830
-#: js-apps/dashboard/src/pages/Contacts.tsx:832
-#: js-apps/dashboard/src/pages/Segments.tsx:391
-#: includes/Admin/AdminMenu.php:46
+#: js-apps/dashboard/src/config/contactTabs.tsx:33
+#: js-apps/dashboard/src/pages/Contacts.tsx:873
+#: js-apps/dashboard/src/pages/Segments.tsx:411
+#: includes/Admin/AdminMenu.php:65
+#: includes/Support/Capabilities.php:131
 msgid "Segments"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:210
+#: js-apps/dashboard/src/App.tsx:275
 #: js-apps/dashboard/src/components/analytics/OverviewTab.tsx:26
-#: js-apps/dashboard/src/pages/Analytics.tsx:72
-#: js-apps/dashboard/src/pages/Campaigns.tsx:485
-#: js-apps/dashboard/src/pages/Dashboard.tsx:192
-#: includes/Admin/AdminMenu.php:50
+#: js-apps/dashboard/src/pages/Analytics.tsx:73
+#: js-apps/dashboard/src/pages/Campaigns.tsx:517
+#: js-apps/dashboard/src/pages/Dashboard.tsx:208
+#: includes/Admin/AdminMenu.php:69
+#: includes/Support/Capabilities.php:142
 msgid "Campaigns"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:214
-#: js-apps/dashboard/src/pages/Automations.tsx:486
-#: includes/Admin/AdminMenu.php:51
+#: js-apps/dashboard/src/App.tsx:279
+#: js-apps/dashboard/src/pages/Automations.tsx:521
+#: includes/Admin/AdminMenu.php:70
+#: includes/Support/Capabilities.php:154
 msgid "Automations"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:221
-#: js-apps/dashboard/src/pages/Analytics.tsx:69
-#: includes/Admin/AdminMenu.php:52
+#: js-apps/dashboard/src/App.tsx:286
+#: js-apps/dashboard/src/pages/Analytics.tsx:70
+#: includes/Admin/AdminMenu.php:71
 msgid "Emails"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:227
-#: includes/Admin/AdminMenu.php:53
+#: js-apps/dashboard/src/App.tsx:292
+#: includes/Admin/AdminMenu.php:72
 msgid "Templates"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:231
-#: includes/Admin/AdminMenu.php:54
+#: js-apps/dashboard/src/App.tsx:296
+#: includes/Admin/AdminMenu.php:73
 msgid "Logs"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:237
-#: js-apps/dashboard/src/pages/Analytics.tsx:60
-#: js-apps/dashboard/src/pages/Campaigns.tsx:275
-#: includes/Admin/AdminMenu.php:55
+#: js-apps/dashboard/src/App.tsx:302
+#: js-apps/dashboard/src/pages/Analytics.tsx:61
+#: js-apps/dashboard/src/pages/Campaigns.tsx:282
+#: includes/Admin/AdminMenu.php:74
+#: includes/Support/Capabilities.php:197
 msgid "Analytics"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:241
-#: js-apps/dashboard/src/App.tsx:265
+#: js-apps/dashboard/src/App.tsx:306
+#: js-apps/dashboard/src/App.tsx:340
 #: js-apps/dashboard/src/components/campaigns/ABTestConfig.tsx:340
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:437
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:328
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:394
-#: includes/Admin/AdminMenu.php:56
+#: includes/Admin/AdminMenu.php:75
+#: includes/Support/Capabilities.php:205
 #: kelune-crm.php:95
 msgid "Settings"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:248
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:112
-#: includes/Admin/AdminMenu.php:62
+#: js-apps/dashboard/src/App.tsx:313
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:123
+#: includes/Admin/AdminMenu.php:81
 msgid "License"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:328
+#: js-apps/dashboard/src/App.tsx:404
 msgid "Open menu"
 msgstr ""
 
-#: js-apps/dashboard/src/App.tsx:337
+#: js-apps/dashboard/src/App.tsx:413
 msgid "Navigation"
 msgstr ""
 
 #: js-apps/dashboard/src/components/analytics/CampaignsTab.tsx:21
-#: js-apps/dashboard/src/pages/Campaigns.tsx:37
+#: js-apps/dashboard/src/pages/Campaigns.tsx:38
 msgid "Total Campaigns"
 msgstr ""
 
@@ -162,40 +171,40 @@ msgstr ""
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:235
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:224
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:22
-#: js-apps/dashboard/src/pages/Automations.tsx:22
-#: js-apps/dashboard/src/pages/Automations.tsx:325
-#: js-apps/dashboard/src/pages/Automations.tsx:401
+#: js-apps/dashboard/src/pages/Automations.tsx:23
+#: js-apps/dashboard/src/pages/Automations.tsx:338
+#: js-apps/dashboard/src/pages/Automations.tsx:414
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:47
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:472
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:795
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:21
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:22
 msgid "Active"
 msgstr ""
 
 #: js-apps/dashboard/src/components/analytics/CampaignsTab.tsx:31
 #: js-apps/dashboard/src/components/campaigns/campaignStatus.ts:15
-#: js-apps/dashboard/src/pages/Campaigns.tsx:336
-#: js-apps/dashboard/src/pages/Campaigns.tsx:418
+#: js-apps/dashboard/src/pages/Campaigns.tsx:346
+#: js-apps/dashboard/src/pages/Campaigns.tsx:428
 #: js-apps/dashboard/src/pages/settings/CronMonitor.tsx:29
 msgid "Scheduled"
 msgstr ""
 
 #: js-apps/dashboard/src/components/analytics/CampaignsTab.tsx:36
 #: js-apps/dashboard/src/components/analytics/OverviewTab.tsx:41
-#: js-apps/dashboard/src/pages/Campaigns.tsx:52
+#: js-apps/dashboard/src/pages/Campaigns.tsx:53
 msgid "Avg Open Rate"
 msgstr ""
 
 #: js-apps/dashboard/src/components/analytics/CampaignsTab.tsx:43
 #: js-apps/dashboard/src/components/analytics/OverviewTab.tsx:48
-#: js-apps/dashboard/src/pages/Campaigns.tsx:61
+#: js-apps/dashboard/src/pages/Campaigns.tsx:62
 msgid "Avg Click Rate"
 msgstr ""
 
 #: js-apps/dashboard/src/components/analytics/CampaignsTab.tsx:52
-#: js-apps/dashboard/src/pages/Campaigns.tsx:312
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:17
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:26
+#: js-apps/dashboard/src/pages/Campaigns.tsx:322
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:18
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:27
 msgid "Campaign"
 msgstr ""
 
@@ -207,11 +216,11 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/CampaignAnalytics.tsx:391
 #: js-apps/dashboard/src/components/campaigns/campaignStatus.ts:18
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:101
-#: js-apps/dashboard/src/pages/Campaigns.tsx:345
-#: js-apps/dashboard/src/pages/Campaigns.tsx:419
-#: js-apps/dashboard/src/pages/Dashboard.tsx:64
-#: js-apps/dashboard/src/pages/Dashboard.tsx:275
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:25
+#: js-apps/dashboard/src/pages/Campaigns.tsx:355
+#: js-apps/dashboard/src/pages/Campaigns.tsx:429
+#: js-apps/dashboard/src/pages/Dashboard.tsx:65
+#: js-apps/dashboard/src/pages/Dashboard.tsx:306
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:26
 msgid "Sent"
 msgstr ""
 
@@ -228,8 +237,8 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/CampaignAnalytics.tsx:230
 #: js-apps/dashboard/src/components/campaigns/CampaignAnalytics.tsx:406
 #: js-apps/dashboard/src/components/email-logs/EmailLogStats.tsx:42
-#: js-apps/dashboard/src/pages/Campaigns.tsx:352
-#: js-apps/dashboard/src/pages/Campaigns.tsx:420
+#: js-apps/dashboard/src/pages/Campaigns.tsx:362
+#: js-apps/dashboard/src/pages/Campaigns.tsx:430
 msgid "Open Rate"
 msgstr ""
 
@@ -242,8 +251,8 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/CampaignAnalytics.tsx:243
 #: js-apps/dashboard/src/components/campaigns/CampaignAnalytics.tsx:412
 #: js-apps/dashboard/src/components/email-logs/EmailLogStats.tsx:52
-#: js-apps/dashboard/src/pages/Campaigns.tsx:359
-#: js-apps/dashboard/src/pages/Campaigns.tsx:421
+#: js-apps/dashboard/src/pages/Campaigns.tsx:369
+#: js-apps/dashboard/src/pages/Campaigns.tsx:431
 msgid "Click Rate"
 msgstr ""
 
@@ -257,20 +266,20 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/analytics/chartUtils.ts:37
 #: js-apps/dashboard/src/components/analytics/EmailsTab.tsx:29
-#: js-apps/dashboard/src/pages/Dashboard.tsx:74
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:27
+#: js-apps/dashboard/src/pages/Dashboard.tsx:75
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:28
 msgid "Opened"
 msgstr ""
 
 #: js-apps/dashboard/src/components/analytics/chartUtils.ts:40
 #: js-apps/dashboard/src/components/analytics/EmailsTab.tsx:34
-#: js-apps/dashboard/src/pages/Dashboard.tsx:79
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:28
+#: js-apps/dashboard/src/pages/Dashboard.tsx:80
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:29
 msgid "Clicked"
 msgstr ""
 
 #: js-apps/dashboard/src/components/analytics/ContactsTab.tsx:35
-#: js-apps/dashboard/src/pages/Dashboard.tsx:36
+#: js-apps/dashboard/src/pages/Dashboard.tsx:37
 msgid "Contact Growth"
 msgstr ""
 
@@ -294,8 +303,8 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/CampaignAnalytics.tsx:177
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:108
 #: js-apps/dashboard/src/components/email-logs/EmailLogStats.tsx:18
-#: js-apps/dashboard/src/pages/Dashboard.tsx:69
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:26
+#: js-apps/dashboard/src/pages/Dashboard.tsx:70
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:27
 msgid "Delivered"
 msgstr ""
 
@@ -304,8 +313,8 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/contactStatus.ts:7
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:137
 #: js-apps/dashboard/src/components/email-logs/EmailLogStats.tsx:34
-#: js-apps/dashboard/src/pages/Dashboard.tsx:84
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:33
+#: js-apps/dashboard/src/pages/Dashboard.tsx:85
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:34
 msgid "Bounced"
 msgstr ""
 
@@ -323,20 +332,20 @@ msgid "Engagement Over Time"
 msgstr ""
 
 #: js-apps/dashboard/src/components/analytics/OverviewTab.tsx:21
-#: js-apps/dashboard/src/pages/Dashboard.tsx:186
+#: js-apps/dashboard/src/pages/Dashboard.tsx:201
 msgid "Total Contacts"
 msgstr ""
 
 #: js-apps/dashboard/src/components/analytics/OverviewTab.tsx:31
-#: js-apps/dashboard/src/pages/Automations.tsx:43
-#: js-apps/dashboard/src/pages/Dashboard.tsx:204
-#: js-apps/dashboard/src/pages/Dashboard.tsx:318
+#: js-apps/dashboard/src/pages/Automations.tsx:44
+#: js-apps/dashboard/src/pages/Dashboard.tsx:222
+#: js-apps/dashboard/src/pages/Dashboard.tsx:353
 msgid "Active Automations"
 msgstr ""
 
 #: js-apps/dashboard/src/components/analytics/OverviewTab.tsx:36
-#: js-apps/dashboard/src/pages/Dashboard.tsx:41
-#: js-apps/dashboard/src/pages/Dashboard.tsx:198
+#: js-apps/dashboard/src/pages/Dashboard.tsx:42
+#: js-apps/dashboard/src/pages/Dashboard.tsx:215
 msgid "Emails Sent"
 msgstr ""
 
@@ -358,7 +367,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/actionTypeOptions.tsx:21
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:302
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:520
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:530
 msgid "Add to Lists"
 msgstr ""
 
@@ -368,7 +377,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/actionTypeOptions.tsx:27
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:309
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:527
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:537
 msgid "Remove from Lists"
 msgstr ""
 
@@ -378,8 +387,8 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/actionTypeOptions.tsx:33
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:316
-#: js-apps/dashboard/src/pages/Contacts.tsx:774
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:506
+#: js-apps/dashboard/src/pages/Contacts.tsx:673
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:516
 msgid "Add Tags"
 msgstr ""
 
@@ -389,7 +398,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/actionTypeOptions.tsx:39
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:323
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:513
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:523
 msgid "Remove Tags"
 msgstr ""
 
@@ -455,8 +464,10 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/ABTestConfig.tsx:328
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:658
 #: js-apps/dashboard/src/components/email-templates/FooterSettingsModal.tsx:59
-#: js-apps/dashboard/src/pages/Contacts.tsx:865
-#: js-apps/dashboard/src/pages/Contacts.tsx:873
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:371
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:377
+#: js-apps/dashboard/src/pages/Contacts.tsx:913
+#: js-apps/dashboard/src/pages/Contacts.tsx:921
 msgid "Save"
 msgstr ""
 
@@ -491,7 +502,7 @@ msgid "Upgrade to Kelune CRM Pro to branch an automation on tags, segments and e
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationBuilder.tsx:38
-#: js-apps/dashboard/src/pages/Automations.tsx:158
+#: js-apps/dashboard/src/pages/Automations.tsx:159
 msgid "Automation settings saved"
 msgstr ""
 
@@ -508,24 +519,24 @@ msgid "Failed to save trigger"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationBuilder.tsx:63
-#: js-apps/dashboard/src/pages/Automations.tsx:199
+#: js-apps/dashboard/src/pages/Automations.tsx:200
 msgid "Automation activated"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationBuilder.tsx:66
-#: js-apps/dashboard/src/pages/Automations.tsx:203
-#: includes/Api/Controllers/AutomationsController.php:440
+#: js-apps/dashboard/src/pages/Automations.tsx:204
+#: includes/Api/Controllers/AutomationsController.php:471
 msgid "Failed to activate automation"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationBuilder.tsx:74
-#: js-apps/dashboard/src/pages/Automations.tsx:209
+#: js-apps/dashboard/src/pages/Automations.tsx:210
 msgid "Automation paused"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationBuilder.tsx:77
-#: js-apps/dashboard/src/pages/Automations.tsx:213
-#: includes/Api/Controllers/AutomationsController.php:463
+#: js-apps/dashboard/src/pages/Automations.tsx:214
+#: includes/Api/Controllers/AutomationsController.php:494
 msgid "Failed to pause automation"
 msgstr ""
 
@@ -591,9 +602,9 @@ msgid "Back to automations"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationCanvas.tsx:481
-#: js-apps/dashboard/src/pages/Automations.tsx:253
+#: js-apps/dashboard/src/pages/Automations.tsx:256
 #: js-apps/dashboard/src/pages/EmailTemplateBuilderPage.tsx:137
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:189
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:192
 msgid "Edit info"
 msgstr ""
 
@@ -624,7 +635,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationInfoModal.tsx:51
 #: js-apps/dashboard/src/components/automations/TemplateSelectionModal.tsx:112
-#: js-apps/dashboard/src/pages/Automations.tsx:487
+#: js-apps/dashboard/src/pages/Automations.tsx:523
 msgid "Create Automation"
 msgstr ""
 
@@ -633,13 +644,14 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:720
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldForm.tsx:77
 #: js-apps/dashboard/src/components/email-templates/TemplateInfoModal.tsx:34
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:331
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:533
-#: js-apps/dashboard/src/pages/Contacts.tsx:841
-#: js-apps/dashboard/src/pages/Lists.tsx:341
-#: js-apps/dashboard/src/pages/Segments.tsx:424
+#: js-apps/dashboard/src/pages/Contacts.tsx:889
+#: js-apps/dashboard/src/pages/Lists.tsx:348
+#: js-apps/dashboard/src/pages/Segments.tsx:439
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:722
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:473
-#: js-apps/dashboard/src/pages/Tags.tsx:275
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:483
+#: js-apps/dashboard/src/pages/Tags.tsx:282
 msgid "Update"
 msgstr ""
 
@@ -648,13 +660,14 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:721
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldForm.tsx:78
 #: js-apps/dashboard/src/components/email-templates/TemplateInfoModal.tsx:34
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:331
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:534
-#: js-apps/dashboard/src/pages/Contacts.tsx:842
-#: js-apps/dashboard/src/pages/Lists.tsx:342
-#: js-apps/dashboard/src/pages/Segments.tsx:425
+#: js-apps/dashboard/src/pages/Contacts.tsx:890
+#: js-apps/dashboard/src/pages/Lists.tsx:349
+#: js-apps/dashboard/src/pages/Segments.tsx:440
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:722
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:474
-#: js-apps/dashboard/src/pages/Tags.tsx:276
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:484
+#: js-apps/dashboard/src/pages/Tags.tsx:283
 msgid "Create"
 msgstr ""
 
@@ -675,9 +688,9 @@ msgstr ""
 #: js-apps/dashboard/src/components/email-templates/TemplateInfoModal.tsx:48
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:283
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:169
-#: js-apps/dashboard/src/pages/Lists.tsx:353
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:485
-#: js-apps/dashboard/src/pages/Tags.tsx:287
+#: js-apps/dashboard/src/pages/Lists.tsx:360
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:495
+#: js-apps/dashboard/src/pages/Tags.tsx:294
 msgid "Description"
 msgstr ""
 
@@ -688,9 +701,10 @@ msgstr ""
 #: js-apps/dashboard/src/components/automations/automationSortOptions.ts:9
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:103
 #: js-apps/dashboard/src/components/email-templates/emailTemplateSortOptions.ts:12
+#: js-apps/dashboard/src/components/roles/userSortOptions.ts:7
 #: js-apps/dashboard/src/components/webhooks/incomingWebhookSortOptions.ts:8
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:257
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:244
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:248
 msgid "Name"
 msgstr ""
 
@@ -714,51 +728,51 @@ msgstr ""
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:435
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:447
 #: js-apps/dashboard/src/components/webhooks/WebhookLogs.tsx:66
-#: js-apps/dashboard/src/pages/Automations.tsx:303
-#: js-apps/dashboard/src/pages/Automations.tsx:398
+#: js-apps/dashboard/src/pages/Automations.tsx:316
 #: js-apps/dashboard/src/pages/Automations.tsx:411
-#: js-apps/dashboard/src/pages/Automations.tsx:430
-#: js-apps/dashboard/src/pages/Campaigns.tsx:325
-#: js-apps/dashboard/src/pages/Campaigns.tsx:417
-#: js-apps/dashboard/src/pages/Campaigns.tsx:430
-#: js-apps/dashboard/src/pages/Campaigns.tsx:442
-#: js-apps/dashboard/src/pages/Contacts.tsx:498
-#: js-apps/dashboard/src/pages/Contacts.tsx:603
-#: js-apps/dashboard/src/pages/Contacts.tsx:638
-#: js-apps/dashboard/src/pages/Contacts.tsx:672
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:238
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:314
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:340
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:379
+#: js-apps/dashboard/src/pages/Automations.tsx:424
+#: js-apps/dashboard/src/pages/Automations.tsx:443
+#: js-apps/dashboard/src/pages/Campaigns.tsx:335
+#: js-apps/dashboard/src/pages/Campaigns.tsx:427
+#: js-apps/dashboard/src/pages/Campaigns.tsx:440
+#: js-apps/dashboard/src/pages/Campaigns.tsx:452
+#: js-apps/dashboard/src/pages/Contacts.tsx:523
+#: js-apps/dashboard/src/pages/Contacts.tsx:628
+#: js-apps/dashboard/src/pages/Contacts.tsx:724
+#: js-apps/dashboard/src/pages/Contacts.tsx:758
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:239
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:317
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:345
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:384
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:466
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:530
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:545
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:572
 #: js-apps/dashboard/src/pages/settings/emailProviderSortOptions.ts:11
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:298
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:355
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:364
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:383
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:541
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:302
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:359
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:368
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:387
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:551
 #: js-apps/dashboard/src/utils/contactIdentity.ts:21
-#: includes/Api/Controllers/ContactsController.php:986
-#: includes/Api/Controllers/EmailLogsController.php:534
+#: includes/Api/Controllers/ContactsController.php:1008
+#: includes/Api/Controllers/EmailLogsController.php:546
 msgid "Status"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/automationSortOptions.ts:11
 #: js-apps/dashboard/src/components/automations/nodes/TriggerNode.tsx:24
 #: js-apps/dashboard/src/components/automations/TriggerConfigDrawer.tsx:56
-#: js-apps/dashboard/src/pages/Automations.tsx:310
-#: js-apps/dashboard/src/pages/Automations.tsx:399
-#: js-apps/dashboard/src/pages/Automations.tsx:417
-#: js-apps/dashboard/src/pages/Automations.tsx:443
+#: js-apps/dashboard/src/pages/Automations.tsx:323
+#: js-apps/dashboard/src/pages/Automations.tsx:412
+#: js-apps/dashboard/src/pages/Automations.tsx:430
+#: js-apps/dashboard/src/pages/Automations.tsx:456
 msgid "Trigger"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/automationSortOptions.ts:12
-#: js-apps/dashboard/src/pages/Automations.tsx:317
-#: js-apps/dashboard/src/pages/Automations.tsx:400
+#: js-apps/dashboard/src/pages/Automations.tsx:330
+#: js-apps/dashboard/src/pages/Automations.tsx:413
 msgid "Enrolled"
 msgstr ""
 
@@ -800,6 +814,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/tagSortOptions.ts:22
 #: js-apps/dashboard/src/components/email-logs/emailLogSortOptions.ts:27
 #: js-apps/dashboard/src/components/email-templates/emailTemplateSortOptions.ts:24
+#: js-apps/dashboard/src/components/roles/userSortOptions.ts:21
 #: js-apps/dashboard/src/components/webhooks/incomingWebhookSortOptions.ts:24
 #: js-apps/dashboard/src/pages/settings/emailProviderSortOptions.ts:25
 msgid "Date added"
@@ -835,7 +850,7 @@ msgid "Average Execution Time"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationStats.tsx:79
-#: js-apps/dashboard/src/pages/Automations.tsx:51
+#: js-apps/dashboard/src/pages/Automations.tsx:52
 msgid "Total Enrolled"
 msgstr ""
 
@@ -844,8 +859,8 @@ msgid "Active Contacts"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/AutomationStats.tsx:89
-#: js-apps/dashboard/src/pages/Automations.tsx:333
-#: js-apps/dashboard/src/pages/Automations.tsx:402
+#: js-apps/dashboard/src/pages/Automations.tsx:346
+#: js-apps/dashboard/src/pages/Automations.tsx:415
 msgid "Completed"
 msgstr ""
 
@@ -916,21 +931,21 @@ msgid "This step is required and cannot be deleted"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/SendStepTestEmail.tsx:22
-#: includes/Api/Controllers/AutomationsController.php:279
+#: includes/Api/Controllers/AutomationsController.php:310
 msgid "Add email content before sending a test."
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/SendStepTestEmail.tsx:28
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:355
-#: includes/Api/Controllers/AutomationsController.php:287
-#: includes/Api/Controllers/CampaignsController.php:474
+#: includes/Api/Controllers/AutomationsController.php:318
+#: includes/Api/Controllers/CampaignsController.php:516
 msgid "Test email sent successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/SendStepTestEmail.tsx:33
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:358
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:349
-#: includes/Api/Controllers/EmailTemplatesController.php:151
+#: includes/Api/Controllers/EmailTemplatesController.php:164
 msgid "Failed to send test email"
 msgstr ""
 
@@ -951,7 +966,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/SendStepTestEmail.tsx:46
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:673
-#: js-apps/dashboard/src/components/license/ActivateForm.tsx:52
+#: js-apps/dashboard/src/components/license/ActivateForm.tsx:61
 msgid "Email Address"
 msgstr ""
 
@@ -974,7 +989,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:93
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:281
 #: js-apps/dashboard/src/utils/contactIdentity.ts:11
-#: includes/Api/Controllers/ContactsController.php:976
+#: includes/Api/Controllers/ContactsController.php:998
 msgid "First Name"
 msgstr ""
 
@@ -985,7 +1000,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:94
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:288
 #: js-apps/dashboard/src/utils/contactIdentity.ts:12
-#: includes/Api/Controllers/ContactsController.php:977
+#: includes/Api/Controllers/ContactsController.php:999
 msgid "Last Name"
 msgstr ""
 
@@ -1000,13 +1015,14 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:11
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldForm.tsx:65
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:30
+#: js-apps/dashboard/src/components/roles/userSortOptions.ts:9
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:92
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:258
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:274
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:276
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:216
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:217
 #: js-apps/dashboard/src/utils/contactIdentity.ts:10
-#: includes/Api/Controllers/ContactsController.php:975
+#: includes/Api/Controllers/ContactsController.php:997
 msgid "Email"
 msgstr ""
 
@@ -1019,10 +1035,10 @@ msgstr ""
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:32
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:96
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:260
-#: js-apps/dashboard/src/pages/Contacts.tsx:511
-#: js-apps/dashboard/src/pages/Contacts.tsx:605
+#: js-apps/dashboard/src/pages/Contacts.tsx:536
+#: js-apps/dashboard/src/pages/Contacts.tsx:630
 #: js-apps/dashboard/src/utils/contactIdentity.ts:14
-#: includes/Api/Controllers/ContactsController.php:979
+#: includes/Api/Controllers/ContactsController.php:1001
 msgid "Phone"
 msgstr ""
 
@@ -1033,18 +1049,18 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/contactSortOptions.ts:11
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:14
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:95
-#: js-apps/dashboard/src/pages/Contacts.tsx:505
-#: js-apps/dashboard/src/pages/Contacts.tsx:604
+#: js-apps/dashboard/src/pages/Contacts.tsx:530
+#: js-apps/dashboard/src/pages/Contacts.tsx:629
 #: js-apps/dashboard/src/utils/contactIdentity.ts:13
-#: includes/Api/Controllers/ContactsController.php:978
+#: includes/Api/Controllers/ContactsController.php:1000
 msgid "Company"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:27
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:132
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:230
-#: js-apps/dashboard/src/pages/Contacts.tsx:517
-#: js-apps/dashboard/src/pages/Contacts.tsx:606
+#: js-apps/dashboard/src/pages/Contacts.tsx:542
+#: js-apps/dashboard/src/pages/Contacts.tsx:631
 msgid "Address"
 msgstr ""
 
@@ -1053,7 +1069,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:234
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:17
 #: js-apps/dashboard/src/utils/contactIdentity.ts:16
-#: includes/Api/Controllers/ContactsController.php:981
+#: includes/Api/Controllers/ContactsController.php:1003
 msgid "Address Line 2"
 msgstr ""
 
@@ -1063,19 +1079,19 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:240
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:18
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:97
-#: js-apps/dashboard/src/pages/Contacts.tsx:523
-#: js-apps/dashboard/src/pages/Contacts.tsx:607
+#: js-apps/dashboard/src/pages/Contacts.tsx:548
+#: js-apps/dashboard/src/pages/Contacts.tsx:632
 #: js-apps/dashboard/src/utils/contactIdentity.ts:17
-#: includes/Api/Controllers/ContactsController.php:982
+#: includes/Api/Controllers/ContactsController.php:1004
 msgid "City"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:30
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:245
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:98
-#: js-apps/dashboard/src/pages/Contacts.tsx:529
+#: js-apps/dashboard/src/pages/Contacts.tsx:554
 #: js-apps/dashboard/src/utils/contactIdentity.ts:18
-#: includes/Api/Controllers/ContactsController.php:983
+#: includes/Api/Controllers/ContactsController.php:1005
 msgid "State"
 msgstr ""
 
@@ -1085,10 +1101,10 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:250
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:20
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:100
-#: js-apps/dashboard/src/pages/Contacts.tsx:535
-#: js-apps/dashboard/src/pages/Contacts.tsx:609
+#: js-apps/dashboard/src/pages/Contacts.tsx:560
+#: js-apps/dashboard/src/pages/Contacts.tsx:634
 #: js-apps/dashboard/src/utils/contactIdentity.ts:20
-#: includes/Api/Controllers/ContactsController.php:984
+#: includes/Api/Controllers/ContactsController.php:1006
 msgid "Postal Code"
 msgstr ""
 
@@ -1099,20 +1115,20 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:256
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:21
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:99
-#: js-apps/dashboard/src/pages/Contacts.tsx:541
-#: js-apps/dashboard/src/pages/Contacts.tsx:610
+#: js-apps/dashboard/src/pages/Contacts.tsx:566
+#: js-apps/dashboard/src/pages/Contacts.tsx:635
 #: js-apps/dashboard/src/utils/contactIdentity.ts:19
-#: includes/Api/Controllers/ContactsController.php:985
+#: includes/Api/Controllers/ContactsController.php:1007
 msgid "Country"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:162
-#: js-apps/dashboard/src/pages/Tags.tsx:69
+#: js-apps/dashboard/src/pages/Tags.tsx:70
 msgid "Failed to fetch tags"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:171
-#: js-apps/dashboard/src/pages/Lists.tsx:78
+#: js-apps/dashboard/src/pages/Lists.tsx:79
 msgid "Failed to fetch lists"
 msgstr ""
 
@@ -1123,7 +1139,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:238
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:325
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:367
-#: js-apps/dashboard/src/config/settingsNav.tsx:27
+#: js-apps/dashboard/src/config/settingsNav.tsx:33
 msgid "Custom Fields"
 msgstr ""
 
@@ -1200,7 +1216,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:620
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:532
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:192
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:281
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:294
 msgid "Preview"
 msgstr ""
 
@@ -1265,7 +1281,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:436
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:408
-#: js-apps/dashboard/src/config/settingsNav.tsx:15
+#: js-apps/dashboard/src/config/settingsNav.tsx:19
 #: js-apps/dashboard/src/pages/settings/EmailGlobalSettings.tsx:14
 msgid "Global Email"
 msgstr ""
@@ -1282,6 +1298,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:444
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:413
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:307
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:20
 msgid "Custom"
 msgstr ""
 
@@ -1412,7 +1429,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:512
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:216
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:190
-#: js-apps/dashboard/src/pages/Contacts.tsx:776
+#: js-apps/dashboard/src/pages/Contacts.tsx:675
 msgid "Select tags"
 msgstr ""
 
@@ -1486,8 +1503,8 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:618
 #: js-apps/dashboard/src/components/automations/TriggerFields.tsx:36
-#: js-apps/dashboard/src/pages/Contacts.tsx:699
-#: js-apps/dashboard/src/pages/Tags.tsx:162
+#: js-apps/dashboard/src/pages/Contacts.tsx:785
+#: js-apps/dashboard/src/pages/Tags.tsx:163
 msgid "Tag"
 msgstr ""
 
@@ -1503,8 +1520,8 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:632
 #: js-apps/dashboard/src/components/automations/TriggerFields.tsx:49
-#: js-apps/dashboard/src/pages/Contacts.tsx:685
-#: js-apps/dashboard/src/pages/Lists.tsx:178
+#: js-apps/dashboard/src/pages/Contacts.tsx:771
+#: js-apps/dashboard/src/pages/Lists.tsx:179
 msgid "List"
 msgstr ""
 
@@ -1519,7 +1536,7 @@ msgid "Select list"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/StepConfigPanel.tsx:646
-#: js-apps/dashboard/src/pages/Segments.tsx:205
+#: js-apps/dashboard/src/pages/Segments.tsx:214
 msgid "Segment"
 msgstr ""
 
@@ -1660,7 +1677,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/TemplatePreviewModal.tsx:62
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:557
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:398
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:417
 msgid "Template Preview"
 msgstr ""
 
@@ -1733,7 +1750,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/automations/TemplateSelectionModal.tsx:59
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:176
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:232
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:245
 msgid "Template"
 msgstr ""
 
@@ -1741,13 +1758,13 @@ msgstr ""
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:240
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:180
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:262
-#: js-apps/dashboard/src/pages/Automations.tsx:295
-#: js-apps/dashboard/src/pages/Campaigns.tsx:317
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:237
-#: js-apps/dashboard/src/pages/Lists.tsx:183
-#: js-apps/dashboard/src/pages/Segments.tsx:210
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:249
-#: js-apps/dashboard/src/pages/Tags.tsx:167
+#: js-apps/dashboard/src/pages/Automations.tsx:308
+#: js-apps/dashboard/src/pages/Campaigns.tsx:327
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:250
+#: js-apps/dashboard/src/pages/Lists.tsx:184
+#: js-apps/dashboard/src/pages/Segments.tsx:219
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:253
+#: js-apps/dashboard/src/pages/Tags.tsx:168
 msgid "(untitled)"
 msgstr ""
 
@@ -1776,17 +1793,19 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/ABTestConfig.tsx:260
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:283
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:188
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:192
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:252
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:393
-#: js-apps/dashboard/src/pages/Automations.tsx:376
-#: js-apps/dashboard/src/pages/Campaigns.tsx:393
-#: js-apps/dashboard/src/pages/Contacts.tsx:574
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:295
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:276
-#: js-apps/dashboard/src/pages/Lists.tsx:226
-#: js-apps/dashboard/src/pages/Segments.tsx:272
+#: js-apps/dashboard/src/pages/Automations.tsx:389
+#: js-apps/dashboard/src/pages/Campaigns.tsx:403
+#: js-apps/dashboard/src/pages/Contacts.tsx:599
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:296
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:289
+#: js-apps/dashboard/src/pages/Lists.tsx:227
+#: js-apps/dashboard/src/pages/Segments.tsx:281
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:505
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:334
-#: js-apps/dashboard/src/pages/Tags.tsx:192
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:338
+#: js-apps/dashboard/src/pages/Tags.tsx:193
 msgid "Actions"
 msgstr ""
 
@@ -1903,13 +1922,13 @@ msgstr ""
 #: js-apps/dashboard/src/components/automations/typeLabels.ts:36
 #: js-apps/dashboard/src/components/campaigns/campaignStatus.ts:14
 #: js-apps/dashboard/src/components/campaigns/campaignStatus.ts:45
-#: js-apps/dashboard/src/pages/Automations.tsx:24
+#: js-apps/dashboard/src/pages/Automations.tsx:25
 msgid "Draft"
 msgstr ""
 
 #: js-apps/dashboard/src/components/automations/typeLabels.ts:16
 #: js-apps/dashboard/src/components/campaigns/campaignStatus.ts:17
-#: js-apps/dashboard/src/pages/Automations.tsx:23
+#: js-apps/dashboard/src/pages/Automations.tsx:24
 msgid "Paused"
 msgstr ""
 
@@ -1923,6 +1942,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/campaigns/ABTestConfig.tsx:127
 #: js-apps/dashboard/src/components/setup-wizard/WelcomeStep.tsx:37
+#: js-apps/dashboard/src/pages/settings/RolesPermissions.tsx:59
 #: js-apps/dashboard/src/pages/settings/useSettingsForm.ts:47
 msgid "Failed to save settings"
 msgstr ""
@@ -1967,25 +1987,29 @@ msgstr ""
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:334
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:153
 #: js-apps/dashboard/src/components/email-logs/emailLogSortOptions.ts:12
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:166
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:212
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:220
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:238
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:355
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:229
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:313
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:334
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:366
-#: js-apps/dashboard/src/pages/Lists.tsx:199
-#: js-apps/dashboard/src/pages/Lists.tsx:246
-#: js-apps/dashboard/src/pages/Lists.tsx:254
-#: js-apps/dashboard/src/pages/Lists.tsx:266
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:230
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:316
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:339
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:371
+#: js-apps/dashboard/src/pages/Lists.tsx:200
+#: js-apps/dashboard/src/pages/Lists.tsx:247
+#: js-apps/dashboard/src/pages/Lists.tsx:255
+#: js-apps/dashboard/src/pages/Lists.tsx:267
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:457
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:529
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:539
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:558
 #: js-apps/dashboard/src/pages/settings/emailProviderSortOptions.ts:9
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:257
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:352
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:370
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:396
-#: includes/Api/Controllers/EmailLogsController.php:527
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:261
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:356
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:374
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:400
+#: includes/Api/Controllers/EmailLogsController.php:539
 msgid "Type"
 msgstr ""
 
@@ -1994,7 +2018,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:172
 #: js-apps/dashboard/src/components/email-logs/emailLogSortOptions.ts:9
 #: js-apps/dashboard/src/pages/settings/DoubleOptinSettings.tsx:22
-#: includes/Api/Controllers/EmailLogsController.php:533
+#: includes/Api/Controllers/EmailLogsController.php:545
 msgid "Subject"
 msgstr ""
 
@@ -2005,14 +2029,15 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/ABTestConfig.tsx:265
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:288
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:530
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:199
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:398
-#: js-apps/dashboard/src/pages/Contacts.tsx:582
-#: js-apps/dashboard/src/pages/Contacts.tsx:851
-#: js-apps/dashboard/src/pages/Lists.tsx:231
-#: js-apps/dashboard/src/pages/Segments.tsx:280
+#: js-apps/dashboard/src/pages/Contacts.tsx:607
+#: js-apps/dashboard/src/pages/Contacts.tsx:899
+#: js-apps/dashboard/src/pages/Lists.tsx:232
+#: js-apps/dashboard/src/pages/Segments.tsx:289
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:516
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:339
-#: js-apps/dashboard/src/pages/Tags.tsx:197
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:343
+#: js-apps/dashboard/src/pages/Tags.tsx:198
 msgid "Edit"
 msgstr ""
 
@@ -2021,28 +2046,30 @@ msgstr ""
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:292
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:384
 #: js-apps/dashboard/src/components/email-templates/SortableBlock.tsx:95
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:203
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:319
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:250
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:511
-#: js-apps/dashboard/src/pages/Automations.tsx:283
-#: js-apps/dashboard/src/pages/Automations.tsx:524
-#: js-apps/dashboard/src/pages/Campaigns.tsx:305
-#: js-apps/dashboard/src/pages/Campaigns.tsx:522
-#: js-apps/dashboard/src/pages/Contacts.tsx:425
-#: js-apps/dashboard/src/pages/Contacts.tsx:811
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:304
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:486
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:211
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:389
-#: js-apps/dashboard/src/pages/Lists.tsx:235
-#: js-apps/dashboard/src/pages/Lists.tsx:330
-#: js-apps/dashboard/src/pages/Segments.tsx:199
-#: js-apps/dashboard/src/pages/Segments.tsx:413
+#: js-apps/dashboard/src/pages/Automations.tsx:294
+#: js-apps/dashboard/src/pages/Automations.tsx:513
+#: js-apps/dashboard/src/pages/Campaigns.tsx:314
+#: js-apps/dashboard/src/pages/Campaigns.tsx:509
+#: js-apps/dashboard/src/pages/Contacts.tsx:448
+#: js-apps/dashboard/src/pages/Contacts.tsx:713
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:307
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:465
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:222
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:385
+#: js-apps/dashboard/src/pages/Lists.tsx:236
+#: js-apps/dashboard/src/pages/Lists.tsx:314
+#: js-apps/dashboard/src/pages/Segments.tsx:206
+#: js-apps/dashboard/src/pages/Segments.tsx:404
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:520
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:710
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:343
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:462
-#: js-apps/dashboard/src/pages/Tags.tsx:201
-#: js-apps/dashboard/src/pages/Tags.tsx:264
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:347
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:448
+#: js-apps/dashboard/src/pages/Tags.tsx:202
+#: js-apps/dashboard/src/pages/Tags.tsx:252
 msgid "Delete"
 msgstr ""
 
@@ -2256,9 +2283,9 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/CampaignAnalytics.tsx:396
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:187
 #: js-apps/dashboard/src/components/email-logs/emailLogSortOptions.ts:13
-#: js-apps/dashboard/src/pages/Dashboard.tsx:280
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:254
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:316
+#: js-apps/dashboard/src/pages/Dashboard.tsx:311
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:255
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:319
 msgid "Opens"
 msgstr ""
 
@@ -2267,11 +2294,11 @@ msgstr ""
 #: js-apps/dashboard/src/components/campaigns/CampaignAnalytics.tsx:401
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:190
 #: js-apps/dashboard/src/components/email-logs/emailLogSortOptions.ts:14
-#: js-apps/dashboard/src/pages/Dashboard.tsx:285
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:262
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:317
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:281
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:354
+#: js-apps/dashboard/src/pages/Dashboard.tsx:316
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:263
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:320
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:285
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:358
 msgid "Clicks"
 msgstr ""
 
@@ -2337,16 +2364,16 @@ msgstr ""
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:274
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:94
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:375
-#: js-apps/dashboard/src/pages/Automations.tsx:358
-#: js-apps/dashboard/src/pages/Campaigns.tsx:375
-#: js-apps/dashboard/src/pages/Contacts.tsx:564
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:286
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:258
-#: js-apps/dashboard/src/pages/Lists.tsx:208
-#: js-apps/dashboard/src/pages/Segments.tsx:254
+#: js-apps/dashboard/src/pages/Automations.tsx:371
+#: js-apps/dashboard/src/pages/Campaigns.tsx:385
+#: js-apps/dashboard/src/pages/Contacts.tsx:589
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:287
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:271
+#: js-apps/dashboard/src/pages/Lists.tsx:209
+#: js-apps/dashboard/src/pages/Segments.tsx:263
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:487
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:325
-#: js-apps/dashboard/src/pages/Tags.tsx:183
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:329
+#: js-apps/dashboard/src/pages/Tags.tsx:184
 msgid "Created"
 msgstr ""
 
@@ -2384,7 +2411,7 @@ msgid "open rate"
 msgstr ""
 
 #: js-apps/dashboard/src/components/campaigns/CampaignAnalytics.tsx:439
-#: js-apps/dashboard/src/pages/Analytics.tsx:63
+#: js-apps/dashboard/src/pages/Analytics.tsx:64
 msgid "Overview"
 msgstr ""
 
@@ -2422,12 +2449,12 @@ msgid "Available in Kelune CRM Pro"
 msgstr ""
 
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:314
-#: includes/Api/Controllers/CampaignsController.php:255
+#: includes/Api/Controllers/CampaignsController.php:297
 msgid "Campaign created successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:336
-#: includes/Api/Controllers/CampaignsController.php:293
+#: includes/Api/Controllers/CampaignsController.php:335
 msgid "Campaign updated successfully"
 msgstr ""
 
@@ -2593,7 +2620,7 @@ msgid "Configure Campaign"
 msgstr ""
 
 #: js-apps/dashboard/src/components/campaigns/CampaignForm.tsx:724
-#: js-apps/dashboard/src/pages/Campaigns.tsx:486
+#: js-apps/dashboard/src/pages/Campaigns.tsx:519
 msgid "Create Campaign"
 msgstr ""
 
@@ -2615,7 +2642,7 @@ msgid "Sent date"
 msgstr ""
 
 #: js-apps/dashboard/src/components/campaigns/campaignStatus.ts:16
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:24
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:25
 msgid "Sending"
 msgstr ""
 
@@ -2625,8 +2652,8 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/common/ActionConfirm.tsx:12
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:227
-#: js-apps/dashboard/src/pages/Automations.tsx:519
-#: js-apps/dashboard/src/pages/Campaigns.tsx:517
+#: js-apps/dashboard/src/pages/Automations.tsx:502
+#: js-apps/dashboard/src/pages/Campaigns.tsx:498
 msgid "Activate"
 msgstr ""
 
@@ -2653,11 +2680,11 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/common/ActionConfirm.tsx:27
 #: js-apps/dashboard/src/components/email-templates/SortableBlock.tsx:90
-#: js-apps/dashboard/src/pages/Automations.tsx:261
-#: js-apps/dashboard/src/pages/Automations.tsx:521
-#: js-apps/dashboard/src/pages/Campaigns.tsx:268
-#: js-apps/dashboard/src/pages/Campaigns.tsx:519
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:197
+#: js-apps/dashboard/src/pages/Automations.tsx:268
+#: js-apps/dashboard/src/pages/Automations.tsx:507
+#: js-apps/dashboard/src/pages/Campaigns.tsx:273
+#: js-apps/dashboard/src/pages/Campaigns.tsx:503
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:204
 msgid "Duplicate"
 msgstr ""
 
@@ -2675,26 +2702,26 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/common/ActionConfirm.tsx:44
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:312
-#: js-apps/dashboard/src/pages/License.tsx:138
+#: js-apps/dashboard/src/pages/License.tsx:142
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:831
 msgid "Yes"
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/ActionConfirm.tsx:44
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:312
-#: js-apps/dashboard/src/pages/License.tsx:138
+#: js-apps/dashboard/src/pages/License.tsx:142
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:832
 msgid "No"
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/AudienceSelect.tsx:8
-#: js-apps/dashboard/src/pages/Contacts.tsx:874
+#: js-apps/dashboard/src/pages/Contacts.tsx:922
 msgid "Select tags..."
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/AudienceSelect.tsx:9
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:59
-#: js-apps/dashboard/src/pages/Contacts.tsx:334
+#: js-apps/dashboard/src/pages/Contacts.tsx:349
 msgid "Failed to load tags"
 msgstr ""
 
@@ -2704,13 +2731,13 @@ msgid "Deleted tag (#%d)"
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/AudienceSelect.tsx:14
-#: js-apps/dashboard/src/pages/Contacts.tsx:866
+#: js-apps/dashboard/src/pages/Contacts.tsx:914
 msgid "Select lists..."
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/AudienceSelect.tsx:15
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:38
-#: js-apps/dashboard/src/pages/Contacts.tsx:371
+#: js-apps/dashboard/src/pages/Contacts.tsx:386
 msgid "Failed to load lists"
 msgstr ""
 
@@ -2818,7 +2845,11 @@ msgid "Email preview"
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/ErrorBoundary.tsx:26
-msgid "Sorry, something went wrong."
+msgid "Internal error"
+msgstr ""
+
+#: js-apps/dashboard/src/components/common/ErrorBoundary.tsx:26
+msgid "Sorry, an unexpected error stopped this page from loading."
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/ErrorBoundary.tsx:27
@@ -2856,14 +2887,14 @@ msgstr ""
 #: js-apps/dashboard/src/components/common/ImportModal.tsx:29
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:16
 #: js-apps/dashboard/src/utils/contactIdentity.ts:15
-#: includes/Api/Controllers/ContactsController.php:980
+#: includes/Api/Controllers/ContactsController.php:1002
 msgid "Address Line 1"
 msgstr ""
 
 #: js-apps/dashboard/src/components/common/ImportModal.tsx:32
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:144
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:19
-#: js-apps/dashboard/src/pages/Contacts.tsx:608
+#: js-apps/dashboard/src/pages/Contacts.tsx:633
 msgid "State/Province"
 msgstr ""
 
@@ -2872,9 +2903,9 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:267
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:23
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:102
-#: js-apps/dashboard/src/pages/Contacts.tsx:548
-#: js-apps/dashboard/src/pages/Contacts.tsx:611
-#: includes/Api/Controllers/ContactsController.php:987
+#: js-apps/dashboard/src/pages/Contacts.tsx:573
+#: js-apps/dashboard/src/pages/Contacts.tsx:636
+#: includes/Api/Controllers/ContactsController.php:1009
 msgid "Source"
 msgstr ""
 
@@ -2882,9 +2913,9 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:158
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:24
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:103
-#: js-apps/dashboard/src/pages/Contacts.tsx:557
-#: js-apps/dashboard/src/pages/Contacts.tsx:612
-#: includes/Api/Controllers/ContactsController.php:988
+#: js-apps/dashboard/src/pages/Contacts.tsx:582
+#: js-apps/dashboard/src/pages/Contacts.tsx:637
+#: includes/Api/Controllers/ContactsController.php:1010
 msgid "Lead Score"
 msgstr ""
 
@@ -2926,7 +2957,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: js-apps/dashboard/src/components/common/ImportModal.tsx:262
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:548
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:558
 msgid "Done"
 msgstr ""
 
@@ -2995,7 +3026,7 @@ msgstr ""
 
 #. translators: %1$d: created count, %2$d: updated count, %3$d: skipped count
 #: js-apps/dashboard/src/components/common/ImportModal.tsx:338
-#: includes/Api/Controllers/ContactsController.php:780
+#: includes/Api/Controllers/ContactsController.php:802
 msgid "%1$d created, %2$d updated, %3$d skipped"
 msgstr ""
 
@@ -3112,17 +3143,19 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/common/list/ListSort.tsx:99
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:255
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:251
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:308
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:465
-#: js-apps/dashboard/src/pages/Automations.tsx:461
-#: js-apps/dashboard/src/pages/Campaigns.tsx:460
-#: js-apps/dashboard/src/pages/Contacts.tsx:718
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:424
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:343
-#: js-apps/dashboard/src/pages/Lists.tsx:284
-#: js-apps/dashboard/src/pages/Segments.tsx:365
+#: js-apps/dashboard/src/pages/Automations.tsx:474
+#: js-apps/dashboard/src/pages/Campaigns.tsx:470
+#: js-apps/dashboard/src/pages/Contacts.tsx:804
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:429
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:356
+#: js-apps/dashboard/src/pages/Lists.tsx:285
+#: js-apps/dashboard/src/pages/Segments.tsx:374
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:591
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:414
-#: js-apps/dashboard/src/pages/Tags.tsx:228
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:418
+#: js-apps/dashboard/src/pages/Tags.tsx:229
 msgid "Sort"
 msgstr ""
 
@@ -3133,6 +3166,19 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/common/ModalFooter.tsx:7
 msgid "OK"
+msgstr ""
+
+#: js-apps/dashboard/src/components/common/NoPermission.tsx:7
+msgid "No permission"
+msgstr ""
+
+#: js-apps/dashboard/src/components/common/NoPermission.tsx:7
+msgid "Sorry, you do not have permission to access this page."
+msgstr ""
+
+#: js-apps/dashboard/src/components/common/NoPermission.tsx:10
+#: js-apps/dashboard/src/pages/NotFound.tsx:8
+msgid "Back to Home"
 msgstr ""
 
 #. translators: %s: Pro feature name
@@ -3171,16 +3217,16 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:161
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:304
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:428
-#: js-apps/dashboard/src/pages/Automations.tsx:405
-#: js-apps/dashboard/src/pages/Campaigns.tsx:423
-#: js-apps/dashboard/src/pages/Contacts.tsx:613
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:320
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:304
-#: js-apps/dashboard/src/pages/Lists.tsx:247
-#: js-apps/dashboard/src/pages/Segments.tsx:306
+#: js-apps/dashboard/src/pages/Automations.tsx:418
+#: js-apps/dashboard/src/pages/Campaigns.tsx:433
+#: js-apps/dashboard/src/pages/Contacts.tsx:638
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:323
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:317
+#: js-apps/dashboard/src/pages/Lists.tsx:248
+#: js-apps/dashboard/src/pages/Segments.tsx:315
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:532
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:358
-#: js-apps/dashboard/src/pages/Tags.tsx:212
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:362
+#: js-apps/dashboard/src/pages/Tags.tsx:213
 msgid "Created Date"
 msgstr ""
 
@@ -3210,7 +3256,7 @@ msgid "Email History"
 msgstr ""
 
 #: js-apps/dashboard/src/components/contacts/ContactDetail.tsx:233
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:221
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:222
 msgid "(no subject)"
 msgstr ""
 
@@ -3233,7 +3279,7 @@ msgstr ""
 #. translators: %s: comma-separated field labels, e.g. "Email, First Name".
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:96
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:335
-#: includes/Api/Controllers/ContactsController.php:1208
+#: includes/Api/Controllers/ContactsController.php:1230
 msgid "%s is required"
 msgid_plural "These fields are required: %s"
 msgstr[0] ""
@@ -3293,12 +3339,12 @@ msgid "Select a country"
 msgstr ""
 
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:269
-#: js-apps/dashboard/src/pages/Lists.tsx:20
+#: js-apps/dashboard/src/pages/Lists.tsx:21
 msgid "Manual"
 msgstr ""
 
 #: js-apps/dashboard/src/components/contacts/ContactForm.tsx:270
-#: js-apps/dashboard/src/pages/Contacts.tsx:630
+#: js-apps/dashboard/src/pages/Contacts.tsx:661
 msgid "Import"
 msgstr ""
 
@@ -3351,8 +3397,8 @@ msgstr ""
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:27
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:214
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:104
-#: includes/Api/Controllers/ContactsController.php:639
-#: includes/Api/Controllers/EmailLogsController.php:546
+#: includes/Api/Controllers/ContactsController.php:661
+#: includes/Api/Controllers/EmailLogsController.php:558
 msgid "Created At"
 msgstr ""
 
@@ -3373,9 +3419,9 @@ msgid "Export Contacts"
 msgstr ""
 
 #: js-apps/dashboard/src/components/contacts/ExportModal.tsx:96
-#: js-apps/dashboard/src/pages/Contacts.tsx:624
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:326
-#: js-apps/dashboard/src/pages/Segments.tsx:185
+#: js-apps/dashboard/src/pages/Contacts.tsx:651
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:330
+#: js-apps/dashboard/src/pages/Segments.tsx:188
 msgid "Export"
 msgstr ""
 
@@ -3477,7 +3523,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldForm.tsx:71
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:40
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:261
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:406
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:411
 msgid "Date"
 msgstr ""
 
@@ -3621,7 +3667,7 @@ msgid "Custom field deleted successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/components/custom-fields/CustomFieldsList.tsx:155
-#: includes/Api/Controllers/CustomFieldsController.php:289
+#: includes/Api/Controllers/CustomFieldsController.php:304
 msgid "Failed to delete custom field"
 msgstr ""
 
@@ -3769,13 +3815,13 @@ msgid "Enter help text"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:75
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:148
-#: includes/Api/Controllers/EmailLogsController.php:407
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:149
+#: includes/Api/Controllers/EmailLogsController.php:419
 msgid "Email resent successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:80
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:152
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:153
 msgid "Failed to resend email"
 msgstr ""
 
@@ -3798,7 +3844,7 @@ msgid "Email Log Details"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:145
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:300
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:301
 msgid "Resend"
 msgstr ""
 
@@ -3808,52 +3854,52 @@ msgid "Details"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:150
-#: js-apps/dashboard/src/pages/Lists.tsx:171
-#: js-apps/dashboard/src/pages/Lists.tsx:244
-#: js-apps/dashboard/src/pages/Tags.tsx:155
-#: js-apps/dashboard/src/pages/Tags.tsx:210
-#: includes/Api/Controllers/EmailLogsController.php:526
+#: js-apps/dashboard/src/pages/Lists.tsx:172
+#: js-apps/dashboard/src/pages/Lists.tsx:245
+#: js-apps/dashboard/src/pages/Tags.tsx:156
+#: js-apps/dashboard/src/pages/Tags.tsx:211
+#: includes/Api/Controllers/EmailLogsController.php:538
 msgid "ID"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:163
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:247
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:315
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:346
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:392
-#: includes/Api/Controllers/EmailLogsController.php:535
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:248
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:318
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:351
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:397
+#: includes/Api/Controllers/EmailLogsController.php:547
 msgid "Provider"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:166
-#: includes/Api/Controllers/EmailLogsController.php:531
+#: includes/Api/Controllers/EmailLogsController.php:543
 msgid "To"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:169
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:270
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:318
-#: includes/Api/Controllers/EmailLogsController.php:532
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:271
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:321
+#: includes/Api/Controllers/EmailLogsController.php:544
 msgid "From"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:175
-#: includes/Api/Controllers/EmailLogsController.php:528
+#: includes/Api/Controllers/EmailLogsController.php:540
 msgid "Campaign ID"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:178
-#: includes/Api/Controllers/EmailLogsController.php:529
+#: includes/Api/Controllers/EmailLogsController.php:541
 msgid "Automation ID"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:181
-#: includes/Api/Controllers/EmailLogsController.php:530
+#: includes/Api/Controllers/EmailLogsController.php:542
 msgid "Contact ID"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:184
-#: includes/Api/Controllers/EmailLogsController.php:536
+#: includes/Api/Controllers/EmailLogsController.php:548
 msgid "Tracking Token"
 msgstr ""
 
@@ -3862,40 +3908,40 @@ msgid "Error"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:196
-#: includes/Api/Controllers/EmailLogsController.php:537
+#: includes/Api/Controllers/EmailLogsController.php:549
 msgid "Queued At"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:199
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:277
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:319
-#: includes/Api/Controllers/EmailLogsController.php:538
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:278
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:322
+#: includes/Api/Controllers/EmailLogsController.php:550
 msgid "Sent At"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:202
-#: includes/Api/Controllers/EmailLogsController.php:539
+#: includes/Api/Controllers/EmailLogsController.php:551
 msgid "Delivered At"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:205
-#: includes/Api/Controllers/EmailLogsController.php:540
+#: includes/Api/Controllers/EmailLogsController.php:552
 msgid "Opened At"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:208
-#: includes/Api/Controllers/EmailLogsController.php:541
+#: includes/Api/Controllers/EmailLogsController.php:553
 msgid "Clicked At"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:211
-#: includes/Api/Controllers/EmailLogsController.php:542
+#: includes/Api/Controllers/EmailLogsController.php:554
 msgid "Bounced At"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogDetail.tsx:217
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:105
-#: includes/Api/Controllers/EmailLogsController.php:547
+#: includes/Api/Controllers/EmailLogsController.php:559
 msgid "Updated At"
 msgstr ""
 
@@ -3920,7 +3966,7 @@ msgid "Recipient"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-logs/EmailLogStats.tsx:26
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:29
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:30
 msgid "Failed"
 msgstr ""
 
@@ -4124,7 +4170,7 @@ msgid "Add at least one block before sending a test"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:342
-#: includes/Api/Controllers/EmailTemplatesController.php:105
+#: includes/Api/Controllers/EmailTemplatesController.php:118
 msgid "Test Email"
 msgstr ""
 
@@ -4168,8 +4214,8 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/email-templates/EmailTemplateBuilder.tsx:640
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:27
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:247
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:303
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:260
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:316
 msgid "Editor"
 msgstr ""
 
@@ -4215,12 +4261,12 @@ msgid "Drag to reorder"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:12
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:22
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:23
 msgid "Favorites"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:13
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:23
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:24
 msgid "Non-favorites"
 msgstr ""
 
@@ -4234,17 +4280,18 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:223
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:237
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:311
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:325
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:324
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:338
 msgid "Favorite"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:280
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:373
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:399
 msgid "Search templates..."
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-templates/TemplateGalleryModal.tsx:302
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:19
 msgid "Built-in"
 msgstr ""
 
@@ -4257,7 +4304,7 @@ msgid "Edit Template Info"
 msgstr ""
 
 #: js-apps/dashboard/src/components/email-templates/TemplateInfoModal.tsx:34
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:369
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:394
 msgid "Create Template"
 msgstr ""
 
@@ -4310,34 +4357,259 @@ msgstr ""
 msgid "Main"
 msgstr ""
 
-#: js-apps/dashboard/src/components/license/ActivateForm.tsx:26
+#: js-apps/dashboard/src/components/license/ActivateForm.tsx:29
 #: js-apps/dashboard/src/components/setup-wizard/LicenseForm.tsx:27
 msgid "Successfully activated."
 msgstr ""
 
-#: js-apps/dashboard/src/components/license/ActivateForm.tsx:29
+#: js-apps/dashboard/src/components/license/ActivateForm.tsx:38
 #: js-apps/dashboard/src/components/setup-wizard/LicenseForm.tsx:31
 msgid "The license key could not be activated."
 msgstr ""
 
-#: js-apps/dashboard/src/components/license/ActivateForm.tsx:41
+#: js-apps/dashboard/src/components/license/ActivateForm.tsx:50
 msgid "License Code"
 msgstr ""
 
-#: js-apps/dashboard/src/components/license/ActivateForm.tsx:45
+#: js-apps/dashboard/src/components/license/ActivateForm.tsx:54
 msgid "License code is required."
 msgstr ""
 
-#: js-apps/dashboard/src/components/license/ActivateForm.tsx:56
+#: js-apps/dashboard/src/components/license/ActivateForm.tsx:65
 msgid "Email address is required."
 msgstr ""
 
-#: js-apps/dashboard/src/components/license/ActivateForm.tsx:60
+#: js-apps/dashboard/src/components/license/ActivateForm.tsx:69
 msgid "Enter a valid email address."
 msgstr ""
 
-#: js-apps/dashboard/src/components/license/ActivateForm.tsx:69
+#: js-apps/dashboard/src/components/license/ActivateForm.tsx:78
 msgid "Activate License"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleForm.tsx:30
+msgid "All Permissions"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleForm.tsx:46
+msgid "Preset"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleForm.tsx:93
+msgid "Role Name"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleForm.tsx:96
+#: includes/Services/RoleService.php:219
+msgid "Role name is required."
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleForm.tsx:99
+msgid "e.g. Marketing Assistant"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:21
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:37
+msgid "WordPress"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:79
+msgid "Role updated successfully"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:83
+msgid "Role created successfully"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:89
+msgid "Failed to save role"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:100
+msgid "Role deleted successfully"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:104
+msgid "Failed to delete role"
+msgstr ""
+
+#. translators: %d: number of roles deleted
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:121
+msgid "%d role deleted"
+msgid_plural "%d roles deleted"
+msgstr[0] ""
+msgstr[1] ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:126
+msgid "Failed to delete roles"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:145
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:276
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:295
+msgid "Role"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:174
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:213
+#: js-apps/dashboard/src/components/roles/roleSortOptions.ts:9
+msgid "Permissions"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:179
+msgid "All"
+msgstr ""
+
+#. translators: 1: granted permission count, 2: total permission count
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:182
+msgid "%1$d of %2$d"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:185
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:214
+#: js-apps/dashboard/src/components/roles/roleSortOptions.ts:10
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:324
+#: js-apps/dashboard/src/pages/settings/RolesPermissions.tsx:81
+msgid "Users"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:198
+msgid "Administrators always hold every permission."
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:202
+msgid "Deleting this role removes it from everyone who holds it."
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:299
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:208
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:268
+#: js-apps/dashboard/src/pages/settings/RolesPermissions.tsx:74
+msgid "Roles"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:300
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:331
+msgid "Create Role"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:304
+msgid "Search roles..."
+msgstr ""
+
+#. translators: %s: role name
+#: js-apps/dashboard/src/components/roles/RoleList.tsx:330
+msgid "Edit %s"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/roleSortOptions.ts:7
+msgid "Role name"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/roleSortOptions.ts:8
+msgid "Slug"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:71
+msgid "Failed to fetch users"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:101
+msgid "User roles updated successfully"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:106
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:136
+msgid "Failed to update user roles"
+msgstr ""
+
+#. translators: %d: number of users updated
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:131
+msgid "%d user updated"
+msgid_plural "%d users updated"
+msgstr[0] ""
+msgstr[1] ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:178
+msgid "User"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:202
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:267
+#: js-apps/dashboard/src/components/roles/userSortOptions.ts:8
+msgid "Username"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:223
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:269
+msgid "CRM Access"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:229
+msgid "Full access"
+msgstr ""
+
+#. translators: %d: number of CRM permissions the user holds
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:238
+msgid "%d permissions"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:243
+msgid "Registered"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:258
+msgid "Edit roles"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:259
+msgid "You cannot edit this user."
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:270
+msgid "Registered Date"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:334
+msgid "Search users..."
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:349
+msgid "Assign Role"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:351
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:359
+msgid "Select role"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:357
+msgid "Remove Role"
+msgstr ""
+
+#. translators: %s: user display name
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:370
+msgid "Roles for %s"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:372
+msgid "Select a role"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:377
+msgid "User Role Settings"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:378
+msgid "Allow multiple roles per user"
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/UserRoleList.tsx:378
+msgid "A user holding several roles gets the combined permissions of all of them. Off means one role per user, as WordPress does by default."
+msgstr ""
+
+#: js-apps/dashboard/src/components/roles/userSortOptions.ts:10
+msgid "Registered date"
 msgstr ""
 
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:40
@@ -4438,7 +4710,7 @@ msgid "Number of days"
 msgstr ""
 
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:234
-#: js-apps/dashboard/src/pages/Contacts.tsx:788
+#: js-apps/dashboard/src/pages/Contacts.tsx:687
 msgid "Select status"
 msgstr ""
 
@@ -4447,7 +4719,7 @@ msgstr ""
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:23
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:48
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:473
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:22
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:23
 msgid "Inactive"
 msgstr ""
 
@@ -4480,10 +4752,10 @@ msgid "Describe this segment..."
 msgstr ""
 
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:289
-#: js-apps/dashboard/src/pages/Segments.tsx:226
-#: js-apps/dashboard/src/pages/Segments.tsx:300
-#: js-apps/dashboard/src/pages/Segments.tsx:313
-#: js-apps/dashboard/src/pages/Segments.tsx:332
+#: js-apps/dashboard/src/pages/Segments.tsx:235
+#: js-apps/dashboard/src/pages/Segments.tsx:309
+#: js-apps/dashboard/src/pages/Segments.tsx:322
+#: js-apps/dashboard/src/pages/Segments.tsx:341
 msgid "Match Type"
 msgstr ""
 
@@ -4519,10 +4791,10 @@ msgid "Refresh Preview"
 msgstr ""
 
 #: js-apps/dashboard/src/components/segments/SegmentBuilder.tsx:360
-#: js-apps/dashboard/src/pages/Segments.tsx:235
-#: js-apps/dashboard/src/pages/Segments.tsx:301
-#: js-apps/dashboard/src/pages/Segments.tsx:319
-#: js-apps/dashboard/src/pages/Segments.tsx:345
+#: js-apps/dashboard/src/pages/Segments.tsx:244
+#: js-apps/dashboard/src/pages/Segments.tsx:310
+#: js-apps/dashboard/src/pages/Segments.tsx:328
+#: js-apps/dashboard/src/pages/Segments.tsx:354
 msgid "Auto Refresh"
 msgstr ""
 
@@ -4579,7 +4851,7 @@ msgstr ""
 
 #: js-apps/dashboard/src/components/setup-wizard/LicenseForm.tsx:70
 #: js-apps/dashboard/src/components/setup-wizard/LicenseInfo.tsx:42
-#: js-apps/dashboard/src/pages/License.tsx:125
+#: js-apps/dashboard/src/pages/License.tsx:126
 msgid "Help & Support"
 msgstr ""
 
@@ -4608,12 +4880,13 @@ msgid "Activate your license to unlock the Pro features and receive updates. Thi
 msgstr ""
 
 #: js-apps/dashboard/src/components/setup-wizard/WelcomeStep.tsx:33
+#: js-apps/dashboard/src/pages/settings/RolesPermissions.tsx:56
 #: js-apps/dashboard/src/pages/settings/useSettingsForm.ts:44
 msgid "Settings saved successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/components/setup-wizard/WelcomeStep.tsx:46
-#: js-apps/dashboard/src/pages/Dashboard.tsx:255
+#: js-apps/dashboard/src/pages/Dashboard.tsx:284
 msgid "Welcome to Kelune CRM"
 msgstr ""
 
@@ -4669,19 +4942,19 @@ msgid "Last used"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:114
-#: includes/Controllers/WebhookController.php:245
+#: includes/Controllers/WebhookController.php:252
 msgid "Webhook updated successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:121
-#: includes/Controllers/WebhookController.php:197
+#: includes/Controllers/WebhookController.php:204
 msgid "Webhook created successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:142
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:27
-#: js-apps/dashboard/src/pages/Contacts.tsx:752
-#: js-apps/dashboard/src/pages/Contacts.tsx:840
+#: js-apps/dashboard/src/pages/Contacts.tsx:847
+#: js-apps/dashboard/src/pages/Contacts.tsx:888
 msgid "Create Contact"
 msgstr ""
 
@@ -4817,16 +5090,16 @@ msgstr ""
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:347
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:380
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:278
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:274
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:554
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:278
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:564
 msgid "Copied!"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookForm.tsx:379
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:277
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:281
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:277
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:555
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:281
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:565
 msgid "Copy URL"
 msgstr ""
 
@@ -4839,12 +5112,12 @@ msgid "Usage"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:143
-#: includes/Controllers/WebhookController.php:268
+#: includes/Controllers/WebhookController.php:275
 msgid "Webhook deleted successfully"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:147
-#: includes/Controllers/WebhookController.php:265
+#: includes/Controllers/WebhookController.php:272
 msgid "Failed to delete webhook"
 msgstr ""
 
@@ -4872,7 +5145,7 @@ msgid "Regenerate"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:183
-#: includes/Controllers/WebhookController.php:293
+#: includes/Controllers/WebhookController.php:300
 msgid "Webhook key regenerated successfully"
 msgstr ""
 
@@ -4881,7 +5154,7 @@ msgid "Failed to regenerate key"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:195
-#: includes/Controllers/WebhookController.php:322
+#: includes/Controllers/WebhookController.php:329
 msgid "Webhook status updated successfully"
 msgstr ""
 
@@ -4923,36 +5196,36 @@ msgid "Any"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:384
-#: js-apps/dashboard/src/pages/Automations.tsx:367
-#: js-apps/dashboard/src/pages/Campaigns.tsx:384
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:267
-#: js-apps/dashboard/src/pages/Lists.tsx:217
-#: js-apps/dashboard/src/pages/Segments.tsx:263
+#: js-apps/dashboard/src/pages/Automations.tsx:380
+#: js-apps/dashboard/src/pages/Campaigns.tsx:394
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:280
+#: js-apps/dashboard/src/pages/Lists.tsx:218
+#: js-apps/dashboard/src/pages/Segments.tsx:272
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:496
 msgid "Updated"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:408
-#: js-apps/dashboard/src/pages/Automations.tsx:389
-#: js-apps/dashboard/src/pages/Campaigns.tsx:408
-#: js-apps/dashboard/src/pages/Contacts.tsx:592
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:294
-#: js-apps/dashboard/src/pages/Segments.tsx:290
+#: js-apps/dashboard/src/pages/Automations.tsx:402
+#: js-apps/dashboard/src/pages/Campaigns.tsx:418
+#: js-apps/dashboard/src/pages/Contacts.tsx:617
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:307
+#: js-apps/dashboard/src/pages/Segments.tsx:299
 msgid "More actions"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:429
-#: js-apps/dashboard/src/pages/Automations.tsx:406
-#: js-apps/dashboard/src/pages/Campaigns.tsx:424
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:305
-#: js-apps/dashboard/src/pages/Lists.tsx:248
-#: js-apps/dashboard/src/pages/Segments.tsx:307
+#: js-apps/dashboard/src/pages/Automations.tsx:419
+#: js-apps/dashboard/src/pages/Campaigns.tsx:434
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:318
+#: js-apps/dashboard/src/pages/Lists.tsx:249
+#: js-apps/dashboard/src/pages/Segments.tsx:316
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:533
 msgid "Updated Date"
 msgstr ""
 
 #: js-apps/dashboard/src/components/webhooks/WebhookList.tsx:490
-#: js-apps/dashboard/src/config/settingsNav.tsx:45
+#: js-apps/dashboard/src/config/settingsNav.tsx:54
 msgid "Incoming Webhooks"
 msgstr ""
 
@@ -5010,122 +5283,128 @@ msgstr ""
 msgid "Webhook Logs"
 msgstr ""
 
-#: js-apps/dashboard/src/config/settingsNav.tsx:9
+#: js-apps/dashboard/src/config/settingsNav.tsx:12
 #: js-apps/dashboard/src/pages/settings/GeneralSettings.tsx:19
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:25
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:26
+#: includes/Support/Capabilities.php:88
 msgid "General"
 msgstr ""
 
-#: js-apps/dashboard/src/config/settingsNav.tsx:21
+#: js-apps/dashboard/src/config/settingsNav.tsx:26
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:688
 msgid "Email Providers"
 msgstr ""
 
-#: js-apps/dashboard/src/config/settingsNav.tsx:33
-#: js-apps/dashboard/src/pages/Settings.tsx:53
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:440
+#: js-apps/dashboard/src/config/settingsNav.tsx:40
+#: js-apps/dashboard/src/pages/Settings.tsx:63
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:455
+#: includes/Support/Capabilities.php:186
 msgid "Smart Links"
 msgstr ""
 
-#: js-apps/dashboard/src/config/settingsNav.tsx:39
+#: js-apps/dashboard/src/config/settingsNav.tsx:47
 #: js-apps/dashboard/src/pages/settings/DoubleOptinSettings.tsx:14
 msgid "Double Opt-in"
 msgstr ""
 
-#: js-apps/dashboard/src/config/settingsNav.tsx:51
+#: js-apps/dashboard/src/config/settingsNav.tsx:61
+msgid "Roles & Permissions"
+msgstr ""
+
+#: js-apps/dashboard/src/config/settingsNav.tsx:68
 #: js-apps/dashboard/src/pages/settings/ComplianceSettings.tsx:13
 msgid "Compliance"
 msgstr ""
 
-#: js-apps/dashboard/src/config/settingsNav.tsx:57
+#: js-apps/dashboard/src/config/settingsNav.tsx:75
 #: js-apps/dashboard/src/pages/settings/CronMonitor.tsx:116
 msgid "Cron Monitor"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:36
+#: js-apps/dashboard/src/pages/Automations.tsx:37
 msgid "Total Automations"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:58
+#: js-apps/dashboard/src/pages/Automations.tsx:59
 msgid "Avg Completion Rate"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:164
-#: includes/Api/Controllers/AutomationsController.php:351
+#: js-apps/dashboard/src/pages/Automations.tsx:165
+#: includes/Api/Controllers/AutomationsController.php:382
 msgid "Automation created successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:169
+#: js-apps/dashboard/src/pages/Automations.tsx:170
 msgid "Failed to save automation"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:179
-#: includes/Api/Controllers/AutomationsController.php:396
+#: js-apps/dashboard/src/pages/Automations.tsx:180
+#: includes/Api/Controllers/AutomationsController.php:427
 msgid "Automation deleted successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:183
-#: includes/Api/Controllers/AutomationsController.php:393
+#: js-apps/dashboard/src/pages/Automations.tsx:184
+#: includes/Api/Controllers/AutomationsController.php:424
 msgid "Failed to delete automation"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:189
-#: includes/Api/Controllers/AutomationsController.php:415
+#: js-apps/dashboard/src/pages/Automations.tsx:190
+#: includes/Api/Controllers/AutomationsController.php:446
 msgid "Automation duplicated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:193
-#: includes/Api/Controllers/AutomationsController.php:406
+#: js-apps/dashboard/src/pages/Automations.tsx:194
+#: includes/Api/Controllers/AutomationsController.php:437
 msgid "Failed to duplicate automation"
 msgstr ""
 
 #. translators: %s: bulk action name
-#: js-apps/dashboard/src/pages/Automations.tsx:225
-#: js-apps/dashboard/src/pages/Campaigns.tsx:236
+#: js-apps/dashboard/src/pages/Automations.tsx:226
+#: js-apps/dashboard/src/pages/Campaigns.tsx:237
 msgid "Bulk %s completed"
 msgstr ""
 
 #. translators: %s: bulk action name
-#: js-apps/dashboard/src/pages/Automations.tsx:232
+#: js-apps/dashboard/src/pages/Automations.tsx:233
 msgid "Failed to %s automations"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:269
+#: js-apps/dashboard/src/pages/Automations.tsx:278
 msgid "View stats"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:290
-#: js-apps/dashboard/src/pages/Automations.tsx:550
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:18
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:27
+#: js-apps/dashboard/src/pages/Automations.tsx:303
+#: js-apps/dashboard/src/pages/Automations.tsx:577
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:19
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:28
 msgid "Automation"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:341
-#: js-apps/dashboard/src/pages/Automations.tsx:403
+#: js-apps/dashboard/src/pages/Automations.tsx:354
+#: js-apps/dashboard/src/pages/Automations.tsx:416
 msgid "Conversion"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:349
-#: js-apps/dashboard/src/pages/Automations.tsx:404
+#: js-apps/dashboard/src/pages/Automations.tsx:362
+#: js-apps/dashboard/src/pages/Automations.tsx:417
 msgid "Last Triggered"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:381
+#: js-apps/dashboard/src/pages/Automations.tsx:394
 msgid "Edit workflow"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Automations.tsx:504
-msgid "Search automations..."
-msgstr ""
-
-#: js-apps/dashboard/src/pages/Automations.tsx:520
-#: js-apps/dashboard/src/pages/Campaigns.tsx:518
+#: js-apps/dashboard/src/pages/Automations.tsx:503
+#: js-apps/dashboard/src/pages/Campaigns.tsx:499
 msgid "Pause"
 msgstr ""
 
+#: js-apps/dashboard/src/pages/Automations.tsx:541
+msgid "Search automations..."
+msgstr ""
+
 #. translators: %s: automation name
-#: js-apps/dashboard/src/pages/Automations.tsx:550
+#: js-apps/dashboard/src/pages/Automations.tsx:577
 msgid "Statistics: %s"
 msgstr ""
 
@@ -5134,18 +5413,18 @@ msgid "Campaign Builder"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/CampaignBuilderPage.tsx:73
-#: js-apps/dashboard/src/pages/Campaigns.tsx:189
+#: js-apps/dashboard/src/pages/Campaigns.tsx:190
 msgid "Campaign scheduled"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/CampaignBuilderPage.tsx:74
-#: js-apps/dashboard/src/pages/Campaigns.tsx:190
-#: includes/Api/Controllers/CampaignsController.php:356
+#: js-apps/dashboard/src/pages/Campaigns.tsx:191
+#: includes/Api/Controllers/CampaignsController.php:398
 msgid "Campaign queued for sending"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/CampaignBuilderPage.tsx:78
-#: js-apps/dashboard/src/pages/Campaigns.tsx:200
+#: js-apps/dashboard/src/pages/Campaigns.tsx:201
 msgid "Campaign paused"
 msgstr ""
 
@@ -5183,408 +5462,405 @@ msgstr ""
 msgid "Add email content before saving the campaign"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:44
+#: js-apps/dashboard/src/pages/Campaigns.tsx:45
 msgid "Active Campaigns"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:164
-#: includes/Api/Controllers/CampaignsController.php:312
+#: js-apps/dashboard/src/pages/Campaigns.tsx:165
+#: includes/Api/Controllers/CampaignsController.php:354
 msgid "Campaign deleted successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:168
-#: includes/Api/Controllers/CampaignsController.php:309
+#: js-apps/dashboard/src/pages/Campaigns.tsx:169
+#: includes/Api/Controllers/CampaignsController.php:351
 msgid "Failed to delete campaign"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:174
-#: includes/Api/Controllers/CampaignsController.php:331
+#: js-apps/dashboard/src/pages/Campaigns.tsx:175
+#: includes/Api/Controllers/CampaignsController.php:373
 msgid "Campaign duplicated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:178
-#: includes/Api/Controllers/CampaignsController.php:322
+#: js-apps/dashboard/src/pages/Campaigns.tsx:179
+#: includes/Api/Controllers/CampaignsController.php:364
 msgid "Failed to duplicate campaign"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:194
-#: includes/Api/Controllers/CampaignsController.php:389
+#: js-apps/dashboard/src/pages/Campaigns.tsx:195
+#: includes/Api/Controllers/CampaignsController.php:431
 msgid "Failed to activate campaign"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:204
-#: includes/Api/Controllers/CampaignsController.php:430
+#: js-apps/dashboard/src/pages/Campaigns.tsx:205
+#: includes/Api/Controllers/CampaignsController.php:472
 msgid "Failed to pause campaign"
 msgstr ""
 
 #. translators: %d: number of campaigns deleted
-#: js-apps/dashboard/src/pages/Campaigns.tsx:214
+#: js-apps/dashboard/src/pages/Campaigns.tsx:215
 msgid "%d campaign deleted"
 msgid_plural "%d campaigns deleted"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:219
+#: js-apps/dashboard/src/pages/Campaigns.tsx:220
 msgid "Failed to delete campaigns"
 msgstr ""
 
 #. translators: %s: bulk action name
-#: js-apps/dashboard/src/pages/Campaigns.tsx:243
+#: js-apps/dashboard/src/pages/Campaigns.tsx:244
 msgid "Failed to %s campaigns"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:261
+#: js-apps/dashboard/src/pages/Campaigns.tsx:263
 msgid "Edit config"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:284
-#: js-apps/dashboard/src/pages/Campaigns.tsx:536
+#: js-apps/dashboard/src/pages/Campaigns.tsx:291
+#: js-apps/dashboard/src/pages/Campaigns.tsx:560
 msgid "A/B Testing"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:366
-#: js-apps/dashboard/src/pages/Campaigns.tsx:422
+#: js-apps/dashboard/src/pages/Campaigns.tsx:376
+#: js-apps/dashboard/src/pages/Campaigns.tsx:432
 msgid "Sent Date"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:398
+#: js-apps/dashboard/src/pages/Campaigns.tsx:408
 msgid "Edit campaign"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Campaigns.tsx:503
+#: js-apps/dashboard/src/pages/Campaigns.tsx:537
 msgid "Search campaigns..."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:174
-#: js-apps/dashboard/src/pages/Contacts.tsx:185
+#: js-apps/dashboard/src/pages/Contacts.tsx:189
+#: js-apps/dashboard/src/pages/Contacts.tsx:200
 msgid "Failed to load contact details"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:191
-#: includes/Api/Controllers/ContactsController.php:347
+#: js-apps/dashboard/src/pages/Contacts.tsx:206
+#: includes/Api/Controllers/ContactsController.php:369
 msgid "Contact deleted successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:194
-#: includes/Api/Controllers/ContactsController.php:342
+#: js-apps/dashboard/src/pages/Contacts.tsx:209
+#: includes/Api/Controllers/ContactsController.php:364
 msgid "Failed to delete contact"
 msgstr ""
 
 #. translators: %d: number of contacts deleted
-#: js-apps/dashboard/src/pages/Contacts.tsx:204
+#: js-apps/dashboard/src/pages/Contacts.tsx:219
 msgid "%d contact deleted"
 msgid_plural "%d contacts deleted"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:209
+#: js-apps/dashboard/src/pages/Contacts.tsx:224
 msgid "Failed to delete contacts"
 msgstr ""
 
 #. translators: %d: number of contacts updated
-#: js-apps/dashboard/src/pages/Contacts.tsx:222
+#: js-apps/dashboard/src/pages/Contacts.tsx:237
 msgid "%d contact updated"
 msgid_plural "%d contacts updated"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:227
+#: js-apps/dashboard/src/pages/Contacts.tsx:242
 msgid "Failed to update contacts"
 msgstr ""
 
 #. translators: %d: number of contacts tags were added to
-#: js-apps/dashboard/src/pages/Contacts.tsx:240
+#: js-apps/dashboard/src/pages/Contacts.tsx:255
 msgid "Tags added to %d contact"
 msgid_plural "Tags added to %d contacts"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:245
-#: includes/Api/Controllers/ContactsController.php:366
+#: js-apps/dashboard/src/pages/Contacts.tsx:260
+#: includes/Api/Controllers/ContactsController.php:388
 #: includes/Processors/ActionProcessor.php:303
 msgid "Failed to add tags"
 msgstr ""
 
 #. translators: %d: number of contacts enrolled
-#: js-apps/dashboard/src/pages/Contacts.tsx:263
+#: js-apps/dashboard/src/pages/Contacts.tsx:278
 msgid "Enrolled %d contact"
 msgid_plural "Enrolled %d contacts"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of contacts skipped (already enrolled)
-#: js-apps/dashboard/src/pages/Contacts.tsx:267
+#: js-apps/dashboard/src/pages/Contacts.tsx:282
 msgid "(%d already enrolled)"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:271
+#: js-apps/dashboard/src/pages/Contacts.tsx:286
 msgid "No contacts enrolled — they may already be enrolled."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:277
+#: js-apps/dashboard/src/pages/Contacts.tsx:292
 msgid "Failed to enroll contacts"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:302
+#: js-apps/dashboard/src/pages/Contacts.tsx:317
 msgid "Contact updated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:306
+#: js-apps/dashboard/src/pages/Contacts.tsx:321
 msgid "Contact created successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:312
+#: js-apps/dashboard/src/pages/Contacts.tsx:327
 msgid "Failed to save contact"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:346
+#: js-apps/dashboard/src/pages/Contacts.tsx:361
 msgid "Tags updated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:351
+#: js-apps/dashboard/src/pages/Contacts.tsx:366
 msgid "Failed to update tags"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:383
+#: js-apps/dashboard/src/pages/Contacts.tsx:398
 msgid "Lists updated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:388
+#: js-apps/dashboard/src/pages/Contacts.tsx:403
 msgid "Failed to update lists"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:403
-#: js-apps/dashboard/src/pages/Contacts.tsx:865
+#: js-apps/dashboard/src/pages/Contacts.tsx:420
+#: js-apps/dashboard/src/pages/Contacts.tsx:913
 msgid "Manage Lists"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:411
-#: js-apps/dashboard/src/pages/Contacts.tsx:873
+#: js-apps/dashboard/src/pages/Contacts.tsx:428
+#: js-apps/dashboard/src/pages/Contacts.tsx:921
 msgid "Manage Tags"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:441
+#: js-apps/dashboard/src/pages/Contacts.tsx:466
 msgid "Contact"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:450
+#: js-apps/dashboard/src/pages/Contacts.tsx:475
 msgid "(no name)"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:579
+#: js-apps/dashboard/src/pages/Contacts.tsx:604
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:513
 msgid "View"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:756
-msgid "Search contacts..."
-msgstr ""
-
-#: js-apps/dashboard/src/pages/Contacts.tsx:786
+#: js-apps/dashboard/src/pages/Contacts.tsx:685
 msgid "Update Status"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:798
+#: js-apps/dashboard/src/pages/Contacts.tsx:698
 msgid "Enroll in Automation"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:800
+#: js-apps/dashboard/src/pages/Contacts.tsx:700
 msgid "Select automation"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:832
+#: js-apps/dashboard/src/pages/Contacts.tsx:852
+msgid "Search contacts..."
+msgstr ""
+
+#: js-apps/dashboard/src/pages/Contacts.tsx:873
 msgid "Upgrade to Kelune CRM Pro to build dynamic segments with the query builder and auto-refresh."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:839
+#: js-apps/dashboard/src/pages/Contacts.tsx:887
 msgid "Edit Contact"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Contacts.tsx:846
+#: js-apps/dashboard/src/pages/Contacts.tsx:894
 msgid "Contact Details"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:20
+#: js-apps/dashboard/src/pages/Dashboard.tsx:21
 msgid "Good morning"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:22
+#: js-apps/dashboard/src/pages/Dashboard.tsx:23
 msgid "Good afternoon"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:23
+#: js-apps/dashboard/src/pages/Dashboard.tsx:24
 msgid "Good evening"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:46
+#: js-apps/dashboard/src/pages/Dashboard.tsx:47
 msgid "Email Opens"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:51
+#: js-apps/dashboard/src/pages/Dashboard.tsx:52
 msgid "Email Clicks"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:56
+#: js-apps/dashboard/src/pages/Dashboard.tsx:57
 #: js-apps/dashboard/src/utils/dateRangePresets.ts:9
 msgid "Last 30 Days"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:57
+#: js-apps/dashboard/src/pages/Dashboard.tsx:58
 msgid "Last 60 Days"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:58
+#: js-apps/dashboard/src/pages/Dashboard.tsx:59
 msgid "Last 90 Days"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:59
+#: js-apps/dashboard/src/pages/Dashboard.tsx:60
 msgid "All Time"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:215
+#: js-apps/dashboard/src/pages/Dashboard.tsx:237
 msgid "Create a tag"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:220
+#: js-apps/dashboard/src/pages/Dashboard.tsx:243
 msgid "Add your first contact"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:225
+#: js-apps/dashboard/src/pages/Dashboard.tsx:249
 msgid "Design an email template"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:230
+#: js-apps/dashboard/src/pages/Dashboard.tsx:255
 msgid "Send a campaign"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:235
+#: js-apps/dashboard/src/pages/Dashboard.tsx:261
 msgid "Build an automation"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:273
+#: js-apps/dashboard/src/pages/Dashboard.tsx:300
 msgid "Recent Campaigns"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:273
-#: js-apps/dashboard/src/pages/Dashboard.tsx:306
-#: js-apps/dashboard/src/pages/Dashboard.tsx:318
+#: js-apps/dashboard/src/pages/Dashboard.tsx:304
+#: js-apps/dashboard/src/pages/Dashboard.tsx:337
+#: js-apps/dashboard/src/pages/Dashboard.tsx:354
 msgid "View All"
 msgstr ""
 
 #. translators: %s: email open rate percentage
-#: js-apps/dashboard/src/pages/Dashboard.tsx:293
+#: js-apps/dashboard/src/pages/Dashboard.tsx:324
 msgid "%s%% open"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:297
+#: js-apps/dashboard/src/pages/Dashboard.tsx:328
 msgid "No campaigns yet"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:299
+#: js-apps/dashboard/src/pages/Dashboard.tsx:330
 msgid "Create a Campaign"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:306
+#: js-apps/dashboard/src/pages/Dashboard.tsx:337
 msgid "Recent Contacts"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:310
+#: js-apps/dashboard/src/pages/Dashboard.tsx:345
 msgid "No contacts yet"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:312
+#: js-apps/dashboard/src/pages/Dashboard.tsx:347
 msgid "Add a Contact"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:326
+#: js-apps/dashboard/src/pages/Dashboard.tsx:367
 msgid "No active automations"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:328
+#: js-apps/dashboard/src/pages/Dashboard.tsx:369
 msgid "Create an Automation"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:338
+#: js-apps/dashboard/src/pages/Dashboard.tsx:378
 msgid "Getting Started"
 msgstr ""
 
 #. translators: %1$d: number of completed steps, %2$d: total number of steps
-#: js-apps/dashboard/src/pages/Dashboard.tsx:341
+#: js-apps/dashboard/src/pages/Dashboard.tsx:381
 msgid "%1$d / %2$d done"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Dashboard.tsx:357
+#: js-apps/dashboard/src/pages/Dashboard.tsx:397
 msgid "Email Performance"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:19
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:20
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:721
 msgid "Test"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:20
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:21
 msgid "Transactional"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:23
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:24
 msgid "Queued"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:32
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:33
 msgid "Cancelled"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:36
-msgid "WordPress"
-msgstr ""
-
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:40
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:41
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:30
 msgid "Amazon SES"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:132
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:133
 msgid "Failed to load email log details"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:138
-#: includes/Api/Controllers/EmailLogsController.php:332
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:139
+#: includes/Api/Controllers/EmailLogsController.php:344
 msgid "Email log deleted successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:142
-#: includes/Api/Controllers/EmailLogsController.php:326
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:143
+#: includes/Api/Controllers/EmailLogsController.php:338
 msgid "Failed to delete email log"
 msgstr ""
 
 #. translators: %d: number of email logs deleted
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:161
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:162
 msgid "%d email log deleted"
 msgid_plural "%d email logs deleted"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:166
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:167
 msgid "Failed to delete email logs"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:204
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:205
 msgid "Email logs exported successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:207
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:208
 msgid "Failed to export email logs"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:352
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:357
 msgid "Date range"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:456
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:472
+#: includes/Support/Capabilities.php:176
 msgid "Email Logs"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailLogs.tsx:463
+#: js-apps/dashboard/src/pages/EmailLogs.tsx:479
 msgid "Search by subject, recipient..."
 msgstr ""
 
@@ -5593,7 +5869,7 @@ msgid "Email Template Builder"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/EmailTemplateBuilderPage.tsx:88
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:106
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:107
 msgid "Template info updated"
 msgstr ""
 
@@ -5617,286 +5893,287 @@ msgstr ""
 msgid "Add email content before saving the template"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:114
-#: includes/Api/Controllers/EmailTemplatesController.php:280
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:115
+#: includes/Api/Controllers/EmailTemplatesController.php:293
 msgid "Template created successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:119
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:120
 msgid "Failed to save template"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:125
-#: includes/Api/Controllers/EmailTemplatesController.php:406
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:126
+#: includes/Api/Controllers/EmailTemplatesController.php:419
 msgid "Template deleted successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:129
-#: includes/Api/Controllers/EmailTemplatesController.php:398
-#: includes/Api/Controllers/EmailTemplatesController.php:410
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:130
+#: includes/Api/Controllers/EmailTemplatesController.php:411
+#: includes/Api/Controllers/EmailTemplatesController.php:423
 msgid "Failed to delete template"
 msgstr ""
 
 #. translators: %d: number of templates deleted
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:139
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:140
 msgid "%d template deleted"
 msgid_plural "%d templates deleted"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:144
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:145
 msgid "Failed to delete templates"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:158
-#: includes/Api/Controllers/EmailTemplatesController.php:518
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:159
+#: includes/Api/Controllers/EmailTemplatesController.php:531
 msgid "Template duplicated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:162
-#: includes/Api/Controllers/EmailTemplatesController.php:500
-#: includes/Api/Controllers/EmailTemplatesController.php:522
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:163
+#: includes/Api/Controllers/EmailTemplatesController.php:513
+#: includes/Api/Controllers/EmailTemplatesController.php:535
 msgid "Failed to duplicate template"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:168
-#: includes/Api/Controllers/EmailTemplatesController.php:456
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:169
+#: includes/Api/Controllers/EmailTemplatesController.php:469
 msgid "Favorite status updated"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:172
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:173
 msgid "Failed to update favorite status"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:226
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:239
 msgid "Remove from favorites"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:227
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:240
 msgid "Add to favorites"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:284
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:297
 msgid "Edit template"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/EmailTemplates.tsx:368
+#: js-apps/dashboard/src/pages/EmailTemplates.tsx:392
+#: includes/Support/Capabilities.php:165
 msgid "Email Templates"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:35
+#: js-apps/dashboard/src/pages/License.tsx:36
 msgid "Successfully deactivated."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:38
+#: js-apps/dashboard/src/pages/License.tsx:39
 msgid "The license could not be deactivated."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:63
+#: js-apps/dashboard/src/pages/License.tsx:64
 msgid "License Status"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:64
+#: js-apps/dashboard/src/pages/License.tsx:65
 msgid "Valid"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:64
+#: js-apps/dashboard/src/pages/License.tsx:65
 msgid "Invalid"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:68
+#: js-apps/dashboard/src/pages/License.tsx:69
 msgid "License Type"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:73
+#: js-apps/dashboard/src/pages/License.tsx:74
 msgid "License Expired on"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:78
+#: js-apps/dashboard/src/pages/License.tsx:79
 msgid "Support Expired on"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:83
+#: js-apps/dashboard/src/pages/License.tsx:84
 msgid "Your License Key"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:111
+#: js-apps/dashboard/src/pages/License.tsx:112
 msgid "License Details"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:112
+#: js-apps/dashboard/src/pages/License.tsx:113
 msgid "Enter License"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:119
+#: js-apps/dashboard/src/pages/License.tsx:120
 msgid "Learn more"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:138
+#: js-apps/dashboard/src/pages/License.tsx:142
 msgid "Deactivate license"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:138
+#: js-apps/dashboard/src/pages/License.tsx:142
 msgid "Are you sure want to deactivate license?"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/License.tsx:140
+#: js-apps/dashboard/src/pages/License.tsx:144
 msgid "Deactivate License"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:21
+#: js-apps/dashboard/src/pages/Lists.tsx:22
 msgid "Dynamic"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:111
+#: js-apps/dashboard/src/pages/Lists.tsx:112
 msgid "List deleted successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:115
-#: includes/Api/Controllers/ListsController.php:194
+#: js-apps/dashboard/src/pages/Lists.tsx:116
+#: includes/Api/Controllers/ListsController.php:206
 msgid "Failed to delete list"
 msgstr ""
 
 #. translators: %d: number of lists deleted
-#: js-apps/dashboard/src/pages/Lists.tsx:128
+#: js-apps/dashboard/src/pages/Lists.tsx:129
 msgid "%d list deleted"
 msgid_plural "%d lists deleted"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:133
+#: js-apps/dashboard/src/pages/Lists.tsx:134
 msgid "Failed to delete lists"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:149
+#: js-apps/dashboard/src/pages/Lists.tsx:150
 msgid "List updated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:153
+#: js-apps/dashboard/src/pages/Lists.tsx:154
 msgid "List created successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:159
+#: js-apps/dashboard/src/pages/Lists.tsx:160
 msgid "Failed to save list"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:310
-#: js-apps/dashboard/src/pages/Lists.tsx:340
+#: js-apps/dashboard/src/pages/Lists.tsx:323
+#: js-apps/dashboard/src/pages/Lists.tsx:347
 msgid "Create List"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:314
+#: js-apps/dashboard/src/pages/Lists.tsx:328
 msgid "Search lists..."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:339
+#: js-apps/dashboard/src/pages/Lists.tsx:346
 msgid "Edit List"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:344
+#: js-apps/dashboard/src/pages/Lists.tsx:351
 msgid "List Name"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:347
+#: js-apps/dashboard/src/pages/Lists.tsx:354
 msgid "Please enter list name"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:350
+#: js-apps/dashboard/src/pages/Lists.tsx:357
 msgid "e.g., Newsletter Subscribers"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Lists.tsx:354
+#: js-apps/dashboard/src/pages/Lists.tsx:361
 msgid "Describe this list..."
+msgstr ""
+
+#: js-apps/dashboard/src/pages/NotFound.tsx:5
+msgid "Not found"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/NotFound.tsx:5
 msgid "Sorry, the page you visited does not exist."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/NotFound.tsx:6
-msgid "Back to Contacts"
-msgstr ""
-
-#: js-apps/dashboard/src/pages/Segments.tsx:20
-#: js-apps/dashboard/src/pages/Segments.tsx:45
+#: js-apps/dashboard/src/pages/Segments.tsx:21
+#: js-apps/dashboard/src/pages/Segments.tsx:46
 msgid "Match All"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:21
-#: js-apps/dashboard/src/pages/Segments.tsx:45
+#: js-apps/dashboard/src/pages/Segments.tsx:22
+#: js-apps/dashboard/src/pages/Segments.tsx:46
 msgid "Match Any"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:24
-#: js-apps/dashboard/src/pages/Segments.tsx:241
-#: js-apps/dashboard/src/pages/Segments.tsx:351
+#: js-apps/dashboard/src/pages/Segments.tsx:25
+#: js-apps/dashboard/src/pages/Segments.tsx:250
+#: js-apps/dashboard/src/pages/Segments.tsx:360
 msgid "Enabled"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:25
-#: js-apps/dashboard/src/pages/Segments.tsx:242
-#: js-apps/dashboard/src/pages/Segments.tsx:352
+#: js-apps/dashboard/src/pages/Segments.tsx:26
+#: js-apps/dashboard/src/pages/Segments.tsx:251
+#: js-apps/dashboard/src/pages/Segments.tsx:361
 msgid "Disabled"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:101
+#: js-apps/dashboard/src/pages/Segments.tsx:102
 msgid "Segment deleted successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:105
+#: js-apps/dashboard/src/pages/Segments.tsx:106
 msgid "Failed to delete segment"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:112
+#: js-apps/dashboard/src/pages/Segments.tsx:113
 msgid "Segment refreshed successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:115
+#: js-apps/dashboard/src/pages/Segments.tsx:116
 msgid "Failed to refresh segment"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:139
+#: js-apps/dashboard/src/pages/Segments.tsx:140
 msgid "Segment exported successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:142
+#: js-apps/dashboard/src/pages/Segments.tsx:143
 msgid "Failed to export segment"
 msgstr ""
 
 #. translators: %d: number of segments deleted
-#: js-apps/dashboard/src/pages/Segments.tsx:155
+#: js-apps/dashboard/src/pages/Segments.tsx:156
 msgid "%d segment deleted"
 msgid_plural "%d segments deleted"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:160
+#: js-apps/dashboard/src/pages/Segments.tsx:161
 msgid "Failed to delete segments"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:245
-#: js-apps/dashboard/src/pages/Segments.tsx:304
+#: js-apps/dashboard/src/pages/Segments.tsx:254
+#: js-apps/dashboard/src/pages/Segments.tsx:313
 msgid "Last Calculated"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:277
+#: js-apps/dashboard/src/pages/Segments.tsx:286
 msgid "Refresh membership"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:392
-#: js-apps/dashboard/src/pages/Segments.tsx:423
+#: js-apps/dashboard/src/pages/Segments.tsx:413
+#: js-apps/dashboard/src/pages/Segments.tsx:438
 msgid "Create Segment"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:396
+#: js-apps/dashboard/src/pages/Segments.tsx:418
 msgid "Search segments..."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Segments.tsx:422
+#: js-apps/dashboard/src/pages/Segments.tsx:437
 msgid "Edit Segment"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Settings.tsx:53
+#: js-apps/dashboard/src/pages/Settings.tsx:63
 msgid "Upgrade to Kelune CRM Pro to create trackable smart links with click actions."
 msgstr ""
 
@@ -6276,7 +6553,7 @@ msgid "Email provider deleted"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:393
-#: includes/Api/Controllers/EmailProviderController.php:247
+#: includes/Api/Controllers/EmailProviderController.php:254
 msgid "Failed to delete email provider"
 msgstr ""
 
@@ -6355,7 +6632,7 @@ msgid "Encryption"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:644
-#: includes/Api/Controllers/EmailProviderController.php:635
+#: includes/Api/Controllers/EmailProviderController.php:644
 msgid "Access Key ID"
 msgstr ""
 
@@ -6364,7 +6641,7 @@ msgid "Enter the Access Key ID"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:647
-#: includes/Api/Controllers/EmailProviderController.php:638
+#: includes/Api/Controllers/EmailProviderController.php:647
 msgid "Secret Access Key"
 msgstr ""
 
@@ -6387,7 +6664,7 @@ msgid "Enter the Mailgun API key"
 msgstr ""
 
 #: js-apps/dashboard/src/pages/settings/EmailProviders.tsx:663
-#: includes/Api/Controllers/EmailProviderController.php:646
+#: includes/Api/Controllers/EmailProviderController.php:655
 msgid "Domain"
 msgstr ""
 
@@ -6661,278 +6938,287 @@ msgstr ""
 msgid "Only works for logged-in visitors — an anonymous commenter's address is unknown until they submit."
 msgstr ""
 
+#: js-apps/dashboard/src/pages/settings/RolesPermissions.tsx:42
+msgid "Failed to load roles"
+msgstr ""
+
+#. translators: %s: error message
+#: js-apps/dashboard/src/pages/settings/RolesPermissions.tsx:68
+msgid "Could not load roles: %s"
+msgstr ""
+
 #: js-apps/dashboard/src/pages/settings/useSettingsForm.ts:30
 msgid "Failed to load settings"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:113
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:124
 msgid "Welcome"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:116
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:127
 msgid "Finished"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:128
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:141
 msgid "Contact Lists"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:128
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:141
 msgid "Just enter the name of each list and click Save & Next!"
 msgstr ""
 
 #. translators: %d: row number
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:130
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:143
 msgid "e.g. List"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:130
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:143
 msgid "Add More List"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:130
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:143
 msgid "At least one list name is required to save."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:130
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:143
 msgid "Lists saved successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:131
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:148
 msgid "Contact Tags"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:131
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:148
 msgid "Just enter the name of each tag and click Save & Next!"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:131
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:148
 msgid "e.g. Tag"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:131
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:148
 msgid "Add More Tag"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:131
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:148
 msgid "At least one tag name is required to save."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SetupWizard.tsx:131
+#: js-apps/dashboard/src/pages/SetupWizard.tsx:148
 msgid "Tags saved successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:28
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:29
 msgid "Website"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:121
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:125
 msgid "Failed to load tags and lists"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:157
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:161
 msgid "Tracking URL copied"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:162
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:166
 msgid "Failed to copy URL"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:185
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:189
 msgid "Smart link deleted successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:189
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:193
 msgid "Failed to delete smart link"
 msgstr ""
 
 #. translators: %d: number of smart links deleted
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:199
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:203
 msgid "%d smart link deleted"
 msgid_plural "%d smart links deleted"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:204
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:208
 msgid "Failed to delete smart links"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:219
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:223
 msgid "Smart link updated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:223
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:227
 msgid "Smart link created successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:234
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:238
 msgid "Failed to update smart link"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:235
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:239
 msgid "Failed to create smart link"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:266
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:353
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:270
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:357
 msgid "Tracking URL"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:273
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:277
 msgid "Click to copy"
 msgstr ""
 
 #. translators: %d: total number of clicks
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:288
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:292
 msgid "Total: %d"
 msgstr ""
 
 #. translators: %d: number of unique clicks
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:293
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:297
 msgid "Unique: %d"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:307
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:356
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:311
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:360
 msgid "Last Clicked"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:316
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:357
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:320
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:361
 msgid "Expires"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:441
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:472
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:457
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:482
 msgid "Create Smart Link"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:445
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:462
 msgid "Search smart links..."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:471
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:481
 msgid "Edit Smart Link"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:476
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:486
 msgid "Link Name"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:479
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:489
 msgid "Please enter link name"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:482
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:492
 msgid "e.g., Webinar Registration Link"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:486
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:496
 msgid "Brief description of this link..."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:489
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:499
 msgid "Link Type"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:493
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:503
 msgid "Redirect URL"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:496
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:506
 msgid "Please enter redirect URL"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:500
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:510
 msgid "Please enter a valid URL"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:507
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:517
 msgid "Select tags to add on click"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:514
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:524
 msgid "Select tags to remove on click"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:521
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:531
 msgid "Select lists to add contact to"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:528
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:538
 msgid "Select lists to remove contact from"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:534
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:544
 msgid "Trigger Automations"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:535
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:545
 msgid "Select automations to trigger"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/SmartLinks.tsx:548
+#: js-apps/dashboard/src/pages/SmartLinks.tsx:558
 msgid "Smart Link Created!"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:95
+#: js-apps/dashboard/src/pages/Tags.tsx:96
 msgid "Tag deleted successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:99
-#: includes/Api/Controllers/TagsController.php:177
+#: js-apps/dashboard/src/pages/Tags.tsx:100
+#: includes/Api/Controllers/TagsController.php:189
 msgid "Failed to delete tag"
 msgstr ""
 
 #. translators: %d: number of tags deleted
-#: js-apps/dashboard/src/pages/Tags.tsx:112
+#: js-apps/dashboard/src/pages/Tags.tsx:113
 msgid "%d tag deleted"
 msgid_plural "%d tags deleted"
 msgstr[0] ""
 msgstr[1] ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:117
+#: js-apps/dashboard/src/pages/Tags.tsx:118
 msgid "Failed to delete tags"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:133
+#: js-apps/dashboard/src/pages/Tags.tsx:134
 msgid "Tag updated successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:137
+#: js-apps/dashboard/src/pages/Tags.tsx:138
 msgid "Tag created successfully"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:143
+#: js-apps/dashboard/src/pages/Tags.tsx:144
 msgid "Failed to save tag"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:248
-#: js-apps/dashboard/src/pages/Tags.tsx:274
+#: js-apps/dashboard/src/pages/Tags.tsx:261
+#: js-apps/dashboard/src/pages/Tags.tsx:281
 msgid "Create Tag"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:252
+#: js-apps/dashboard/src/pages/Tags.tsx:266
 msgid "Search tags..."
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:273
+#: js-apps/dashboard/src/pages/Tags.tsx:280
 msgid "Edit Tag"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:278
+#: js-apps/dashboard/src/pages/Tags.tsx:285
 msgid "Tag Name"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:281
+#: js-apps/dashboard/src/pages/Tags.tsx:288
 msgid "Please enter tag name"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:284
+#: js-apps/dashboard/src/pages/Tags.tsx:291
 msgid "e.g., VIP Customer"
 msgstr ""
 
-#: js-apps/dashboard/src/pages/Tags.tsx:288
+#: js-apps/dashboard/src/pages/Tags.tsx:295
 msgid "Describe this tag..."
 msgstr ""
 
@@ -6977,9 +7263,9 @@ msgstr ""
 
 #. Plugin Name of the plugin
 #: kelune-crm.php
-#: includes/Admin/AdminMenu.php:74
-#: includes/Admin/AdminMenu.php:75
-#: includes/Admin/AdminMenu.php:111
+#: includes/Admin/AdminMenu.php:119
+#: includes/Admin/AdminMenu.php:120
+#: includes/Admin/AdminMenu.php:156
 msgid "Kelune CRM"
 msgstr ""
 
@@ -7003,241 +7289,254 @@ msgstr ""
 msgid "https://devitems.com"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:272
+#: includes/Admin/UserRoleFields.php:60
+#: includes/Admin/UserRoleFields.php:71
+msgid "User Roles"
+msgstr ""
+
+#: includes/Admin/UserRoleFields.php:191
+msgid "Kelune CRM Roles"
+msgstr ""
+
+#: includes/Admin/UserRoleFields.php:212
+msgid "A user keeps the combined permissions of every role selected here."
+msgstr ""
+
+#: includes/Api/Controllers/AutomationsController.php:303
 msgid "A valid email address is required"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:321
-#: includes/Api/Controllers/AutomationsController.php:348
-#: includes/Api/Controllers/AutomationsController.php:362
-#: includes/Api/Controllers/AutomationsController.php:374
-#: includes/Api/Controllers/AutomationsController.php:387
-#: includes/Api/Controllers/AutomationsController.php:412
-#: includes/Api/Controllers/AutomationsController.php:425
-#: includes/Api/Controllers/AutomationsController.php:453
-#: includes/Api/Controllers/AutomationsController.php:476
-#: includes/Api/Controllers/AutomationsController.php:503
-#: includes/Api/Controllers/AutomationsController.php:528
-#: includes/Api/Controllers/AutomationsController.php:562
-#: includes/Api/Controllers/AutomationsController.php:590
-#: includes/Api/Controllers/AutomationsController.php:622
-#: includes/Api/Controllers/AutomationsController.php:663
-#: includes/Api/Controllers/AutomationsController.php:693
-#: includes/Api/Controllers/AutomationsController.php:729
-#: includes/Api/Controllers/AutomationsController.php:748
-#: includes/Api/Controllers/AutomationTemplatesController.php:153
+#: includes/Api/Controllers/AutomationsController.php:352
+#: includes/Api/Controllers/AutomationsController.php:379
+#: includes/Api/Controllers/AutomationsController.php:393
+#: includes/Api/Controllers/AutomationsController.php:405
+#: includes/Api/Controllers/AutomationsController.php:418
+#: includes/Api/Controllers/AutomationsController.php:443
+#: includes/Api/Controllers/AutomationsController.php:456
+#: includes/Api/Controllers/AutomationsController.php:484
+#: includes/Api/Controllers/AutomationsController.php:507
+#: includes/Api/Controllers/AutomationsController.php:534
+#: includes/Api/Controllers/AutomationsController.php:559
+#: includes/Api/Controllers/AutomationsController.php:593
+#: includes/Api/Controllers/AutomationsController.php:621
+#: includes/Api/Controllers/AutomationsController.php:653
+#: includes/Api/Controllers/AutomationsController.php:694
+#: includes/Api/Controllers/AutomationsController.php:724
+#: includes/Api/Controllers/AutomationsController.php:760
+#: includes/Api/Controllers/AutomationsController.php:779
+#: includes/Api/Controllers/AutomationTemplatesController.php:160
 msgid "Automation not found"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:332
+#: includes/Api/Controllers/AutomationsController.php:363
 #: includes/Models/Automation.php:226
 msgid "Automation name is required"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:336
+#: includes/Api/Controllers/AutomationsController.php:367
 #: includes/Models/Automation.php:230
 msgid "Trigger type is required"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:342
+#: includes/Api/Controllers/AutomationsController.php:373
 msgid "Failed to create automation"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:368
+#: includes/Api/Controllers/AutomationsController.php:399
 msgid "Failed to update automation"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:377
+#: includes/Api/Controllers/AutomationsController.php:408
 msgid "Automation updated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:431
+#: includes/Api/Controllers/AutomationsController.php:462
 msgid "Automation has validation errors"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:443
+#: includes/Api/Controllers/AutomationsController.php:474
 msgid "Automation activated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:457
+#: includes/Api/Controllers/AutomationsController.php:488
 msgid "Only active automations can be paused"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:466
+#: includes/Api/Controllers/AutomationsController.php:497
 msgid "Automation paused successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:507
+#: includes/Api/Controllers/AutomationsController.php:538
 msgid "Automation is not active"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:515
+#: includes/Api/Controllers/AutomationsController.php:546
 msgid "Contact could not be enrolled (already enrolled or re-entry not yet allowed)."
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:518
+#: includes/Api/Controllers/AutomationsController.php:549
 msgid "Contact enrolled successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:548
-#: includes/Api/Controllers/AutomationsController.php:575
-#: includes/Api/Controllers/AutomationsController.php:596
-#: includes/Api/Controllers/AutomationsController.php:608
-#: includes/Api/Controllers/AutomationsController.php:628
+#: includes/Api/Controllers/AutomationsController.php:579
+#: includes/Api/Controllers/AutomationsController.php:606
+#: includes/Api/Controllers/AutomationsController.php:627
+#: includes/Api/Controllers/AutomationsController.php:639
+#: includes/Api/Controllers/AutomationsController.php:659
 msgid "Step not found"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:569
+#: includes/Api/Controllers/AutomationsController.php:600
 msgid "Failed to create step"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:578
+#: includes/Api/Controllers/AutomationsController.php:609
 msgid "Step created successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:602
+#: includes/Api/Controllers/AutomationsController.php:633
 msgid "Failed to update step"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:611
+#: includes/Api/Controllers/AutomationsController.php:642
 msgid "Step updated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:633
+#: includes/Api/Controllers/AutomationsController.php:664
 msgid "Cannot delete trigger step. Every automation must have a trigger. You can change the trigger type in settings."
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:649
+#: includes/Api/Controllers/AutomationsController.php:680
 msgid "Failed to delete step"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:652
+#: includes/Api/Controllers/AutomationsController.php:683
 msgid "Step deleted successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:682
+#: includes/Api/Controllers/AutomationsController.php:713
 msgid "Workflow saved successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:715
+#: includes/Api/Controllers/AutomationsController.php:746
 msgid "Failed to update positions"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:718
+#: includes/Api/Controllers/AutomationsController.php:749
 msgid "Positions updated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:735
+#: includes/Api/Controllers/AutomationsController.php:766
 msgid "Failed to reorder steps"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationsController.php:738
+#: includes/Api/Controllers/AutomationsController.php:769
 msgid "Steps reordered successfully"
 msgstr ""
 
 #. translators: %1$d: number of automations processed successfully, %2$d: number that failed
-#: includes/Api/Controllers/AutomationsController.php:818
+#: includes/Api/Controllers/AutomationsController.php:849
 msgid "%1$d automations processed successfully, %2$d failed"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationTemplatesController.php:79
-#: includes/Api/Controllers/AutomationTemplatesController.php:90
-#: includes/Api/Controllers/CampaignsController.php:724
-#: includes/Api/Controllers/EmailTemplatesController.php:208
-#: includes/Api/Controllers/EmailTemplatesController.php:272
-#: includes/Api/Controllers/EmailTemplatesController.php:302
-#: includes/Api/Controllers/EmailTemplatesController.php:350
-#: includes/Api/Controllers/EmailTemplatesController.php:380
-#: includes/Api/Controllers/EmailTemplatesController.php:428
-#: includes/Api/Controllers/EmailTemplatesController.php:448
-#: includes/Api/Controllers/EmailTemplatesController.php:478
-#: includes/Api/Controllers/EmailTemplatesController.php:510
-#: includes/Api/Controllers/EmailTemplatesController.php:576
+#: includes/Api/Controllers/AutomationTemplatesController.php:86
+#: includes/Api/Controllers/AutomationTemplatesController.php:97
+#: includes/Api/Controllers/CampaignsController.php:766
+#: includes/Api/Controllers/EmailTemplatesController.php:221
+#: includes/Api/Controllers/EmailTemplatesController.php:285
+#: includes/Api/Controllers/EmailTemplatesController.php:315
+#: includes/Api/Controllers/EmailTemplatesController.php:363
+#: includes/Api/Controllers/EmailTemplatesController.php:393
+#: includes/Api/Controllers/EmailTemplatesController.php:441
+#: includes/Api/Controllers/EmailTemplatesController.php:461
+#: includes/Api/Controllers/EmailTemplatesController.php:491
+#: includes/Api/Controllers/EmailTemplatesController.php:523
+#: includes/Api/Controllers/EmailTemplatesController.php:589
 msgid "Template not found"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationTemplatesController.php:108
+#: includes/Api/Controllers/AutomationTemplatesController.php:115
 msgid "Failed to create automation from template"
 msgstr ""
 
-#: includes/Api/Controllers/AutomationTemplatesController.php:156
+#: includes/Api/Controllers/AutomationTemplatesController.php:163
 msgid "Template imported successfully"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:223
-#: includes/Api/Controllers/CampaignsController.php:252
-#: includes/Api/Controllers/CampaignsController.php:266
-#: includes/Api/Controllers/CampaignsController.php:290
-#: includes/Api/Controllers/CampaignsController.php:303
-#: includes/Api/Controllers/CampaignsController.php:328
-#: includes/Api/Controllers/CampaignsController.php:343
-#: includes/Api/Controllers/CampaignsController.php:422
-#: includes/Api/Controllers/CampaignsController.php:630
-#: includes/Api/Controllers/CampaignsController.php:646
+#: includes/Api/Controllers/CampaignsController.php:265
+#: includes/Api/Controllers/CampaignsController.php:294
+#: includes/Api/Controllers/CampaignsController.php:308
+#: includes/Api/Controllers/CampaignsController.php:332
+#: includes/Api/Controllers/CampaignsController.php:345
+#: includes/Api/Controllers/CampaignsController.php:370
+#: includes/Api/Controllers/CampaignsController.php:385
+#: includes/Api/Controllers/CampaignsController.php:464
+#: includes/Api/Controllers/CampaignsController.php:672
+#: includes/Api/Controllers/CampaignsController.php:688
 #: includes/Services/EmailService.php:441
 #: includes/Services/EmailService.php:821
 msgid "Campaign not found"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:234
+#: includes/Api/Controllers/CampaignsController.php:276
 msgid "Campaign name is required"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:240
-#: includes/Api/Controllers/CampaignsController.php:272
+#: includes/Api/Controllers/CampaignsController.php:282
+#: includes/Api/Controllers/CampaignsController.php:314
 msgid "A valid From email address is required"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:246
+#: includes/Api/Controllers/CampaignsController.php:288
 msgid "Failed to create campaign"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:278
+#: includes/Api/Controllers/CampaignsController.php:320
 msgid "No updatable fields were provided"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:284
+#: includes/Api/Controllers/CampaignsController.php:326
 msgid "Failed to update campaign"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:355
+#: includes/Api/Controllers/CampaignsController.php:397
 msgid "Campaign scheduled successfully"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:373
+#: includes/Api/Controllers/CampaignsController.php:415
 msgid "This campaign has already been sent. Duplicate it to send again."
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:374
+#: includes/Api/Controllers/CampaignsController.php:416
 msgid "This campaign cannot be activated."
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:426
+#: includes/Api/Controllers/CampaignsController.php:468
 msgid "Only active campaigns can be paused"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:433
+#: includes/Api/Controllers/CampaignsController.php:475
 msgid "Campaign paused successfully"
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:443
+#: includes/Api/Controllers/CampaignsController.php:485
 msgid "Add an email subject before activating this campaign."
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:447
+#: includes/Api/Controllers/CampaignsController.php:489
 msgid "Add email content before activating this campaign."
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:457
+#: includes/Api/Controllers/CampaignsController.php:499
 msgid "Select at least one recipient target before activating this campaign."
 msgstr ""
 
-#: includes/Api/Controllers/CampaignsController.php:663
+#: includes/Api/Controllers/CampaignsController.php:705
 msgid "Unknown analytics type"
 msgstr ""
 
 #. translators: %1$d: number of campaigns processed successfully, %2$d: number that failed
-#: includes/Api/Controllers/CampaignsController.php:786
+#: includes/Api/Controllers/CampaignsController.php:828
 msgid "%1$d campaigns processed successfully, %2$d failed"
 msgstr ""
 
@@ -7267,391 +7566,391 @@ msgstr ""
 msgid "This unsubscribe link is invalid or has expired. Please try again or contact us."
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:185
-#: includes/Api/Controllers/ContactsController.php:266
-#: includes/Api/Controllers/ContactsController.php:336
+#: includes/Api/Controllers/ContactsController.php:207
+#: includes/Api/Controllers/ContactsController.php:288
+#: includes/Api/Controllers/ContactsController.php:358
 msgid "Contact not found"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:217
+#: includes/Api/Controllers/ContactsController.php:239
 msgid "Email already exists"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:224
+#: includes/Api/Controllers/ContactsController.php:246
 msgid "A contact with these details already exists"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:237
-#: includes/Api/Controllers/ContactsController.php:755
+#: includes/Api/Controllers/ContactsController.php:259
+#: includes/Api/Controllers/ContactsController.php:777
 msgid "Failed to create contact"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:291
+#: includes/Api/Controllers/ContactsController.php:313
 msgid "Failed to update contact"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:369
+#: includes/Api/Controllers/ContactsController.php:391
 msgid "Tags added successfully"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:380
+#: includes/Api/Controllers/ContactsController.php:402
 #: includes/Processors/ActionProcessor.php:343
 msgid "Failed to remove tags"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:383
+#: includes/Api/Controllers/ContactsController.php:405
 msgid "Tags removed successfully"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:412
+#: includes/Api/Controllers/ContactsController.php:434
 msgid "Note content is required"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:418
+#: includes/Api/Controllers/ContactsController.php:440
 msgid "Failed to add note"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:421
+#: includes/Api/Controllers/ContactsController.php:443
 msgid "Note added successfully"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:442
-#: includes/Api/Controllers/ContactsController.php:493
+#: includes/Api/Controllers/ContactsController.php:464
+#: includes/Api/Controllers/ContactsController.php:515
 msgid "Invalid contact IDs"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:446
+#: includes/Api/Controllers/ContactsController.php:468
 msgid "No fields to update"
 msgstr ""
 
 #. translators: %s: rejected field name
-#: includes/Api/Controllers/ContactsController.php:456
+#: includes/Api/Controllers/ContactsController.php:478
 msgid "The field \"%s\" cannot be bulk updated"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:462
+#: includes/Api/Controllers/ContactsController.php:484
 msgid "Invalid contact status"
 msgstr ""
 
 #. translators: %d: number of contacts updated
-#: includes/Api/Controllers/ContactsController.php:484
+#: includes/Api/Controllers/ContactsController.php:506
 msgid "%d contacts updated"
 msgstr ""
 
 #. translators: %d: number of contacts deleted
-#: includes/Api/Controllers/ContactsController.php:506
+#: includes/Api/Controllers/ContactsController.php:528
 msgid "%d contacts deleted"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:654
+#: includes/Api/Controllers/ContactsController.php:676
 msgid "No rows to import"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:672
+#: includes/Api/Controllers/ContactsController.php:694
 msgid "Invalid row"
 msgstr ""
 
-#: includes/Api/Controllers/ContactsController.php:698
-#: includes/Api/Controllers/ContactsController.php:1182
+#: includes/Api/Controllers/ContactsController.php:720
+#: includes/Api/Controllers/ContactsController.php:1204
 #: includes/Services/EmailService.php:825
 #: includes/Services/EmailService.php:1569
 msgid "Invalid email address"
 msgstr ""
 
-#: includes/Api/Controllers/CustomFieldsController.php:102
-#: includes/Api/Controllers/CustomFieldsController.php:187
-#: includes/Api/Controllers/CustomFieldsController.php:203
-#: includes/Api/Controllers/CustomFieldsController.php:263
-#: includes/Api/Controllers/CustomFieldsController.php:279
+#: includes/Api/Controllers/CustomFieldsController.php:117
+#: includes/Api/Controllers/CustomFieldsController.php:202
+#: includes/Api/Controllers/CustomFieldsController.php:218
+#: includes/Api/Controllers/CustomFieldsController.php:278
+#: includes/Api/Controllers/CustomFieldsController.php:294
 msgid "Custom field not found"
 msgstr ""
 
-#: includes/Api/Controllers/CustomFieldsController.php:127
+#: includes/Api/Controllers/CustomFieldsController.php:142
 #: includes/Models/CustomField.php:91
 msgid "Field label is required"
 msgstr ""
 
-#: includes/Api/Controllers/CustomFieldsController.php:141
-#: includes/Api/Controllers/CustomFieldsController.php:242
+#: includes/Api/Controllers/CustomFieldsController.php:156
+#: includes/Api/Controllers/CustomFieldsController.php:257
 msgid "A field with this key already exists"
 msgstr ""
 
-#: includes/Api/Controllers/CustomFieldsController.php:177
+#: includes/Api/Controllers/CustomFieldsController.php:192
 msgid "Failed to create custom field"
 msgstr ""
 
-#: includes/Api/Controllers/CustomFieldsController.php:253
+#: includes/Api/Controllers/CustomFieldsController.php:268
 msgid "Failed to update custom field"
 msgstr ""
 
-#: includes/Api/Controllers/CustomFieldsController.php:307
+#: includes/Api/Controllers/CustomFieldsController.php:322
 msgid "Orders array is required"
 msgstr ""
 
-#: includes/Api/Controllers/CustomFieldsController.php:316
+#: includes/Api/Controllers/CustomFieldsController.php:331
 msgid "Each order must have id and field_order"
 msgstr ""
 
-#: includes/Api/Controllers/CustomFieldsController.php:327
+#: includes/Api/Controllers/CustomFieldsController.php:342
 msgid "Failed to reorder custom fields"
 msgstr ""
 
-#: includes/Api/Controllers/CustomFieldsController.php:333
+#: includes/Api/Controllers/CustomFieldsController.php:348
 msgid "Custom fields reordered successfully"
 msgstr ""
 
 #. translators: %s: underlying error message
-#: includes/Api/Controllers/EmailLogsController.php:276
+#: includes/Api/Controllers/EmailLogsController.php:288
 msgid "Failed to fetch email logs: %s"
 msgstr ""
 
-#: includes/Api/Controllers/EmailLogsController.php:296
-#: includes/Api/Controllers/EmailLogsController.php:316
-#: includes/Api/Controllers/EmailLogsController.php:389
+#: includes/Api/Controllers/EmailLogsController.php:308
+#: includes/Api/Controllers/EmailLogsController.php:328
+#: includes/Api/Controllers/EmailLogsController.php:401
 msgid "Email log not found"
 msgstr ""
 
-#: includes/Api/Controllers/EmailLogsController.php:344
+#: includes/Api/Controllers/EmailLogsController.php:356
 msgid "Invalid IDs provided"
 msgstr ""
 
-#: includes/Api/Controllers/EmailLogsController.php:355
+#: includes/Api/Controllers/EmailLogsController.php:367
 msgid "No valid IDs provided"
 msgstr ""
 
 #. translators: %d: number of email logs deleted
-#: includes/Api/Controllers/EmailLogsController.php:367
+#: includes/Api/Controllers/EmailLogsController.php:379
 msgid "%d email log deleted successfully"
 msgid_plural "%d email logs deleted successfully"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: underlying error message
-#: includes/Api/Controllers/EmailLogsController.php:431
+#: includes/Api/Controllers/EmailLogsController.php:443
 msgid "Failed to fetch statistics: %s"
 msgstr ""
 
-#: includes/Api/Controllers/EmailLogsController.php:543
+#: includes/Api/Controllers/EmailLogsController.php:555
 msgid "Open Count"
 msgstr ""
 
-#: includes/Api/Controllers/EmailLogsController.php:544
+#: includes/Api/Controllers/EmailLogsController.php:556
 msgid "Click Count"
 msgstr ""
 
-#: includes/Api/Controllers/EmailLogsController.php:545
+#: includes/Api/Controllers/EmailLogsController.php:557
 msgid "Error Message"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:136
-#: includes/Api/Controllers/EmailProviderController.php:169
-#: includes/Api/Controllers/EmailProviderController.php:184
-#: includes/Api/Controllers/EmailProviderController.php:229
-#: includes/Api/Controllers/EmailProviderController.php:243
-#: includes/Api/Controllers/EmailProviderController.php:298
-#: includes/Api/Controllers/EmailProviderController.php:328
-#: includes/Api/Controllers/EmailProviderController.php:365
-#: includes/Api/Controllers/EmailProviderController.php:419
-#: includes/Api/Controllers/EmailProviderController.php:438
-#: includes/Api/Controllers/EmailProviderController.php:464
-#: includes/Api/Controllers/EmailProviderController.php:747
+#: includes/Api/Controllers/EmailProviderController.php:143
+#: includes/Api/Controllers/EmailProviderController.php:176
+#: includes/Api/Controllers/EmailProviderController.php:191
+#: includes/Api/Controllers/EmailProviderController.php:236
+#: includes/Api/Controllers/EmailProviderController.php:250
+#: includes/Api/Controllers/EmailProviderController.php:305
+#: includes/Api/Controllers/EmailProviderController.php:335
+#: includes/Api/Controllers/EmailProviderController.php:372
+#: includes/Api/Controllers/EmailProviderController.php:427
+#: includes/Api/Controllers/EmailProviderController.php:446
+#: includes/Api/Controllers/EmailProviderController.php:473
+#: includes/Api/Controllers/EmailProviderController.php:762
 msgid "Email provider not found"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:160
+#: includes/Api/Controllers/EmailProviderController.php:167
 msgid "Failed to create email provider"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:174
+#: includes/Api/Controllers/EmailProviderController.php:181
 msgid "Email provider created successfully"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:220
+#: includes/Api/Controllers/EmailProviderController.php:227
 msgid "Failed to update email provider"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:234
+#: includes/Api/Controllers/EmailProviderController.php:241
 msgid "Email provider updated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:250
+#: includes/Api/Controllers/EmailProviderController.php:257
 msgid "Email provider deleted successfully"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:275
-#: includes/Api/Controllers/EmailProviderController.php:303
-#: includes/Api/Controllers/EmailProviderController.php:390
+#: includes/Api/Controllers/EmailProviderController.php:282
+#: includes/Api/Controllers/EmailProviderController.php:310
+#: includes/Api/Controllers/EmailProviderController.php:398
 msgid "Invalid email provider type"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:285
+#: includes/Api/Controllers/EmailProviderController.php:292
 msgid "Connection successful! This provider is configured correctly."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:370
+#: includes/Api/Controllers/EmailProviderController.php:377
 msgid "Adding sender emails is only supported for Amazon SES connections."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:378
+#: includes/Api/Controllers/EmailProviderController.php:386
 msgid "Please provide a valid email address."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:382
+#: includes/Api/Controllers/EmailProviderController.php:390
 msgid "This email is already a sender on this connection."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:397
+#: includes/Api/Controllers/EmailProviderController.php:405
 msgid "Invalid email address! Please use a verified domain."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:407
+#: includes/Api/Controllers/EmailProviderController.php:415
 msgid "This email is already used by another connection."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:424
+#: includes/Api/Controllers/EmailProviderController.php:432
 msgid "Sender email added."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:443
+#: includes/Api/Controllers/EmailProviderController.php:451
 msgid "Removing sender emails is only supported for Amazon SES connections."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:453
+#: includes/Api/Controllers/EmailProviderController.php:462
 msgid "This email is not a manually-added sender on this connection."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:469
+#: includes/Api/Controllers/EmailProviderController.php:478
 msgid "Sender email removed."
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:514
+#: includes/Api/Controllers/EmailProviderController.php:523
 msgid "Name is required"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:519
-#: includes/Api/Controllers/EmailProviderController.php:771
+#: includes/Api/Controllers/EmailProviderController.php:528
+#: includes/Api/Controllers/EmailProviderController.php:786
 msgid "A valid provider type is required"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:524
+#: includes/Api/Controllers/EmailProviderController.php:533
 msgid "Sender email is required"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:526
+#: includes/Api/Controllers/EmailProviderController.php:535
 msgid "Sender email is invalid"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:530
+#: includes/Api/Controllers/EmailProviderController.php:539
 msgid "Reply-to email is invalid"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:630
+#: includes/Api/Controllers/EmailProviderController.php:639
 msgid "SMTP host"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:643
-#: includes/Api/Controllers/EmailProviderController.php:651
+#: includes/Api/Controllers/EmailProviderController.php:652
+#: includes/Api/Controllers/EmailProviderController.php:660
 msgid "API key"
 msgstr ""
 
 #. translators: %s: comma-separated list of missing credential fields
-#: includes/Api/Controllers/EmailProviderController.php:659
+#: includes/Api/Controllers/EmailProviderController.php:668
 msgid "Missing required credentials: %s"
 msgstr ""
 
-#: includes/Api/Controllers/EmailProviderController.php:795
+#: includes/Api/Controllers/EmailProviderController.php:810
 msgid "Too many test attempts. Please wait a minute and try again."
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:97
+#: includes/Api/Controllers/EmailTemplatesController.php:110
 msgid "A valid recipient email is required"
 msgstr ""
 
 #. translators: %s: email subject line
-#: includes/Api/Controllers/EmailTemplatesController.php:111
+#: includes/Api/Controllers/EmailTemplatesController.php:124
 #: includes/Services/EmailService.php:874
 #: includes/Services/EmailService.php:1610
 msgid "[TEST] %s"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:116
+#: includes/Api/Controllers/EmailTemplatesController.php:129
 msgid "Template content is empty"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:129
+#: includes/Api/Controllers/EmailTemplatesController.php:142
 #: includes/Services/EmailService.php:831
 #: includes/Services/EmailService.php:1575
 msgid "That address belongs to a contact who is not accepting email."
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:190
+#: includes/Api/Controllers/EmailTemplatesController.php:203
 msgid "Failed to fetch templates"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:217
+#: includes/Api/Controllers/EmailTemplatesController.php:230
 msgid "Failed to fetch template"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:233
+#: includes/Api/Controllers/EmailTemplatesController.php:246
 msgid "Template name is required"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:262
-#: includes/Api/Controllers/EmailTemplatesController.php:284
+#: includes/Api/Controllers/EmailTemplatesController.php:275
+#: includes/Api/Controllers/EmailTemplatesController.php:297
 msgid "Failed to create template"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:340
-#: includes/Api/Controllers/EmailTemplatesController.php:362
+#: includes/Api/Controllers/EmailTemplatesController.php:353
+#: includes/Api/Controllers/EmailTemplatesController.php:375
 msgid "Failed to update template"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:358
+#: includes/Api/Controllers/EmailTemplatesController.php:371
 msgid "Template updated successfully"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:388
+#: includes/Api/Controllers/EmailTemplatesController.php:401
 msgid "Cannot delete predefined templates"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:438
-#: includes/Api/Controllers/EmailTemplatesController.php:460
+#: includes/Api/Controllers/EmailTemplatesController.php:451
+#: includes/Api/Controllers/EmailTemplatesController.php:473
 msgid "Failed to toggle favorite"
 msgstr ""
 
 #. translators: %s: original template name
-#: includes/Api/Controllers/EmailTemplatesController.php:486
+#: includes/Api/Controllers/EmailTemplatesController.php:499
 msgid "%s (Copy)"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:558
+#: includes/Api/Controllers/EmailTemplatesController.php:571
 msgid "Failed to fetch predefined templates"
 msgstr ""
 
-#: includes/Api/Controllers/EmailTemplatesController.php:587
+#: includes/Api/Controllers/EmailTemplatesController.php:600
 msgid "Failed to preview template"
 msgstr ""
 
-#: includes/Api/Controllers/ListsController.php:97
-#: includes/Api/Controllers/ListsController.php:147
-#: includes/Api/Controllers/ListsController.php:188
+#: includes/Api/Controllers/ListsController.php:109
+#: includes/Api/Controllers/ListsController.php:159
+#: includes/Api/Controllers/ListsController.php:200
 msgid "List not found"
 msgstr ""
 
-#: includes/Api/Controllers/ListsController.php:115
-#: includes/Api/Controllers/ListsController.php:158
+#: includes/Api/Controllers/ListsController.php:127
+#: includes/Api/Controllers/ListsController.php:170
 msgid "List name is required"
 msgstr ""
 
-#: includes/Api/Controllers/ListsController.php:119
+#: includes/Api/Controllers/ListsController.php:131
 msgid "List already exists"
 msgstr ""
 
-#: includes/Api/Controllers/ListsController.php:128
+#: includes/Api/Controllers/ListsController.php:140
 msgid "Failed to create list"
 msgstr ""
 
-#: includes/Api/Controllers/ListsController.php:169
+#: includes/Api/Controllers/ListsController.php:181
 msgid "Failed to update list"
 msgstr ""
 
@@ -7696,46 +7995,62 @@ msgstr ""
 msgid "Back to the website"
 msgstr ""
 
-#: includes/Api/Controllers/SettingsController.php:202
+#: includes/Api/Controllers/RolesController.php:100
+msgid "Role created."
+msgstr ""
+
+#: includes/Api/Controllers/RolesController.php:123
+msgid "Role updated."
+msgstr ""
+
+#: includes/Api/Controllers/RolesController.php:134
+msgid "Role deleted."
+msgstr ""
+
+#: includes/Api/Controllers/RolesController.php:168
+msgid "User roles updated."
+msgstr ""
+
+#: includes/Api/Controllers/SettingsController.php:212
 msgid "From Email is not a valid email address."
 msgstr ""
 
-#: includes/Api/Controllers/SettingsController.php:205
+#: includes/Api/Controllers/SettingsController.php:215
 msgid "Reply-To Email is not a valid email address."
 msgstr ""
 
-#: includes/Api/Controllers/SettingsController.php:214
+#: includes/Api/Controllers/SettingsController.php:224
 msgid "The email footer must contain the {{unsubscribe_url}} merge tag so recipients can opt out."
 msgstr ""
 
-#: includes/Api/Controllers/SettingsController.php:222
+#: includes/Api/Controllers/SettingsController.php:232
 msgid "The confirmation email must contain the {{confirmation_url}} merge tag."
 msgstr ""
 
-#: includes/Api/Controllers/TagsController.php:89
-#: includes/Api/Controllers/TagsController.php:133
-#: includes/Api/Controllers/TagsController.php:171
+#: includes/Api/Controllers/TagsController.php:101
+#: includes/Api/Controllers/TagsController.php:145
+#: includes/Api/Controllers/TagsController.php:183
 msgid "Tag not found"
 msgstr ""
 
-#: includes/Api/Controllers/TagsController.php:104
-#: includes/Api/Controllers/TagsController.php:144
+#: includes/Api/Controllers/TagsController.php:116
+#: includes/Api/Controllers/TagsController.php:156
 msgid "Tag name is required"
 msgstr ""
 
-#: includes/Api/Controllers/TagsController.php:108
+#: includes/Api/Controllers/TagsController.php:120
 msgid "Tag already exists"
 msgstr ""
 
-#: includes/Api/Controllers/TagsController.php:117
+#: includes/Api/Controllers/TagsController.php:129
 msgid "Failed to create tag"
 msgstr ""
 
-#: includes/Api/Controllers/TagsController.php:155
+#: includes/Api/Controllers/TagsController.php:167
 msgid "Failed to update tag"
 msgstr ""
 
-#: includes/Api/Controllers/ToolsController.php:76
+#: includes/Api/Controllers/ToolsController.php:83
 msgid "Task ran successfully."
 msgstr ""
 
@@ -7765,62 +8080,54 @@ msgstr ""
 msgid "This link points somewhere that cannot be opened."
 msgstr ""
 
-#: includes/Api/RestApi.php:121
-msgid "Invalid import type"
-msgstr ""
-
-#: includes/Api/RestApi.php:137
-msgid "Invalid export type"
-msgstr ""
-
-#: includes/Controllers/WebhookController.php:172
+#: includes/Controllers/WebhookController.php:179
 #: includes/Models/IncomingWebhook.php:165
 msgid "Webhook name is required"
 msgstr ""
 
-#: includes/Controllers/WebhookController.php:176
-#: includes/Controllers/WebhookController.php:182
+#: includes/Controllers/WebhookController.php:183
+#: includes/Controllers/WebhookController.php:189
 #: includes/Models/IncomingWebhook.php:173
 msgid "At least one allowed action must be selected"
 msgstr ""
 
-#: includes/Controllers/WebhookController.php:188
+#: includes/Controllers/WebhookController.php:195
 msgid "Failed to create webhook"
 msgstr ""
 
-#: includes/Controllers/WebhookController.php:194
-#: includes/Controllers/WebhookController.php:210
-#: includes/Controllers/WebhookController.php:228
-#: includes/Controllers/WebhookController.php:242
-#: includes/Controllers/WebhookController.php:259
-#: includes/Controllers/WebhookController.php:282
-#: includes/Controllers/WebhookController.php:307
-#: includes/Controllers/WebhookController.php:319
-#: includes/Controllers/WebhookController.php:341
+#: includes/Controllers/WebhookController.php:201
+#: includes/Controllers/WebhookController.php:217
+#: includes/Controllers/WebhookController.php:235
+#: includes/Controllers/WebhookController.php:249
+#: includes/Controllers/WebhookController.php:266
+#: includes/Controllers/WebhookController.php:289
+#: includes/Controllers/WebhookController.php:314
+#: includes/Controllers/WebhookController.php:326
+#: includes/Controllers/WebhookController.php:348
 #: includes/Handlers/WebhookHandler.php:70
 msgid "Webhook not found"
 msgstr ""
 
-#: includes/Controllers/WebhookController.php:236
+#: includes/Controllers/WebhookController.php:243
 msgid "Failed to update webhook"
 msgstr ""
 
-#: includes/Controllers/WebhookController.php:288
+#: includes/Controllers/WebhookController.php:295
 msgid "Failed to regenerate webhook key"
 msgstr ""
 
-#: includes/Controllers/WebhookController.php:313
+#: includes/Controllers/WebhookController.php:320
 msgid "Failed to toggle webhook status"
 msgstr ""
 
 #. translators: %1$s: required PHP version, %2$s: current PHP version
-#: includes/Core/Activator.php:21
+#: includes/Core/Activator.php:22
 #: kelune-crm.php:39
 msgid "Kelune CRM requires PHP %1$s or higher. Your current version is %2$s."
 msgstr ""
 
 #. translators: %s: required WordPress version
-#: includes/Core/Activator.php:32
+#: includes/Core/Activator.php:33
 #: kelune-crm.php:56
 msgid "Kelune CRM requires WordPress %s or higher. Please update WordPress."
 msgstr ""
@@ -8891,6 +9198,51 @@ msgstr ""
 msgid "minute"
 msgstr ""
 
+#: includes/Services/RoleService.php:33
+msgid "CRM Manager"
+msgstr ""
+
+#: includes/Services/RoleService.php:34
+msgid "CRM Agent"
+msgstr ""
+
+#: includes/Services/RoleService.php:35
+msgid "CRM Viewer"
+msgstr ""
+
+#: includes/Services/RoleService.php:230
+msgid "That role could not be created."
+msgstr ""
+
+#: includes/Services/RoleService.php:248
+#: includes/Services/RoleService.php:300
+msgid "Role not found."
+msgstr ""
+
+#: includes/Services/RoleService.php:254
+msgid "Administrator permissions cannot be changed."
+msgstr ""
+
+#: includes/Services/RoleService.php:294
+msgid "Only custom CRM roles can be deleted."
+msgstr ""
+
+#: includes/Services/RoleService.php:379
+msgid "User not found."
+msgstr ""
+
+#: includes/Services/RoleService.php:385
+msgid "You are not allowed to change this user's roles."
+msgstr ""
+
+#: includes/Services/RoleService.php:401
+msgid "None of those roles exist."
+msgstr ""
+
+#: includes/Services/RoleService.php:414
+msgid "You cannot remove your own administrator role."
+msgstr ""
+
 #: includes/Services/SettingsService.php:35
 msgid "Not interested anymore?"
 msgstr ""
@@ -8905,4 +9257,184 @@ msgstr ""
 
 #: includes/Services/SettingsService.php:47
 msgid "If you did not request this, you can safely ignore this email."
+msgstr ""
+
+#: includes/Support/Capabilities.php:91
+msgid "Access the CRM dashboard"
+msgstr ""
+
+#: includes/Support/Capabilities.php:99
+msgid "View contacts"
+msgstr ""
+
+#: includes/Support/Capabilities.php:100
+msgid "Create contacts"
+msgstr ""
+
+#: includes/Support/Capabilities.php:101
+msgid "Edit contacts"
+msgstr ""
+
+#: includes/Support/Capabilities.php:102
+msgid "Delete contacts"
+msgstr ""
+
+#: includes/Support/Capabilities.php:103
+msgid "Import contacts"
+msgstr ""
+
+#: includes/Support/Capabilities.php:104
+msgid "Export contacts"
+msgstr ""
+
+#: includes/Support/Capabilities.php:112
+msgid "View lists"
+msgstr ""
+
+#: includes/Support/Capabilities.php:113
+msgid "Create lists"
+msgstr ""
+
+#: includes/Support/Capabilities.php:114
+msgid "Edit lists"
+msgstr ""
+
+#: includes/Support/Capabilities.php:115
+msgid "Delete lists"
+msgstr ""
+
+#: includes/Support/Capabilities.php:123
+msgid "View tags"
+msgstr ""
+
+#: includes/Support/Capabilities.php:124
+msgid "Create tags"
+msgstr ""
+
+#: includes/Support/Capabilities.php:125
+msgid "Edit tags"
+msgstr ""
+
+#: includes/Support/Capabilities.php:126
+msgid "Delete tags"
+msgstr ""
+
+#: includes/Support/Capabilities.php:134
+msgid "View segments"
+msgstr ""
+
+#: includes/Support/Capabilities.php:135
+msgid "Create segments"
+msgstr ""
+
+#: includes/Support/Capabilities.php:136
+msgid "Edit segments"
+msgstr ""
+
+#: includes/Support/Capabilities.php:137
+msgid "Delete segments"
+msgstr ""
+
+#: includes/Support/Capabilities.php:145
+msgid "View campaigns"
+msgstr ""
+
+#: includes/Support/Capabilities.php:146
+msgid "Create campaigns"
+msgstr ""
+
+#: includes/Support/Capabilities.php:147
+msgid "Edit campaigns"
+msgstr ""
+
+#: includes/Support/Capabilities.php:148
+msgid "Delete campaigns"
+msgstr ""
+
+#: includes/Support/Capabilities.php:149
+msgid "Send and schedule campaigns"
+msgstr ""
+
+#: includes/Support/Capabilities.php:157
+msgid "View automations"
+msgstr ""
+
+#: includes/Support/Capabilities.php:158
+msgid "Create automations"
+msgstr ""
+
+#: includes/Support/Capabilities.php:159
+msgid "Edit automations"
+msgstr ""
+
+#: includes/Support/Capabilities.php:160
+msgid "Delete automations"
+msgstr ""
+
+#: includes/Support/Capabilities.php:168
+msgid "View email templates"
+msgstr ""
+
+#: includes/Support/Capabilities.php:169
+msgid "Create email templates"
+msgstr ""
+
+#: includes/Support/Capabilities.php:170
+msgid "Edit email templates"
+msgstr ""
+
+#: includes/Support/Capabilities.php:171
+msgid "Delete email templates"
+msgstr ""
+
+#: includes/Support/Capabilities.php:179
+msgid "View email logs"
+msgstr ""
+
+#: includes/Support/Capabilities.php:180
+msgid "Export email logs"
+msgstr ""
+
+#: includes/Support/Capabilities.php:181
+msgid "Delete email logs"
+msgstr ""
+
+#: includes/Support/Capabilities.php:189
+msgid "View smart links"
+msgstr ""
+
+#: includes/Support/Capabilities.php:190
+msgid "Create smart links"
+msgstr ""
+
+#: includes/Support/Capabilities.php:191
+msgid "Edit smart links"
+msgstr ""
+
+#: includes/Support/Capabilities.php:192
+msgid "Delete smart links"
+msgstr ""
+
+#: includes/Support/Capabilities.php:200
+msgid "View analytics and reports"
+msgstr ""
+
+#: includes/Support/Capabilities.php:208
+msgid "Manage settings"
+msgstr ""
+
+#: includes/Support/Capabilities.php:209
+msgid "Manage custom fields"
+msgstr ""
+
+#: includes/Support/Capabilities.php:210
+msgid "Manage email providers"
+msgstr ""
+
+#: includes/Support/Capabilities.php:211
+msgid "Manage incoming webhooks"
+msgstr ""
+
+#: includes/Support/Capabilities.php:212
+msgid "Manage roles and permissions"
 msgstr ""

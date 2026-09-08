@@ -438,6 +438,50 @@ export interface Webhook extends StrictBase {
   last_used_at?: string | null;
 }
 
+/** One group of the capability matrix (GET /roles). */
+export interface RoleCapabilityGroup {
+  key: string;
+  label: string;
+  /** True for a group the Pro add-on owns (segments, smart links). */
+  pro: boolean;
+  /** Capability slug → human label. */
+  capabilities: Record<string, string>;
+}
+
+/** A shipped capability set offered as a starting point in the role editor. */
+export interface RolePreset {
+  slug: string;
+  name: string;
+  capabilities: string[];
+}
+
+export interface CrmRole {
+  slug: string;
+  name: string;
+  /** True for a role this plugin owns (slug prefixed `kelune_crm_`). */
+  is_crm_role: boolean;
+  /** True for one of the three shipped roles, which cannot be deleted. */
+  is_built_in: boolean;
+  /** True for a role that administers the site: every capability, not editable. */
+  is_administrator: boolean;
+  capabilities: string[];
+  users_count: number;
+}
+
+export interface CrmUser {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+  avatar_url?: string;
+  /** Registration date, stored by WordPress in UTC. */
+  registered?: string;
+  roles: string[];
+  is_administrator: boolean;
+  crm_capabilities: string[];
+  editable: boolean;
+}
+
 /**
  * Body-nested list payload (post-unwrap `response.data`) for endpoints that put
  * pagination inside `data`: Campaigns, Automations(list/steps), SmartLinks,

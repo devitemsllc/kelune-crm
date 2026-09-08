@@ -12,6 +12,17 @@ abstract class BaseController
 
     protected string $restBase = '';
 
+    /**
+     * Capabilities guarding this controller's routes. Each subclass names its
+     * own; the defaults are deliberately administrator-only so a controller
+     * that forgets to declare them stays closed rather than open.
+     */
+    protected string $readCapability = 'manage_options';
+
+    protected string $writeCapability = 'manage_options';
+
+    protected string $deleteCapability = 'manage_options';
+
     abstract public function registerRoutes(string $namespace): void;
 
     /**
@@ -42,7 +53,17 @@ abstract class BaseController
 
     public function checkPermission(\WP_REST_Request $request): bool
     {
-        return current_user_can('manage_options');
+        return $this->userCan($this->writeCapability);
+    }
+
+    /**
+     * A site administrator owns every CRM capability. The `manage_options`
+     * check keeps them working on the request that runs before a capability
+     * sync (a fresh update, an add-on just enabled).
+     */
+    protected function userCan(string $capability): bool
+    {
+        return current_user_can($capability) || current_user_can('manage_options');
     }
 
     /**
@@ -58,17 +79,17 @@ abstract class BaseController
 
     public function checkReadPermission(\WP_REST_Request $request): bool
     {
-        return current_user_can('manage_options');
+        return $this->userCan($this->readCapability);
     }
 
     public function checkWritePermission(\WP_REST_Request $request): bool
     {
-        return current_user_can('manage_options');
+        return $this->userCan($this->writeCapability);
     }
 
     public function checkDeletePermission(\WP_REST_Request $request): bool
     {
-        return current_user_can('manage_options');
+        return $this->userCan($this->deleteCapability);
     }
 
     protected function prepareResponse(mixed $data, ?\WP_REST_Request $request = null): \WP_REST_Response|\WP_Error

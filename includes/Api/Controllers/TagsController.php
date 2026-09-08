@@ -5,15 +5,27 @@ declare(strict_types=1);
 namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Repositories\TagRepository;
+use KeluneCRM\Support\Capabilities;
 
 class TagsController extends BaseController
 {
     protected string $restBase = 'tags';
+
+    protected string $readCapability = Capabilities::VIEW_TAGS;
+
+    protected string $writeCapability = Capabilities::EDIT_TAGS;
+
+    protected string $deleteCapability = Capabilities::DELETE_TAGS;
     private \KeluneCRM\Repositories\TagRepository $repository;
 
     public function __construct()
     {
         $this->repository = new TagRepository();
+    }
+
+    public function checkCreatePermission(\WP_REST_Request $request): bool
+    {
+        return $this->userCan(Capabilities::CREATE_TAGS);
     }
 
     public function registerRoutes(string $namespace): void
@@ -30,7 +42,7 @@ class TagsController extends BaseController
             [
                 'methods' => \WP_REST_Server::CREATABLE,
                 'callback' => [$this, 'createItem'],
-                'permission_callback' => [$this, 'checkWritePermission'],
+                'permission_callback' => [$this, 'checkCreatePermission'],
             ],
         ]);
 

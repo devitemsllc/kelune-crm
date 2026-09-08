@@ -26,6 +26,7 @@ import { useListState } from '../hooks/useListState';
 import ActionConfirm from '../components/common/ActionConfirm';
 import EmailPreviewModal from '../components/common/EmailPreviewModal';
 import BulkActionsBar from '../components/common/BulkActionsBar';
+import { CAP, can } from '../utils/capabilities';
 import type { BulkActionValue } from '../components/common/BulkActionsBar';
 import {
   startGlobalLoading,
@@ -313,39 +314,51 @@ const EmailTemplates = () => {
   // Dropdown is kept open (see openMenuId guard) so the confirm anchor survives.
   const rowMenuItems = (record: EmailTemplate): MenuProps['items'] => {
     return [
-      {
-        key: 'edit-info',
-        label: <span>{__('Edit info', 'kelune-crm')}</span>,
-        onClick: () => {
-          setOpenMenuId(null);
-          handleEditInfo(record);
-        },
-      },
-      {
-        key: 'duplicate',
-        label: <span>{__('Duplicate', 'kelune-crm')}</span>,
-        onClick: () => {
-          setOpenMenuId(null);
-          handleDuplicate(record.id);
-        },
-      },
-      { type: 'divider' },
-      {
-        key: 'delete',
-        danger: true,
-        label: (
-          <ActionConfirm
-            action="delete"
-            onConfirm={() => {
-              setOpenMenuId(null);
-              handleDelete(record.id);
-            }}
-            onCancel={() => setOpenMenuId(null)}
-          >
-            <span>{__('Delete', 'kelune-crm')}</span>
-          </ActionConfirm>
-        ),
-      },
+      ...(can(CAP.EDIT_EMAIL_TEMPLATES)
+        ? [
+            {
+              key: 'edit-info',
+              label: <span>{__('Edit info', 'kelune-crm')}</span>,
+              onClick: () => {
+                setOpenMenuId(null);
+                handleEditInfo(record);
+              },
+            },
+          ]
+        : []),
+      ...(can(CAP.CREATE_EMAIL_TEMPLATES)
+        ? [
+            {
+              key: 'duplicate',
+              label: <span>{__('Duplicate', 'kelune-crm')}</span>,
+              onClick: () => {
+                setOpenMenuId(null);
+                handleDuplicate(record.id);
+              },
+            },
+          ]
+        : []),
+      ...(can(CAP.DELETE_EMAIL_TEMPLATES)
+        ? [
+            { type: 'divider' as const },
+            {
+              key: 'delete',
+              danger: true,
+              label: (
+                <ActionConfirm
+                  action="delete"
+                  onConfirm={() => {
+                    setOpenMenuId(null);
+                    handleDelete(record.id);
+                  }}
+                  onCancel={() => setOpenMenuId(null)}
+                >
+                  <span>{__('Delete', 'kelune-crm')}</span>
+                </ActionConfirm>
+              ),
+            },
+          ]
+        : []),
     ];
   };
 
@@ -462,31 +475,35 @@ const EmailTemplates = () => {
               onClick={() => handlePreview(record)}
             />
           </Tooltip>
-          <Tooltip title={__('Edit template', 'kelune-crm')}>
-            <Button
-              shape="default"
-              size="small"
-              icon={<EditOutlined />}
-              href={`#/email-templates/builder/${record.id}`}
-            />
-          </Tooltip>
-          <Dropdown
-            menu={{ items: rowMenuItems(record) }}
-            trigger={['click']}
-            overlayClassName="kelune-crm-cc-confirm-dropdown"
-            open={openMenuId === record.id}
-            onOpenChange={(nextOpen, info) => {
-              // Ignore menu-item clicks (source 'menu') so an inline confirm
-              // can show without the dropdown closing under it.
-              if (info.source === 'trigger' || nextOpen) {
-                setOpenMenuId(nextOpen ? record.id : null);
-              }
-            }}
-          >
-            <Tooltip title={__('More actions', 'kelune-crm')}>
-              <Button shape="default" size="small" icon={<MoreOutlined />} />
+          {can(CAP.EDIT_EMAIL_TEMPLATES) ? (
+            <Tooltip title={__('Edit template', 'kelune-crm')}>
+              <Button
+                shape="default"
+                size="small"
+                icon={<EditOutlined />}
+                href={`#/email-templates/builder/${record.id}`}
+              />
             </Tooltip>
-          </Dropdown>
+          ) : null}
+          {rowMenuItems(record)?.length ? (
+            <Dropdown
+              menu={{ items: rowMenuItems(record) }}
+              trigger={['click']}
+              overlayClassName="kelune-crm-cc-confirm-dropdown"
+              open={openMenuId === record.id}
+              onOpenChange={(nextOpen, info) => {
+                // Ignore menu-item clicks (source 'menu') so an inline confirm
+                // can show without the dropdown closing under it.
+                if (info.source === 'trigger' || nextOpen) {
+                  setOpenMenuId(nextOpen ? record.id : null);
+                }
+              }}
+            >
+              <Tooltip title={__('More actions', 'kelune-crm')}>
+                <Button shape="default" size="small" icon={<MoreOutlined />} />
+              </Tooltip>
+            </Dropdown>
+          ) : null}
         </Space>
       ),
     },
@@ -575,14 +592,30 @@ const EmailTemplates = () => {
       sortOrder: DEFAULT_SORT.order,
     }));
 
+  // With no bulk actions the row checkboxes go too — selecting leads nowhere.
+  const bulkActions = can(CAP.DELETE_EMAIL_TEMPLATES)
+    ? [
+        {
+          value: 'delete',
+          label: __('Delete', 'kelune-crm'),
+          danger: true,
+          confirm: 'delete' as const,
+        },
+      ]
+    : [];
+
   return (
     <div className="kelune-crm-cc-email-templates-container">
       <ListPageHeader
         title={__('Email Templates', 'kelune-crm')}
-        primaryAction={{
-          label: __('Create Template', 'kelune-crm'),
-          onClick: handleCreate,
-        }}
+        primaryAction={
+          can(CAP.CREATE_EMAIL_TEMPLATES)
+            ? {
+                label: __('Create Template', 'kelune-crm'),
+                onClick: handleCreate,
+              }
+            : undefined
+        }
         onReload={loadTemplates}
       />
 
@@ -632,20 +665,13 @@ const EmailTemplates = () => {
 
       <BulkActionsBar
         selectedCount={selectedRowKeys.length}
-        actions={[
-          {
-            value: 'delete',
-            label: __('Delete', 'kelune-crm'),
-            danger: true,
-            confirm: 'delete',
-          },
-        ]}
+        actions={bulkActions}
         onConfirm={handleBulkAction}
         onClear={() => setSelectedRowKeys([])}
       />
 
       <Table
-        rowSelection={rowSelection}
+        rowSelection={bulkActions.length > 0 ? rowSelection : undefined}
         columns={columns}
         dataSource={items}
         rowKey="id"

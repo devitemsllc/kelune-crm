@@ -80,11 +80,24 @@ class Plugin
         $this->container->register('site_mailer', function (): \KeluneCRM\Services\SiteMailerService {
             return new \KeluneCRM\Services\SiteMailerService();
         });
+
+        $this->container->register('role_service', function (): \KeluneCRM\Services\RoleService {
+            return new \KeluneCRM\Services\RoleService();
+        });
+
+        $this->container->register('user_role_fields', function (): \KeluneCRM\Admin\UserRoleFields {
+            return new \KeluneCRM\Admin\UserRoleFields();
+        });
     }
 
     private function init(): void
     {
         add_action('init', [$this, 'onInit']);
+        // Capability sync runs before `admin_menu`, which is where the menu
+        // asks whether the current user holds the CRM capabilities.
+        if (is_admin()) {
+            add_action('init', [$this, 'syncRoles'], 5);
+        }
         add_action('admin_init', [$this, 'maybeMigrate']);
         add_action('admin_init', [$this, 'maybeActivationRedirect']);
         add_action('admin_menu', [$this, 'initAdminMenu']);
@@ -129,11 +142,24 @@ class Plugin
         // password resets, other plugins, and this plugin's Global/Custom sends.
         $this->container->get('site_mailer')->register();
 
+        // Multi-role checkboxes on the WordPress user screens.
+        $this->container->get('user_role_fields')->register();
+
         $this->loadModules();
 
         // Free has finished bootstrapping. The Pro add-on hangs all of its
         // registration (REST controllers, processors, triggers, flags) on this.
         do_action('kelune_crm_loaded', $this->container);
+    }
+
+    /**
+     * Keep site roles in step with the capability catalog: install the shipped
+     * roles on a site that predates them, and hand newly declared capabilities
+     * to the roles whose preset names them.
+     */
+    public function syncRoles(): void
+    {
+        $this->container->get('role_service')->sync();
     }
 
     public function onInit(): void

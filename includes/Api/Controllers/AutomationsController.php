@@ -8,10 +8,17 @@ use KeluneCRM\Repositories\AutomationRepository;
 use KeluneCRM\Repositories\AutomationStepRepository;
 use KeluneCRM\Services\EmailHtmlRenderer;
 use KeluneCRM\Services\EmailService;
+use KeluneCRM\Support\Capabilities;
 
 class AutomationsController extends BaseController
 {
     protected string $restBase = 'automations';
+
+    protected string $readCapability = Capabilities::VIEW_AUTOMATIONS;
+
+    protected string $writeCapability = Capabilities::EDIT_AUTOMATIONS;
+
+    protected string $deleteCapability = Capabilities::DELETE_AUTOMATIONS;
     private \KeluneCRM\Repositories\AutomationRepository $repository;
     private \KeluneCRM\Repositories\AutomationStepRepository $stepRepository;
     private EmailService $emailService;
@@ -21,6 +28,27 @@ class AutomationsController extends BaseController
         $this->repository = new AutomationRepository();
         $this->stepRepository = new AutomationStepRepository();
         $this->emailService = new EmailService();
+    }
+
+    public function checkCreatePermission(\WP_REST_Request $request): bool
+    {
+        return $this->userCan(Capabilities::CREATE_AUTOMATIONS);
+    }
+
+    /**
+     * A bulk request names its action in the body, so the gate is whatever that
+     * action needs on its own route — deleting through `/bulk` answers to the
+     * delete capability, duplicating to create, not to the edit one.
+     */
+    public function checkBulkPermission(\WP_REST_Request $request): bool
+    {
+        $capability = match ((string) $request->get_param('action')) {
+            'delete' => $this->deleteCapability,
+            'duplicate' => Capabilities::CREATE_AUTOMATIONS,
+            default => $this->writeCapability,
+        };
+
+        return $this->userCan($capability);
     }
 
     public function registerRoutes(string $namespace): void
@@ -70,7 +98,7 @@ class AutomationsController extends BaseController
             [
                 'methods' => \WP_REST_Server::CREATABLE,
                 'callback' => [$this, 'createItem'],
-                'permission_callback' => [$this, 'checkWritePermission'],
+                'permission_callback' => [$this, 'checkCreatePermission'],
             ],
         ]);
 
@@ -88,14 +116,14 @@ class AutomationsController extends BaseController
             [
                 'methods' => \WP_REST_Server::DELETABLE,
                 'callback' => [$this, 'deleteItem'],
-                'permission_callback' => [$this, 'checkWritePermission'],
+                'permission_callback' => [$this, 'checkDeletePermission'],
             ],
         ]);
 
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/duplicate', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'duplicateItem'],
-            'permission_callback' => [$this, 'checkWritePermission'],
+            'permission_callback' => [$this, 'checkCreatePermission'],
         ]);
 
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/activate', [
@@ -231,6 +259,9 @@ class AutomationsController extends BaseController
                 'email' => [
                     'required' => true,
                     'type' => 'string',
+                    // Without a validate_callback WordPress skips the type
+                    // check, and sanitize_email() fatals on an array.
+                    'validate_callback' => 'rest_validate_request_arg',
                     'sanitize_callback' => 'sanitize_email',
                 ],
             ],
@@ -239,7 +270,7 @@ class AutomationsController extends BaseController
         register_rest_route($namespace, '/' . $this->restBase . '/bulk', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'bulkAction'],
-            'permission_callback' => [$this, 'checkWritePermission'],
+            'permission_callback' => [$this, 'checkBulkPermission'],
             'args' => [
                 'action' => [
                     'required' => true,

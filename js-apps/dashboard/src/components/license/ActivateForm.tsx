@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Alert, Button, Col, Form, Input, Row, Space, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import { __ } from '@wordpress/i18n';
 import { useDispatch } from '@store/hooks';
 import { setLicense } from '@store/slices/licenseSlice';
 import api from '@/services/api';
+import { CAP, can } from '@utils/capabilities';
 import { licenseEmail } from '@utils/license';
 import { getErrorMessage } from '@utils/getErrorMessage';
 
@@ -23,6 +25,7 @@ interface ActivateFormValues {
  */
 const ActivateForm = ({ setIsLoading }: ActivateFormProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [form] = Form.useForm<ActivateFormValues>();
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -39,6 +42,13 @@ const ActivateForm = ({ setIsLoading }: ActivateFormProps) => {
       setErrorMessage('');
       dispatch(setLicense(response.data));
       message.success(__('Successfully activated.', 'kelune-crm'));
+
+      // Anyone who can open the CRM may activate an unlicensed install, but the
+      // license page itself answers to `manage_settings`. Send whoever may not
+      // stay to `/`, which resolves to the first page they can open.
+      if (!can(CAP.MANAGE_SETTINGS)) {
+        navigate('/', { replace: true });
+      }
     } catch (error) {
       setErrorMessage(
         getErrorMessage(

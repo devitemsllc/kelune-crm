@@ -6,10 +6,17 @@ namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Models\CustomField;
 use KeluneCRM\Repositories\CustomFieldRepository;
+use KeluneCRM\Support\Capabilities;
 
 class CustomFieldsController extends BaseController
 {
     protected string $restBase = 'custom-fields';
+
+    protected string $readCapability = Capabilities::ACCESS;
+
+    protected string $writeCapability = Capabilities::MANAGE_CUSTOM_FIELDS;
+
+    protected string $deleteCapability = Capabilities::MANAGE_CUSTOM_FIELDS;
     private \KeluneCRM\Repositories\CustomFieldRepository $repository;
 
     public function __construct()
@@ -62,15 +69,23 @@ class CustomFieldsController extends BaseController
         ]);
     }
 
+    /** A request param as a string; a non-scalar becomes '' rather than "Array". */
+    private function stringParam(\WP_REST_Request $request, string $key): string
+    {
+        $value = $request->get_param($key);
+
+        return is_scalar($value) ? (string) $value : '';
+    }
+
     public function getItems(\WP_REST_Request $request): \WP_REST_Response
     {
         $params = [
             'page' => absint($request->get_param('page') ?? 1),
             'per_page' => max(1, absint($request->get_param('per_page') ?? 100)),
-            'search' => sanitize_text_field((string) ($request->get_param('search') ?? '')),
-            'field_type' => sanitize_text_field((string) ($request->get_param('field_type') ?? '')),
+            'search' => sanitize_text_field($this->stringParam($request, 'search')),
+            'field_type' => sanitize_text_field($this->stringParam($request, 'field_type')),
             'required' => $request->has_param('required')
-                ? sanitize_text_field((string) $request->get_param('required'))
+                ? sanitize_text_field($this->stringParam($request, 'required'))
                 : '',
         ];
 

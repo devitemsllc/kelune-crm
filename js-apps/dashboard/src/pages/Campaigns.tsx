@@ -54,6 +54,7 @@ import ABTestConfig from '../components/campaigns/ABTestConfig';
 import CampaignAnalytics from '../components/campaigns/CampaignAnalytics';
 import ActionConfirm from '../components/common/ActionConfirm';
 import BulkActionsBar from '../components/common/BulkActionsBar';
+import { CAP, can } from '../utils/capabilities';
 import type { BulkActionValue } from '../components/common/BulkActionsBar';
 import {
   ListPageHeader,
@@ -411,23 +412,29 @@ const Campaigns = () => {
   const rowMenuItems = (record: Campaign): MenuProps['items'] => {
     const items: MenuProps['items'] = [];
 
-    items.push(
-      {
+    if (can(CAP.EDIT_CAMPAIGNS)) {
+      items.push({
         key: 'configure',
         label: <span>{__('Edit config', 'kelune-crm')}</span>,
         onClick: () => {
           setOpenMenuId(null);
           handleConfigure(record);
         },
-      },
-      {
+      });
+    }
+
+    if (can(CAP.CREATE_CAMPAIGNS)) {
+      items.push({
         key: 'duplicate',
         label: <span>{__('Duplicate', 'kelune-crm')}</span>,
         onClick: () => {
           setOpenMenuId(null);
           handleDuplicate(record.id);
         },
-      },
+      });
+    }
+
+    items.push(
       {
         key: 'analytics',
         label: <span>{__('Analytics', 'kelune-crm')}</span>,
@@ -458,25 +465,30 @@ const Campaigns = () => {
           setSelectedCampaign(record);
           setAbTestModalVisible(true);
         },
-      },
-      { type: 'divider' },
-      {
-        key: 'delete',
-        danger: true,
-        label: (
-          <ActionConfirm
-            action="delete"
-            onConfirm={() => {
-              setOpenMenuId(null);
-              handleDelete(record.id);
-            }}
-            onCancel={() => setOpenMenuId(null)}
-          >
-            <span>{__('Delete', 'kelune-crm')}</span>
-          </ActionConfirm>
-        ),
       }
     );
+
+    if (can(CAP.DELETE_CAMPAIGNS)) {
+      items.push(
+        { type: 'divider' },
+        {
+          key: 'delete',
+          danger: true,
+          label: (
+            <ActionConfirm
+              action="delete"
+              onConfirm={() => {
+                setOpenMenuId(null);
+                handleDelete(record.id);
+              }}
+              onCancel={() => setOpenMenuId(null)}
+            >
+              <span>{__('Delete', 'kelune-crm')}</span>
+            </ActionConfirm>
+          ),
+        }
+      );
+    }
 
     return items;
   };
@@ -608,14 +620,16 @@ const Campaigns = () => {
       align: 'right',
       render: (_, record) => (
         <Space>
-          <Tooltip title={__('Edit campaign', 'kelune-crm')}>
-            <Button
-              shape="default"
-              size="small"
-              icon={<EditOutlined />}
-              href={`#/campaigns/builder/${record.id}`}
-            />
-          </Tooltip>
+          {can(CAP.EDIT_CAMPAIGNS) ? (
+            <Tooltip title={__('Edit campaign', 'kelune-crm')}>
+              <Button
+                shape="default"
+                size="small"
+                icon={<EditOutlined />}
+                href={`#/campaigns/builder/${record.id}`}
+              />
+            </Tooltip>
+          ) : null}
           <Dropdown
             menu={{ items: rowMenuItems(record) }}
             trigger={['click']}
@@ -723,14 +737,41 @@ const Campaigns = () => {
       sortOrder: DEFAULT_SORT.order,
     }));
 
+  // With no bulk actions the row checkboxes go too — selecting leads nowhere.
+  const bulkActions = [
+    ...(can(CAP.SEND_CAMPAIGNS)
+      ? [
+          { value: 'activate', label: __('Activate', 'kelune-crm') },
+          { value: 'pause', label: __('Pause', 'kelune-crm') },
+        ]
+      : []),
+    ...(can(CAP.CREATE_CAMPAIGNS)
+      ? [{ value: 'duplicate', label: __('Duplicate', 'kelune-crm') }]
+      : []),
+    ...(can(CAP.DELETE_CAMPAIGNS)
+      ? [
+          {
+            value: 'delete',
+            label: __('Delete', 'kelune-crm'),
+            danger: true,
+            confirm: 'delete' as const,
+          },
+        ]
+      : []),
+  ];
+
   return (
     <div className="kelune-crm-cc-campaigns-container">
       <ListPageHeader
         title={__('Campaigns', 'kelune-crm')}
-        primaryAction={{
-          label: __('Create Campaign', 'kelune-crm'),
-          onClick: handleCreate,
-        }}
+        primaryAction={
+          can(CAP.CREATE_CAMPAIGNS)
+            ? {
+                label: __('Create Campaign', 'kelune-crm'),
+                onClick: handleCreate,
+              }
+            : undefined
+        }
         onReload={reloadAll}
       />
 
@@ -805,23 +846,13 @@ const Campaigns = () => {
 
       <BulkActionsBar
         selectedCount={selectedRowKeys.length}
-        actions={[
-          { value: 'activate', label: __('Activate', 'kelune-crm') },
-          { value: 'pause', label: __('Pause', 'kelune-crm') },
-          { value: 'duplicate', label: __('Duplicate', 'kelune-crm') },
-          {
-            value: 'delete',
-            label: __('Delete', 'kelune-crm'),
-            danger: true,
-            confirm: 'delete',
-          },
-        ]}
+        actions={bulkActions}
         onConfirm={handleBulkAction}
         onClear={() => setSelectedRowKeys([])}
       />
 
       <Table
-        rowSelection={rowSelection}
+        rowSelection={bulkActions.length > 0 ? rowSelection : undefined}
         columns={columns}
         dataSource={items}
         rowKey="id"

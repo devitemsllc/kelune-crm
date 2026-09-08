@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Menu, Divider, Flex } from 'antd';
 import { __ } from '@wordpress/i18n';
 import WebhookList from '../components/webhooks/WebhookList';
@@ -11,13 +10,17 @@ import DoubleOptinSettings from './settings/DoubleOptinSettings';
 import EmailProviders from './settings/EmailProviders';
 import ComplianceSettings from './settings/ComplianceSettings';
 import CronMonitor from './settings/CronMonitor';
-import { Link, useLocation } from 'react-router-dom';
+import RolesPermissions from './settings/RolesPermissions';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import useScreens from '../hooks/useScreens';
 import {
   getSettingsSections,
-  getSettingsMenuKeyFromPath as getMenuKeyFromPath,
+  getSettingsSectionByPath,
   settingsSectionPath,
 } from '../config/settingsNav';
+import NoPermission from '../components/common/NoPermission';
+import NotFound from './NotFound';
+import { can } from '../utils/capabilities';
 
 // Shell only: sidebar + route switch. Each section component fetches and saves
 // itself fully independently (own GET on mount, own POST on save, own form).
@@ -27,21 +30,30 @@ const Settings = () => {
   // Below 992px (stage 2) the sidebar moves into the header drawer (nested under
   // "Settings"), so this page renders content only — full width, no sidebar.
   const narrow = xs || sm || md;
-  // Initialize from the current route to prevent a flash of the default tab.
-  const [selectedMenu, setSelectedMenu] = useState(() =>
-    getMenuKeyFromPath(location.pathname)
-  );
+  // The section comes straight from the URL, so no state can lag behind it.
+  const requested = getSettingsSectionByPath(location.pathname);
 
-  // Sync selected menu with router navigation.
-  useEffect(() => {
-    setSelectedMenu(getMenuKeyFromPath(location.pathname));
-  }, [location.pathname]);
+  // Sections come from the shared config, so the header drawer nests the same
+  // list on narrow screens. Each label is a real `<Link>`, openable in a new tab.
+  const sections = getSettingsSections();
 
-  // Each section renders its label as a real `<Link>` (`#/settings/<route>`) so
-  // sections are openable in a new tab; plain clicks route via HashRouter and
-  // `selectedMenu` syncs from the location effect above. Sections come from the
-  // shared config so the header drawer nests the same list on narrow screens.
-  const menuItems = getSettingsSections().map(({ key, icon, text, route }) => ({
+  if (!requested) {
+    return <NotFound />;
+  }
+
+  // The nav links to the bare `/settings` for any settings capability, so it
+  // resolves to the first section the role can open rather than refusing.
+  if (!can(requested.capability)) {
+    if (requested.route === '' && sections.length > 0) {
+      return <Navigate to={settingsSectionPath(sections[0].route)} replace />;
+    }
+
+    return <NoPermission />;
+  }
+
+  const activeMenu = requested.key;
+
+  const menuItems = sections.map(({ key, icon, text, route }) => ({
     key,
     label: (
       <Link to={settingsSectionPath(route)} style={{ color: 'inherit' }}>
@@ -52,7 +64,7 @@ const Settings = () => {
   }));
 
   const renderContent = () => {
-    switch (selectedMenu) {
+    switch (activeMenu) {
       case 'general':
         return <GeneralSettings />;
 
@@ -88,18 +100,16 @@ const Settings = () => {
       case 'compliance':
         return <ComplianceSettings />;
 
+      case 'roles':
+        return <RolesPermissions />;
+
       case 'cron-monitor':
         return <CronMonitor />;
 
       default:
-        return null;
+        return <NoPermission />;
     }
   };
-
-  // Don't render until selectedMenu is initialized to prevent flash
-  if (!selectedMenu) {
-    return null;
-  }
 
   // Option/form sections (#/settings, /email-global, /double-optin, /compliance)
   // read better constrained and centered; the table/list sections stay full
@@ -107,17 +117,17 @@ const Settings = () => {
   // margins would absorb the free space before growing and collapse the item, so
   // give it an explicit width capped at 960 and center via auto inline margins.
   const isOptionSection =
-    selectedMenu === 'general' ||
-    selectedMenu === 'email-global' ||
-    selectedMenu === 'double-optin' ||
-    selectedMenu === 'compliance';
+    activeMenu === 'general' ||
+    activeMenu === 'email-global' ||
+    activeMenu === 'double-optin' ||
+    activeMenu === 'compliance';
   const contentStyle = isOptionSection
     ? { minWidth: 0, width: '100%', maxWidth: 960, marginInline: 'auto' }
     : { flex: 1, minWidth: 0 };
 
   // Stage 2 (<768px): the sidebar lives in the header drawer, so render the
-  // active section's content only, full width.
-  if (narrow) {
+  // active section's content only, full width. A single section drops it too.
+  if (narrow || sections.length <= 1) {
     return (
       <div className="kelune-crm-cc-settings-container">
         <div style={contentStyle}>{renderContent()}</div>
@@ -141,7 +151,7 @@ const Settings = () => {
           <Menu
             mode="inline"
             inlineIndent={16}
-            selectedKeys={[selectedMenu]}
+            selectedKeys={[activeMenu]}
             items={menuItems}
             style={{ border: 'none', background: 'transparent' }}
           />

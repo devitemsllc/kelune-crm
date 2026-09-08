@@ -7,6 +7,7 @@ namespace KeluneCRM\Api\Controllers;
 use KeluneCRM\Models\EmailProvider;
 use KeluneCRM\Repositories\EmailProviderRepository;
 use KeluneCRM\Services\Providers\ProviderFactory;
+use KeluneCRM\Support\Capabilities;
 
 /**
  * REST CRUD for email provider connections, plus connection testing and
@@ -16,6 +17,12 @@ use KeluneCRM\Services\Providers\ProviderFactory;
 class EmailProviderController extends BaseController
 {
     protected string $restBase = 'email-providers';
+
+    protected string $readCapability = Capabilities::MANAGE_EMAIL_PROVIDERS;
+
+    protected string $writeCapability = Capabilities::MANAGE_EMAIL_PROVIDERS;
+
+    protected string $deleteCapability = Capabilities::MANAGE_EMAIL_PROVIDERS;
 
     private EmailProviderRepository $repository;
 
@@ -373,7 +380,8 @@ class EmailProviderController extends BaseController
             );
         }
 
-        $email = strtolower(sanitize_email((string) $request->get_param('email')));
+        $submitted = $request->get_param('email');
+        $email = is_scalar($submitted) ? strtolower(sanitize_email((string) $submitted)) : '';
         if (!is_email($email)) {
             return $this->errorResponse(__('Please provide a valid email address.', 'kelune-crm'), 'invalid_email', 400);
         }
@@ -446,7 +454,8 @@ class EmailProviderController extends BaseController
             );
         }
 
-        $email = strtolower(sanitize_email((string) $request->get_param('email')));
+        $submitted = $request->get_param('email');
+        $email = is_scalar($submitted) ? strtolower(sanitize_email((string) $submitted)) : '';
         $manual = array_map('strtolower', $provider->manualSenders());
         if (!in_array($email, $manual, true)) {
             return $this->errorResponse(
@@ -522,11 +531,11 @@ class EmailProviderController extends BaseController
 
         if (empty($data['sender_email'])) {
             $errors[] = __('Sender email is required', 'kelune-crm');
-        } elseif (!is_email((string) $data['sender_email'])) {
+        } elseif (!is_email($this->stringValue($data['sender_email']))) {
             $errors[] = __('Sender email is invalid', 'kelune-crm');
         }
 
-        if (!empty($data['reply_to']) && !is_email((string) $data['reply_to'])) {
+        if (!empty($data['reply_to']) && !is_email($this->stringValue($data['reply_to']))) {
             $errors[] = __('Reply-to email is invalid', 'kelune-crm');
         }
 
@@ -549,16 +558,16 @@ class EmailProviderController extends BaseController
      */
     private function sanitizeInputData(array $data, array $existing, array $existing_settings = []): array
     {
-        $type = sanitize_key((string) ($data['provider_type'] ?? ''));
-        $status = sanitize_key((string) ($data['status'] ?? 'active'));
+        $type = sanitize_key($this->stringValue($data['provider_type'] ?? ''));
+        $status = sanitize_key($this->stringValue($data['status'] ?? 'active'));
 
         $clean = [
-            'name' => sanitize_text_field((string) ($data['name'] ?? '')),
+            'name' => sanitize_text_field($this->stringValue($data['name'] ?? '')),
             'provider_type' => $type,
-            'sender_name' => sanitize_text_field((string) ($data['sender_name'] ?? '')),
-            'sender_email' => sanitize_email((string) ($data['sender_email'] ?? '')),
-            'reply_to' => !empty($data['reply_to']) ? sanitize_email((string) $data['reply_to']) : '',
-            'region' => sanitize_text_field((string) ($data['region'] ?? '')),
+            'sender_name' => sanitize_text_field($this->stringValue($data['sender_name'] ?? '')),
+            'sender_email' => sanitize_email($this->stringValue($data['sender_email'] ?? '')),
+            'reply_to' => !empty($data['reply_to']) ? sanitize_email($this->stringValue($data['reply_to'])) : '',
+            'region' => sanitize_text_field($this->stringValue($data['region'] ?? '')),
             'credentials' => $this->sanitizeCredentials($type, $data['credentials'] ?? [], $existing),
             'settings' => $this->sanitizeSettings($type, $data['settings'] ?? [], $existing_settings),
             'status' => in_array($status, ['active', 'inactive'], true) ? $status : 'active',
@@ -665,6 +674,12 @@ class EmailProviderController extends BaseController
         return true;
     }
 
+    /** A submitted field as a string; a non-scalar becomes '' rather than "Array". */
+    private function stringValue(mixed $value): string
+    {
+        return is_scalar($value) ? (string) $value : '';
+    }
+
     /**
      * Sanitize one credential value.
      *
@@ -677,7 +692,7 @@ class EmailProviderController extends BaseController
      */
     private function sanitizeCredentialValue($value): string
     {
-        $clean = preg_replace('/[\x00-\x1F\x7F]/', '', (string) $value);
+        $clean = preg_replace('/[\x00-\x1F\x7F]/', '', $this->stringValue($value));
 
         return trim($clean ?? '');
     }
@@ -704,23 +719,23 @@ class EmailProviderController extends BaseController
 
         switch ($type) {
             case 'smtp':
-                $encryption = sanitize_key((string) ($raw['smtp_encryption'] ?? 'tls'));
+                $encryption = sanitize_key($this->stringValue($raw['smtp_encryption'] ?? 'tls'));
                 return [
-                    'smtp_host' => sanitize_text_field((string) ($raw['smtp_host'] ?? '')),
+                    'smtp_host' => sanitize_text_field($this->stringValue($raw['smtp_host'] ?? '')),
                     'smtp_port' => absint($raw['smtp_port'] ?? 587),
-                    'smtp_username' => sanitize_text_field((string) ($raw['smtp_username'] ?? '')),
+                    'smtp_username' => sanitize_text_field($this->stringValue($raw['smtp_username'] ?? '')),
                     'smtp_password' => $secretValue('smtp_password'),
                     'smtp_encryption' => in_array($encryption, ['none', 'ssl', 'tls'], true) ? $encryption : 'tls',
                 ];
             case 'ses':
                 return [
-                    'ses_access_key_id' => trim(sanitize_text_field((string) ($raw['ses_access_key_id'] ?? ''))),
+                    'ses_access_key_id' => trim(sanitize_text_field($this->stringValue($raw['ses_access_key_id'] ?? ''))),
                     'ses_secret_access_key' => $secretValue('ses_secret_access_key'),
                 ];
             case 'mailgun':
                 return [
                     'mailgun_api_key' => $secretValue('mailgun_api_key'),
-                    'mailgun_domain' => sanitize_text_field((string) ($raw['mailgun_domain'] ?? '')),
+                    'mailgun_domain' => sanitize_text_field($this->stringValue($raw['mailgun_domain'] ?? '')),
                 ];
             case 'sendgrid':
                 return [
@@ -766,16 +781,16 @@ class EmailProviderController extends BaseController
         }
 
         // Test an unsaved inline config.
-        $type = sanitize_key((string) ($data['provider_type'] ?? ''));
+        $type = sanitize_key($this->stringValue($data['provider_type'] ?? ''));
         if (!$this->factory->isValidType($type)) {
             return $this->errorResponse(__('A valid provider type is required', 'kelune-crm'), 'invalid_type', 400);
         }
 
         $model = new EmailProvider([
             'provider_type' => $type,
-            'sender_email' => sanitize_email((string) ($data['sender_email'] ?? '')),
-            'sender_name' => sanitize_text_field((string) ($data['sender_name'] ?? '')),
-            'region' => sanitize_text_field((string) ($data['region'] ?? '')),
+            'sender_email' => sanitize_email($this->stringValue($data['sender_email'] ?? '')),
+            'sender_name' => sanitize_text_field($this->stringValue($data['sender_name'] ?? '')),
+            'region' => sanitize_text_field($this->stringValue($data['region'] ?? '')),
             'credentials' => $this->sanitizeCredentials($type, $data['credentials'] ?? [], []),
         ]);
 

@@ -6,6 +6,7 @@ namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Repositories\EmailLogRepository;
 use KeluneCRM\Services\EmailLogService;
+use KeluneCRM\Support\Capabilities;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -18,6 +19,12 @@ class EmailLogsController extends BaseController
 {
     protected string $restBase = 'email-logs';
 
+    protected string $readCapability = Capabilities::VIEW_EMAIL_LOGS;
+
+    protected string $writeCapability = Capabilities::SEND_CAMPAIGNS;
+
+    protected string $deleteCapability = Capabilities::DELETE_EMAIL_LOGS;
+
     private \KeluneCRM\Repositories\EmailLogRepository $repository;
     private \KeluneCRM\Services\EmailLogService $service;
 
@@ -25,6 +32,11 @@ class EmailLogsController extends BaseController
     {
         $this->repository = new EmailLogRepository();
         $this->service = new EmailLogService();
+    }
+
+    public function checkExportPermission(\WP_REST_Request $request): bool
+    {
+        return $this->userCan(Capabilities::EXPORT_EMAIL_LOGS);
     }
 
     public function registerRoutes(string $namespace): void
@@ -166,7 +178,7 @@ class EmailLogsController extends BaseController
             [
                 'methods' => WP_REST_Server::READABLE,
                 'callback' => [$this, 'exportCSV'],
-                'permission_callback' => [$this, 'checkReadPermission'],
+                'permission_callback' => [$this, 'checkExportPermission'],
                 'args' => [
                     'search' => [
                         'sanitize_callback' => 'sanitize_text_field',

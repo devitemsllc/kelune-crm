@@ -72,6 +72,7 @@ import {
 } from '../components/automations/automationSortOptions';
 import type { SortOrder } from '../components/automations/automationSortOptions';
 import BulkActionsBar from '../components/common/BulkActionsBar';
+import { CAP, can } from '../utils/capabilities';
 import type { BulkActionValue } from '../components/common/BulkActionsBar';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { timeDiff, timeFormat } from '../utils/time';
@@ -414,22 +415,30 @@ const Automations = () => {
   // is kept open (see openMenuId guard) so the confirm anchor survives.
   const rowMenuItems = (record: Automation) => {
     return [
-      {
-        key: 'edit-info',
-        label: <span>{__('Edit info', 'kelune-crm')}</span>,
-        onClick: () => {
-          setOpenMenuId(null);
-          handleEditInfo(record);
-        },
-      },
-      {
-        key: 'duplicate',
-        label: <span>{__('Duplicate', 'kelune-crm')}</span>,
-        onClick: () => {
-          setOpenMenuId(null);
-          handleDuplicate(record.id);
-        },
-      },
+      ...(can(CAP.EDIT_AUTOMATIONS)
+        ? [
+            {
+              key: 'edit-info',
+              label: <span>{__('Edit info', 'kelune-crm')}</span>,
+              onClick: () => {
+                setOpenMenuId(null);
+                handleEditInfo(record);
+              },
+            },
+          ]
+        : []),
+      ...(can(CAP.CREATE_AUTOMATIONS)
+        ? [
+            {
+              key: 'duplicate',
+              label: <span>{__('Duplicate', 'kelune-crm')}</span>,
+              onClick: () => {
+                setOpenMenuId(null);
+                handleDuplicate(record.id);
+              },
+            },
+          ]
+        : []),
       {
         key: 'view-stats',
         label: <span>{__('View stats', 'kelune-crm')}</span>,
@@ -438,23 +447,27 @@ const Automations = () => {
           handleViewStats(record);
         },
       },
-      { type: 'divider' as const },
-      {
-        key: 'delete',
-        danger: true,
-        label: (
-          <ActionConfirm
-            action="delete"
-            onConfirm={() => {
-              setOpenMenuId(null);
-              handleDelete(record.id);
-            }}
-            onCancel={() => setOpenMenuId(null)}
-          >
-            <span>{__('Delete', 'kelune-crm')}</span>
-          </ActionConfirm>
-        ),
-      },
+      ...(can(CAP.DELETE_AUTOMATIONS)
+        ? [
+            { type: 'divider' as const },
+            {
+              key: 'delete',
+              danger: true,
+              label: (
+                <ActionConfirm
+                  action="delete"
+                  onConfirm={() => {
+                    setOpenMenuId(null);
+                    handleDelete(record.id);
+                  }}
+                  onCancel={() => setOpenMenuId(null)}
+                >
+                  <span>{__('Delete', 'kelune-crm')}</span>
+                </ActionConfirm>
+              ),
+            },
+          ]
+        : []),
     ];
   };
 
@@ -584,13 +597,15 @@ const Automations = () => {
       align: 'right',
       render: (_, record) => (
         <Space>
-          <Tooltip title={__('Edit workflow', 'kelune-crm')}>
-            <Button
-              size="small"
-              icon={<EditOutlined />}
-              href={`#/automations/builder/${record.id}`}
-            />
-          </Tooltip>
+          {can(CAP.EDIT_AUTOMATIONS) ? (
+            <Tooltip title={__('Edit workflow', 'kelune-crm')}>
+              <Button
+                size="small"
+                icon={<EditOutlined />}
+                href={`#/automations/builder/${record.id}`}
+              />
+            </Tooltip>
+          ) : null}
           <Dropdown
             menu={{ items: rowMenuItems(record) }}
             trigger={['click']}
@@ -716,14 +731,41 @@ const Automations = () => {
       sortOrder: DEFAULT_SORT.order,
     }));
 
+  // With no bulk actions the row checkboxes go too — selecting leads nowhere.
+  const bulkActions = [
+    ...(can(CAP.EDIT_AUTOMATIONS)
+      ? [
+          { value: 'activate', label: __('Activate', 'kelune-crm') },
+          { value: 'pause', label: __('Pause', 'kelune-crm') },
+        ]
+      : []),
+    ...(can(CAP.CREATE_AUTOMATIONS)
+      ? [{ value: 'duplicate', label: __('Duplicate', 'kelune-crm') }]
+      : []),
+    ...(can(CAP.DELETE_AUTOMATIONS)
+      ? [
+          {
+            value: 'delete',
+            label: __('Delete', 'kelune-crm'),
+            danger: true,
+            confirm: 'delete' as const,
+          },
+        ]
+      : []),
+  ];
+
   return (
     <div className="kelune-crm-cc-automations-container">
       <ListPageHeader
         title={__('Automations', 'kelune-crm')}
-        primaryAction={{
-          label: __('Create Automation', 'kelune-crm'),
-          onClick: handleCreate,
-        }}
+        primaryAction={
+          can(CAP.CREATE_AUTOMATIONS)
+            ? {
+                label: __('Create Automation', 'kelune-crm'),
+                onClick: handleCreate,
+              }
+            : undefined
+        }
         onReload={reload}
       />
 
@@ -799,23 +841,13 @@ const Automations = () => {
 
       <BulkActionsBar
         selectedCount={selectedRowKeys.length}
-        actions={[
-          { value: 'activate', label: __('Activate', 'kelune-crm') },
-          { value: 'pause', label: __('Pause', 'kelune-crm') },
-          { value: 'duplicate', label: __('Duplicate', 'kelune-crm') },
-          {
-            value: 'delete',
-            label: __('Delete', 'kelune-crm'),
-            danger: true,
-            confirm: 'delete',
-          },
-        ]}
+        actions={bulkActions}
         onConfirm={handleBulkAction}
         onClear={() => setSelectedRowKeys([])}
       />
 
       <Table
-        rowSelection={rowSelection}
+        rowSelection={bulkActions.length > 0 ? rowSelection : undefined}
         columns={columns}
         dataSource={items}
         rowKey="id"

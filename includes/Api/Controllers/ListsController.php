@@ -5,15 +5,27 @@ declare(strict_types=1);
 namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Repositories\ListRepository;
+use KeluneCRM\Support\Capabilities;
 
 class ListsController extends BaseController
 {
     protected string $restBase = 'lists';
+
+    protected string $readCapability = Capabilities::VIEW_LISTS;
+
+    protected string $writeCapability = Capabilities::EDIT_LISTS;
+
+    protected string $deleteCapability = Capabilities::DELETE_LISTS;
     private \KeluneCRM\Repositories\ListRepository $repository;
 
     public function __construct()
     {
         $this->repository = new ListRepository();
+    }
+
+    public function checkCreatePermission(\WP_REST_Request $request): bool
+    {
+        return $this->userCan(Capabilities::CREATE_LISTS);
     }
 
     public function registerRoutes(string $namespace): void
@@ -30,7 +42,7 @@ class ListsController extends BaseController
             [
                 'methods' => \WP_REST_Server::CREATABLE,
                 'callback' => [$this, 'createItem'],
-                'permission_callback' => [$this, 'checkWritePermission'],
+                'permission_callback' => [$this, 'checkCreatePermission'],
             ],
         ]);
 

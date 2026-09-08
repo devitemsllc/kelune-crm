@@ -5,10 +5,17 @@ declare(strict_types=1);
 namespace KeluneCRM\Api\Controllers;
 
 use KeluneCRM\Services\SettingsService;
+use KeluneCRM\Support\Capabilities;
 
 class SettingsController extends BaseController
 {
     protected string $restBase = 'settings';
+
+    protected string $readCapability = Capabilities::ACCESS;
+
+    protected string $writeCapability = Capabilities::MANAGE_SETTINGS;
+
+    protected string $deleteCapability = Capabilities::MANAGE_SETTINGS;
 
     /**
      * How each setting key is sanitized on the way in. The key set mirrors
@@ -58,6 +65,9 @@ class SettingsController extends BaseController
         'track_email_clicks' => 'bool',
         'use_gravatar_service' => 'bool',
 
+        // Roles and permissions
+        'multiple_user_roles_enabled' => 'bool',
+
         // Setup wizard progress.
         'setup_wizard_step' => 'int',
         'setup_wizard_finished' => 'bool',
@@ -78,12 +88,12 @@ class SettingsController extends BaseController
             [
                 'methods' => \WP_REST_Server::READABLE,
                 'callback' => [$this, 'getSettings'],
-                'permission_callback' => [$this, 'checkPermission'],
+                'permission_callback' => [$this, 'checkReadPermission'],
             ],
             [
                 'methods' => \WP_REST_Server::EDITABLE,
                 'callback' => [$this, 'updateSettings'],
-                'permission_callback' => [$this, 'checkPermission'],
+                'permission_callback' => [$this, 'checkWritePermission'],
             ],
         ]);
     }

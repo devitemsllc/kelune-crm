@@ -8,10 +8,17 @@ use KeluneCRM\Models\Campaign;
 use KeluneCRM\Repositories\CampaignRepository;
 use KeluneCRM\Services\EmailHtmlRenderer;
 use KeluneCRM\Services\EmailService;
+use KeluneCRM\Support\Capabilities;
 
 class CampaignsController extends BaseController
 {
     protected string $restBase = 'campaigns';
+
+    protected string $readCapability = Capabilities::VIEW_CAMPAIGNS;
+
+    protected string $writeCapability = Capabilities::EDIT_CAMPAIGNS;
+
+    protected string $deleteCapability = Capabilities::DELETE_CAMPAIGNS;
     private \KeluneCRM\Repositories\CampaignRepository $repository;
     private \KeluneCRM\Services\EmailService $emailService;
 
@@ -19,6 +26,33 @@ class CampaignsController extends BaseController
     {
         $this->repository = new CampaignRepository();
         $this->emailService = new EmailService();
+    }
+
+    public function checkCreatePermission(\WP_REST_Request $request): bool
+    {
+        return $this->userCan(Capabilities::CREATE_CAMPAIGNS);
+    }
+
+    public function checkSendPermission(\WP_REST_Request $request): bool
+    {
+        return $this->userCan(Capabilities::SEND_CAMPAIGNS);
+    }
+
+    /**
+     * A bulk request names its action in the body, so the gate is whatever that
+     * action needs on its own route — deleting through `/bulk` answers to the
+     * delete capability, activating to the send one, duplicating to create.
+     */
+    public function checkBulkPermission(\WP_REST_Request $request): bool
+    {
+        $capability = match ((string) $request->get_param('action')) {
+            'delete' => $this->deleteCapability,
+            'activate', 'pause' => Capabilities::SEND_CAMPAIGNS,
+            'duplicate' => Capabilities::CREATE_CAMPAIGNS,
+            default => $this->writeCapability,
+        };
+
+        return $this->userCan($capability);
     }
 
     public function registerRoutes(string $namespace): void
@@ -68,7 +102,7 @@ class CampaignsController extends BaseController
             [
                 'methods' => \WP_REST_Server::CREATABLE,
                 'callback' => [$this, 'createItem'],
-                'permission_callback' => [$this, 'checkWritePermission'],
+                'permission_callback' => [$this, 'checkCreatePermission'],
             ],
         ]);
 
@@ -86,14 +120,14 @@ class CampaignsController extends BaseController
             [
                 'methods' => \WP_REST_Server::DELETABLE,
                 'callback' => [$this, 'deleteItem'],
-                'permission_callback' => [$this, 'checkWritePermission'],
+                'permission_callback' => [$this, 'checkDeletePermission'],
             ],
         ]);
 
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/duplicate', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'duplicateItem'],
-            'permission_callback' => [$this, 'checkWritePermission'],
+            'permission_callback' => [$this, 'checkCreatePermission'],
         ]);
 
         // Activating IS the send: it permits dispatch, which starts at once or at
@@ -101,24 +135,26 @@ class CampaignsController extends BaseController
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/activate', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'activateCampaign'],
-            'permission_callback' => [$this, 'checkWritePermission'],
+            'permission_callback' => [$this, 'checkSendPermission'],
         ]);
 
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/pause', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'pauseCampaign'],
-            'permission_callback' => [$this, 'checkWritePermission'],
+            'permission_callback' => [$this, 'checkSendPermission'],
         ]);
 
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/test', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'sendTest'],
-            'permission_callback' => [$this, 'checkWritePermission'],
+            'permission_callback' => [$this, 'checkSendPermission'],
             'args' => [
                 'email' => [
                     'required' => true,
-                    'validate_callback' => function ($param) {
-                        return is_email($param);
+                    // The scalar test comes first: is_email() and
+                    // sanitize_email() both fatal on an array.
+                    'validate_callback' => static function ($param): bool {
+                        return is_scalar($param) && false !== is_email((string) $param);
                     },
                     'sanitize_callback' => 'sanitize_email',
                 ],
@@ -173,11 +209,17 @@ class CampaignsController extends BaseController
         register_rest_route($namespace, '/' . $this->restBase . '/bulk', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'bulkAction'],
-            'permission_callback' => [$this, 'checkWritePermission'],
+            'permission_callback' => [$this, 'checkBulkPermission'],
             'args' => [
                 'action' => [
                     'required' => true,
+                    // 'type' + 'validate_callback' are what make 'enum' bite:
+                    // WP skips enum validation entirely for an arg with no
+                    // validate_callback.
+                    'type' => 'string',
                     'enum' => ['delete', 'activate', 'pause', 'duplicate'],
+                    'validate_callback' => 'rest_validate_request_arg',
+                    'sanitize_callback' => 'sanitize_key',
                 ],
                 'ids' => [
                     'required' => true,

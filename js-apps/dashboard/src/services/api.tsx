@@ -12,6 +12,10 @@ import type {
   CronStatus,
   LicenseStatus,
   Paginated,
+  RoleCapabilityGroup,
+  RolePreset,
+  CrmRole,
+  CrmUser,
   Segment,
   SmartLink,
   Tag,
@@ -229,6 +233,29 @@ const apiService = {
   settings: {
     getAll: () => api.get<Payload>('/settings'),
     update: (data: Payload) => api.put<Payload>('/settings', data),
+  },
+
+  // Roles & permissions
+  roles: {
+    getAll: (): Res<{
+      roles: CrmRole[];
+      capability_groups: RoleCapabilityGroup[];
+      presets: RolePreset[];
+      multiple_roles_enabled: boolean;
+      can_assign_users: boolean;
+    }> => api.get('/roles'),
+    create: (data: { name: string; capabilities: string[] }): Res<CrmRole> =>
+      api.post('/roles', data),
+    update: (
+      slug: string,
+      data: { name?: string; capabilities?: string[] }
+    ): Res<CrmRole> => api.put(`/roles/${slug}`, data),
+    delete: (slug: string) => api.delete(`/roles/${slug}`),
+    /** Rows in the body; the total comes back in the X-WP-Total header. */
+    getUsers: (params?: Params): Res<CrmUser[]> =>
+      api.get('/roles/users', { params }),
+    setUserRoles: (id: Id, roles: string[]): Res<CrmUser> =>
+      api.put(`/roles/users/${id}`, { roles }),
   },
 
   // Diagnostics (Settings → Cron Monitor)

@@ -11,9 +11,19 @@ import BrandMark from './components/common/BrandMark';
 import PageLoader from './components/common/PageLoader';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import GlobalLoader from './components/common/GlobalLoader';
+import RequireCapability from './components/common/RequireCapability';
+import NoPermission from './components/common/NoPermission';
+import { CAP, can, canAny, type Capability } from './utils/capabilities';
+import {
+  canViewDashboard,
+  firstPermittedRoute,
+  landingRoute,
+} from './utils/landingRoute';
+import { getContactTabs } from './config/contactTabs';
 import {
   getSettingsSections,
   getSettingsMenuKeyFromPath,
+  getSettingsSectionByPath,
   settingsSectionPath,
 } from './config/settingsNav';
 import {
@@ -55,6 +65,59 @@ const SetupWizard = lazy(() => import('./pages/SetupWizard'));
 const License = lazy(() => import('./pages/License'));
 
 const { Header, Content } = Layout;
+
+// The capability a nav row and its route need; a list means any one of them.
+const NAV_CAPABILITIES: Record<string, Capability | Capability[]> = {
+  dashboard: CAP.VIEW_ANALYTICS,
+  'contacts-group': [
+    CAP.VIEW_CONTACTS,
+    CAP.VIEW_LISTS,
+    CAP.VIEW_TAGS,
+    CAP.VIEW_SEGMENTS,
+  ],
+  contacts: CAP.VIEW_CONTACTS,
+  'contacts/lists': CAP.VIEW_LISTS,
+  'contacts/tags': CAP.VIEW_TAGS,
+  'contacts/segments': CAP.VIEW_SEGMENTS,
+  campaigns: CAP.VIEW_CAMPAIGNS,
+  automations: CAP.VIEW_AUTOMATIONS,
+  'emails-group': [CAP.VIEW_EMAIL_TEMPLATES, CAP.VIEW_EMAIL_LOGS],
+  'email-templates': CAP.VIEW_EMAIL_TEMPLATES,
+  'email-logs': CAP.VIEW_EMAIL_LOGS,
+  analytics: CAP.VIEW_ANALYTICS,
+  settings: [
+    CAP.MANAGE_SETTINGS,
+    CAP.MANAGE_CUSTOM_FIELDS,
+    CAP.MANAGE_EMAIL_PROVIDERS,
+    CAP.MANAGE_WEBHOOKS,
+    CAP.MANAGE_ROLES,
+    CAP.VIEW_SMART_LINKS,
+  ],
+  license: CAP.MANAGE_SETTINGS,
+};
+
+// A section header routes to the first child the user may open.
+const firstAllowedPath = (
+  children: Array<[Capability, string]>,
+  fallback: string
+): string => children.find(([capability]) => can(capability))?.[1] ?? fallback;
+
+// A settings sub-route is gated by its own section, not the page's any-of list.
+const settingsRouteAllowed = (pathname: string): boolean => {
+  const section = getSettingsSectionByPath(pathname);
+
+  return section !== null && can(section.capability);
+};
+
+const navAllowed = (key: string): boolean => {
+  const required = NAV_CAPABILITIES[key];
+
+  if (!required) {
+    return true;
+  }
+
+  return canAny(Array.isArray(required) ? required : [required]);
+};
 
 // Cap the centered content column so it never stretches edge-to-edge on very
 // wide monitors; the header chrome (border) still spans the full viewport.
@@ -154,6 +217,18 @@ const routeMatched = (path: string, target: string) => {
   return path === target || path.startsWith(`${target}/`);
 };
 
+// The dashboard is an analytics report: a role without that capability lands on
+// its first permitted page instead. The notice remains when it may open nothing.
+const DashboardRoute = () => {
+  if (canViewDashboard()) {
+    return <Dashboard />;
+  }
+
+  const fallback = firstPermittedRoute();
+
+  return fallback ? <Navigate to={fallback} replace /> : <NoPermission />;
+};
+
 const App = () => {
   const location = useLocation();
   // Active top-level page = first path segment (e.g. 'contacts' from '/contacts/lists').
@@ -169,7 +244,13 @@ const App = () => {
   const licenseBlocked = isLicenseBlocked();
   const onLicensePage = licenseBlocked || currentPage === 'license';
 
-  const spacing = getRouteSpacing(onLicensePage ? 'license' : currentPage, wps);
+  // Contacts trims its top padding for the tab bar; one tab means no bar.
+  const spacingPage = onLicensePage
+    ? 'license'
+    : currentPage === 'contacts' && getContactTabs().length <= 1
+      ? 'default'
+      : currentPage;
+  const spacing = getRouteSpacing(spacingPage, wps);
 
   // Two-stage responsive collapse:
   //   Stage 1 (<1200px): the horizontal header menu moves into a right drawer.
@@ -185,6 +266,22 @@ const App = () => {
   useEffect(() => {
     setDrawerOpen(false);
   }, [location.pathname]);
+
+  // Contacts keeps its sub-route so the right child highlights; every other
+  // page is keyed by the first path segment.
+  const parts = location.pathname.split('/').filter(Boolean);
+  const selectedKey =
+    parts[0] === 'contacts'
+      ? parts[1]
+        ? `contacts/${parts[1]}`
+        : 'contacts'
+      : parts[0] || 'dashboard';
+
+  // A route the role cannot open, or that names no page, highlights nothing.
+  const currentRouteAllowed =
+    parts[0] === 'settings'
+      ? settingsRouteAllowed(location.pathname)
+      : selectedKey in NAV_CAPABILITIES && navAllowed(selectedKey);
 
   // Keep the active WordPress submenu indicator in sync with the route.
   // All submenus share the same admin page (?page=kelune-crm), so WordPress
@@ -203,16 +300,15 @@ const App = () => {
       const anchor = li.querySelector('a');
       if (!anchor?.href) return;
 
-      // Submenu href: '#/campaigns' -> '/campaigns'. The bare-slug first item
-      // (Dashboard) has no hash; map it to '/dashboard' so it highlights on the
-      // landing route.
+      // Submenu href: '#/campaigns' -> '/campaigns'. The first item has no hash;
+      // map it to the route a hash-less load settles on.
       const hashPart = anchor.href.split('#')[1];
-      const hrefPath = hashPart ?? '/dashboard';
+      const hrefPath = hashPart ?? landingRoute();
 
       li.classList.remove('current');
       anchor.classList.remove('current');
 
-      if (routeMatched(path, hrefPath)) {
+      if (currentRouteAllowed && routeMatched(path, hrefPath)) {
         li.classList.add('current');
         anchor.classList.add('current');
         anchor.blur();
@@ -227,18 +323,7 @@ const App = () => {
         if (anchor) anchor.removeEventListener('click', handleClick);
       });
     };
-  }, [location.pathname]);
-
-  // Which menu key is active. Contacts keeps its sub-route (e.g.
-  // `contacts/lists`) so the right child highlights; everything else is the
-  // first path segment.
-  const parts = location.pathname.split('/').filter(Boolean);
-  const selectedKey =
-    parts[0] === 'contacts'
-      ? parts[1]
-        ? `contacts/${parts[1]}`
-        : 'contacts'
-      : parts[0] || 'dashboard';
+  }, [location.pathname, currentRouteAllowed]);
 
   // Each leaf renders its label as a real anchor (`#/<path>`) so items are
   // openable in a new tab (cmd/ctrl-click) and expose a real href. Plain
@@ -380,6 +465,18 @@ const App = () => {
       : []),
   ];
 
+  // Rows the user holds no capability for never render, header or drawer.
+  const visibleMenuItems = menuItems
+    .filter((item) => navAllowed(item.key))
+    .map((item) =>
+      'children' in item && item.children
+        ? {
+            ...item,
+            children: item.children.filter((child) => navAllowed(child.key)),
+          }
+        : item
+    );
+
   // Drawer nav: the same items, but on stage 2 (<768px) the "Settings" leaf
   // becomes an expandable submenu holding the Settings page's own sections.
   const settingsChildren = getSettingsSections().map(
@@ -389,8 +486,10 @@ const App = () => {
     })
   );
 
-  const drawerMenuItems = menuItems.map((item) =>
-    item.key === 'settings' && settingsInDrawer
+  const settingsNested = settingsInDrawer && settingsChildren.length > 1;
+
+  const drawerMenuItems = visibleMenuItems.map((item) =>
+    item.key === 'settings' && settingsNested
       ? {
           key: 'settings',
           label: (
@@ -408,10 +507,12 @@ const App = () => {
 
   // On settings routes at stage 2 the active item is the nested section, not the
   // top-level "settings" key.
+  const activeKey = currentRouteAllowed ? selectedKey : '';
+
   const drawerSelectedKey =
-    settingsInDrawer && parts[0] === 'settings'
+    settingsNested && parts[0] === 'settings' && currentRouteAllowed
       ? getSettingsMenuKeyFromPath(location.pathname)
-      : selectedKey;
+      : activeKey;
 
   // Keep the relevant inline submenu(s) open to reflect the current route.
   useEffect(() => {
@@ -421,9 +522,9 @@ const App = () => {
     if (seg === 'email-templates' || seg === 'email-logs') {
       keys.push('emails-group');
     }
-    if (settingsInDrawer && seg === 'settings') keys.push('settings');
+    if (settingsNested && seg === 'settings') keys.push('settings');
     setDrawerOpenKeys(keys);
-  }, [location.pathname, settingsInDrawer]);
+  }, [location.pathname, settingsNested]);
 
   // Header sticks below the WP admin bar on large screens; on small screens the
   // admin bar isn't fixed (<=782px), so the header scrolls with the page.
@@ -487,8 +588,8 @@ const App = () => {
             <Menu
               theme="light"
               mode="horizontal"
-              selectedKeys={[selectedKey]}
-              items={menuItems}
+              selectedKeys={[activeKey]}
+              items={visibleMenuItems}
               style={{
                 flex: 1,
                 minWidth: 0,
@@ -557,45 +658,149 @@ const App = () => {
                       path="/"
                       element={<Navigate to="/dashboard" replace />}
                     />
-                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/dashboard" element={<DashboardRoute />} />
                     <Route
                       path="/contacts-group"
-                      element={<Navigate to="/contacts" replace />}
+                      element={
+                        <Navigate
+                          to={firstAllowedPath(
+                            [
+                              [CAP.VIEW_CONTACTS, '/contacts'],
+                              [CAP.VIEW_LISTS, '/contacts/lists'],
+                              [CAP.VIEW_TAGS, '/contacts/tags'],
+                              [CAP.VIEW_SEGMENTS, '/contacts/segments'],
+                            ],
+                            '/contacts'
+                          )}
+                          replace
+                        />
+                      }
                     />
-                    <Route path="/contacts/*" element={<Contacts />} />
-                    <Route path="/campaigns" element={<Campaigns />} />
+                    <Route
+                      path="/contacts/*"
+                      element={
+                        <RequireCapability
+                          capability={[
+                            CAP.VIEW_CONTACTS,
+                            CAP.VIEW_LISTS,
+                            CAP.VIEW_TAGS,
+                            CAP.VIEW_SEGMENTS,
+                          ]}
+                        >
+                          <Contacts />
+                        </RequireCapability>
+                      }
+                    />
+                    <Route
+                      path="/campaigns"
+                      element={
+                        <RequireCapability capability={CAP.VIEW_CAMPAIGNS}>
+                          <Campaigns />
+                        </RequireCapability>
+                      }
+                    />
                     <Route
                       path="/campaigns/builder/:id"
-                      element={<CampaignBuilderPage />}
+                      element={
+                        <RequireCapability capability={CAP.EDIT_CAMPAIGNS}>
+                          <CampaignBuilderPage />
+                        </RequireCapability>
+                      }
                     />
                     {/* WP "Emails" section header target → its first child. */}
                     <Route
                       path="/emails-group"
-                      element={<Navigate to="/email-templates" replace />}
+                      element={
+                        <Navigate
+                          to={firstAllowedPath(
+                            [
+                              [CAP.VIEW_EMAIL_TEMPLATES, '/email-templates'],
+                              [CAP.VIEW_EMAIL_LOGS, '/email-logs'],
+                            ],
+                            '/email-templates'
+                          )}
+                          replace
+                        />
+                      }
                     />
                     <Route
                       path="/email-templates"
-                      element={<EmailTemplates />}
+                      element={
+                        <RequireCapability
+                          capability={CAP.VIEW_EMAIL_TEMPLATES}
+                        >
+                          <EmailTemplates />
+                        </RequireCapability>
+                      }
                     />
                     <Route
                       path="/email-templates/builder/:id"
-                      element={<EmailTemplateBuilderPage />}
+                      element={
+                        <RequireCapability
+                          capability={CAP.EDIT_EMAIL_TEMPLATES}
+                        >
+                          <EmailTemplateBuilderPage />
+                        </RequireCapability>
+                      }
                     />
-                    <Route path="/email-logs" element={<EmailLogs />} />
-                    <Route path="/automations" element={<Automations />} />
+                    <Route
+                      path="/email-logs"
+                      element={
+                        <RequireCapability capability={CAP.VIEW_EMAIL_LOGS}>
+                          <EmailLogs />
+                        </RequireCapability>
+                      }
+                    />
+                    <Route
+                      path="/automations"
+                      element={
+                        <RequireCapability capability={CAP.VIEW_AUTOMATIONS}>
+                          <Automations />
+                        </RequireCapability>
+                      }
+                    />
                     <Route
                       path="/automations/builder/:id"
-                      element={<AutomationBuilderPage />}
+                      element={
+                        <RequireCapability capability={CAP.EDIT_AUTOMATIONS}>
+                          <AutomationBuilderPage />
+                        </RequireCapability>
+                      }
                     />
-                    <Route path="/analytics/*" element={<Analytics />} />
-                    <Route path="/settings/*" element={<Settings />} />
+                    <Route
+                      path="/analytics/*"
+                      element={
+                        <RequireCapability capability={CAP.VIEW_ANALYTICS}>
+                          <Analytics />
+                        </RequireCapability>
+                      }
+                    />
+                    <Route
+                      path="/settings/*"
+                      element={
+                        <RequireCapability
+                          capability={[
+                            CAP.MANAGE_SETTINGS,
+                            CAP.MANAGE_CUSTOM_FIELDS,
+                            CAP.MANAGE_EMAIL_PROVIDERS,
+                            CAP.MANAGE_WEBHOOKS,
+                            CAP.MANAGE_ROLES,
+                            CAP.VIEW_SMART_LINKS,
+                          ]}
+                        >
+                          <Settings />
+                        </RequireCapability>
+                      }
+                    />
                     {/* Without Pro there is nothing to license, so a bookmarked
                         or stale #/license goes home rather than to Not Found. */}
                     <Route
                       path="/license"
                       element={
                         isProActive() ? (
-                          <License />
+                          <RequireCapability capability={CAP.MANAGE_SETTINGS}>
+                            <License />
+                          </RequireCapability>
                         ) : (
                           <Navigate to="/dashboard" replace />
                         )

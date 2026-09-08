@@ -4,12 +4,13 @@ import {
   selectSetupRunning,
   selectSetupStep,
 } from '@store/slices/setupWizardSlice';
+import { CAP, can } from '@/utils/capabilities';
 
 /**
  * Read-side helper for the setup wizard. The wizard is shown whenever it has not
  * been finished, or while it is actively running (so the final congratulations
  * step — where `finished` is already true — stays visible until the user
- * leaves).
+ * leaves). It writes settings, so only someone who may manage them sees it.
  */
 export const useSetupWizard = () => {
   const step = useSelector(selectSetupStep);
@@ -20,7 +21,7 @@ export const useSetupWizard = () => {
     step,
     finished,
     running,
-    shouldShowWizard: !finished || running,
+    shouldShowWizard: can(CAP.MANAGE_SETTINGS) && (!finished || running),
   };
 };
 

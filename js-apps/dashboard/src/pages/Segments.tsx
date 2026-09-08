@@ -40,6 +40,7 @@ import SegmentBuilder from '../components/segments/SegmentBuilder';
 import ActionConfirm from '../components/common/ActionConfirm';
 import ModalFooter from '../components/common/ModalFooter';
 import BulkActionsBar from '../components/common/BulkActionsBar';
+import { CAP, can } from '../utils/capabilities';
 import type { BulkActionValue } from '../components/common/BulkActionsBar';
 import {
   ListPageHeader,
@@ -293,31 +294,39 @@ const Segments = () => {
   // ActionConfirm; the Dropdown is kept open (see openMenuId guard) so the
   // confirm anchor survives.
   const rowMenuItems = (record: Segment): MenuProps['items'] => [
-    {
-      key: 'export',
-      label: <span>{__('Export', 'kelune-crm')}</span>,
-      onClick: () => {
-        setOpenMenuId(null);
-        handleExport(record.id);
-      },
-    },
-    { type: 'divider' },
-    {
-      key: 'delete',
-      danger: true,
-      label: (
-        <ActionConfirm
-          action="delete"
-          onConfirm={() => {
-            setOpenMenuId(null);
-            handleDelete(record.id);
-          }}
-          onCancel={() => setOpenMenuId(null)}
-        >
-          <span>{__('Delete', 'kelune-crm')}</span>
-        </ActionConfirm>
-      ),
-    },
+    ...(can(CAP.EXPORT_CONTACTS)
+      ? [
+          {
+            key: 'export',
+            label: <span>{__('Export', 'kelune-crm')}</span>,
+            onClick: () => {
+              setOpenMenuId(null);
+              handleExport(record.id);
+            },
+          },
+        ]
+      : []),
+    ...(can(CAP.DELETE_SEGMENTS)
+      ? [
+          { type: 'divider' as const },
+          {
+            key: 'delete',
+            danger: true,
+            label: (
+              <ActionConfirm
+                action="delete"
+                onConfirm={() => {
+                  setOpenMenuId(null);
+                  handleDelete(record.id);
+                }}
+                onCancel={() => setOpenMenuId(null)}
+              >
+                <span>{__('Delete', 'kelune-crm')}</span>
+              </ActionConfirm>
+            ),
+          },
+        ]
+      : []),
   ];
 
   const allColumns: VisibleColumn[] = [
@@ -430,31 +439,35 @@ const Segments = () => {
               onClick={() => handleRefresh(record.id)}
             />
           </Tooltip>
-          <Tooltip title={__('Edit', 'kelune-crm')}>
-            <Button
-              shape="default"
-              size="small"
-              icon={<EditOutlined />}
-              onClick={() => handleEdit(record)}
-            />
-          </Tooltip>
-          <Dropdown
-            menu={{ items: rowMenuItems(record) }}
-            trigger={['click']}
-            overlayClassName="kelune-crm-cc-confirm-dropdown"
-            open={openMenuId === record.id}
-            onOpenChange={(nextOpen, info) => {
-              // Ignore menu-item clicks (source 'menu') so an inline confirm
-              // can show without the dropdown closing under it.
-              if (info.source === 'trigger' || nextOpen) {
-                setOpenMenuId(nextOpen ? record.id : null);
-              }
-            }}
-          >
-            <Tooltip title={__('More actions', 'kelune-crm')}>
-              <Button shape="default" size="small" icon={<MoreOutlined />} />
+          {can(CAP.EDIT_SEGMENTS) ? (
+            <Tooltip title={__('Edit', 'kelune-crm')}>
+              <Button
+                shape="default"
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => handleEdit(record)}
+              />
             </Tooltip>
-          </Dropdown>
+          ) : null}
+          {rowMenuItems(record)?.length ? (
+            <Dropdown
+              menu={{ items: rowMenuItems(record) }}
+              trigger={['click']}
+              overlayClassName="kelune-crm-cc-confirm-dropdown"
+              open={openMenuId === record.id}
+              onOpenChange={(nextOpen, info) => {
+                // Ignore menu-item clicks (source 'menu') so an inline confirm
+                // can show without the dropdown closing under it.
+                if (info.source === 'trigger' || nextOpen) {
+                  setOpenMenuId(nextOpen ? record.id : null);
+                }
+              }}
+            >
+              <Tooltip title={__('More actions', 'kelune-crm')}>
+                <Button shape="default" size="small" icon={<MoreOutlined />} />
+              </Tooltip>
+            </Dropdown>
+          ) : null}
         </Space>
       ),
     },
@@ -570,14 +583,30 @@ const Segments = () => {
       sortOrder: DEFAULT_SORT.order,
     }));
 
+  // With no bulk actions the row checkboxes go too — selecting leads nowhere.
+  const bulkActions = can(CAP.DELETE_SEGMENTS)
+    ? [
+        {
+          value: 'delete',
+          label: __('Delete', 'kelune-crm'),
+          danger: true,
+          confirm: 'delete' as const,
+        },
+      ]
+    : [];
+
   return (
     <div className="kelune-crm-cc-segments-container">
       <ListPageHeader
         title={__('Segments', 'kelune-crm')}
-        primaryAction={{
-          label: __('Create Segment', 'kelune-crm'),
-          onClick: handleCreate,
-        }}
+        primaryAction={
+          can(CAP.CREATE_SEGMENTS)
+            ? {
+                label: __('Create Segment', 'kelune-crm'),
+                onClick: handleCreate,
+              }
+            : undefined
+        }
         onReload={loadSegments}
       />
 
@@ -628,20 +657,13 @@ const Segments = () => {
 
       <BulkActionsBar
         selectedCount={selectedRowKeys.length}
-        actions={[
-          {
-            value: 'delete',
-            label: __('Delete', 'kelune-crm'),
-            danger: true,
-            confirm: 'delete',
-          },
-        ]}
+        actions={bulkActions}
         onConfirm={handleBulkAction}
         onClear={() => setSelectedRowKeys([])}
       />
 
       <Table
-        rowSelection={rowSelection}
+        rowSelection={bulkActions.length > 0 ? rowSelection : undefined}
         columns={columns}
         dataSource={items}
         rowKey="id"

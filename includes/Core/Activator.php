@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KeluneCRM\Core;
 
 use KeluneCRM\Database\Migrator;
+use KeluneCRM\Services\RoleService;
 use KeluneCRM\Services\SettingsService;
 
 class Activator
@@ -39,6 +40,8 @@ class Activator
 
         self::setDefaultOptions();
         self::scheduleCronJobs();
+
+        (new RoleService())->install();
 
         flush_rewrite_rules();
 
