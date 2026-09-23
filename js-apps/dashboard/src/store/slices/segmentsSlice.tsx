@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { startGlobalLoading, stopGlobalLoading } from './globalLoadingSlice';
+import { invalidateReference } from './referenceSlice';
 import type { Segment } from '../../types/models';
 
 interface SegmentsState {
@@ -47,6 +48,7 @@ export const createSegment = createAsyncThunk(
     dispatch(startGlobalLoading());
     try {
       const response = await api.segments.create(segmentData);
+      dispatch(invalidateReference('segments'));
       return response.data;
     } catch (error) {
       return rejectWithValue(getErrorMessage(error));
@@ -65,6 +67,7 @@ export const updateSegment = createAsyncThunk(
     dispatch(startGlobalLoading());
     try {
       const response = await api.segments.update(id, data);
+      dispatch(invalidateReference('segments'));
       return response.data;
     } catch (error) {
       return rejectWithValue(getErrorMessage(error));
@@ -80,6 +83,7 @@ export const deleteSegment = createAsyncThunk(
     dispatch(startGlobalLoading());
     try {
       await api.segments.delete(id);
+      dispatch(invalidateReference('segments'));
       return id;
     } catch (error) {
       return rejectWithValue(getErrorMessage(error));
@@ -95,6 +99,7 @@ export const refreshSegment = createAsyncThunk(
     dispatch(startGlobalLoading());
     try {
       const response = await api.segments.refresh(id);
+      dispatch(invalidateReference('segments'));
       return response.data;
     } catch (error) {
       return rejectWithValue(getErrorMessage(error));

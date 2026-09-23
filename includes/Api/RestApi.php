@@ -7,6 +7,7 @@ namespace KeluneCRM\Api;
 use KeluneCRM\Api\Controllers\AnalyticsController;
 use KeluneCRM\Api\Controllers\AutomationsController;
 use KeluneCRM\Api\Controllers\AutomationTemplatesController;
+use KeluneCRM\Api\Controllers\BounceConfigController;
 use KeluneCRM\Api\Controllers\CampaignsController;
 use KeluneCRM\Api\Controllers\CampaignTrackingController;
 use KeluneCRM\Api\Controllers\ContactsController;
@@ -22,6 +23,7 @@ use KeluneCRM\Api\Controllers\TagsController;
 use KeluneCRM\Api\Controllers\ToolsController;
 use KeluneCRM\Api\Controllers\TrackingController;
 use KeluneCRM\Controllers\WebhookController;
+use KeluneCRM\Handlers\BounceHandler;
 use KeluneCRM\Handlers\WebhookHandler;
 
 class RestApi
@@ -58,11 +60,13 @@ class RestApi
             'email_templates' => new EmailTemplatesController(),
             'email_logs' => new EmailLogsController(),
             'email_providers' => new EmailProviderController(),
+            'bounce_config' => new BounceConfigController(),
             'tracking' => new TrackingController(),
             'tools' => new ToolsController(),
             'optin' => new OptinController(),
             'webhooks' => new WebhookController(),
             'webhook_handler' => new WebhookHandler(),
+            'bounce_handler' => new BounceHandler(),
         ];
 
         /**

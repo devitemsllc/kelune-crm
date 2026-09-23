@@ -277,12 +277,22 @@ class ContactRepository
         // Refresh the UTC update timestamp on every write.
         $data['updated_at'] = current_time('mysql', true);
 
-        // Read the stored status before writing so the change can be announced
-        // below. Only when the payload carries one — an update that doesn't
-        // touch the status must not pay for the extra read.
-        $old_status = array_key_exists('status', $data)
-            ? $this->getStatus($id)
+        // One read, only when a column in the payload needs the old value.
+        $needs_status = array_key_exists('status', $data);
+        $needs_email = array_key_exists('email', $data);
+        $existing = ($needs_status || $needs_email)
+            ? $this->db->get_row($this->db->prepare(
+                "SELECT status, email FROM {$this->tableName} WHERE id = %d",
+                $id
+            ), ARRAY_A)
             : null;
+
+        $old_status = ($needs_status && is_array($existing)) ? (string) $existing['status'] : null;
+
+        // A new address has no delivery history, so it starts with no strikes.
+        if ($needs_email && is_array($existing) && (string) $existing['email'] !== (string) ($data['email'] ?? '')) {
+            $data['soft_bounce_count'] = 0;
+        }
 
         $updated = $this->db->update(
             $this->tableName,
@@ -290,7 +300,7 @@ class ContactRepository
             ['id' => $id]
         ) !== false;
 
-        if ($updated && array_key_exists('status', $data)) {
+        if ($updated && $needs_status) {
             $this->announceStatusChange($id, $old_status, (string) $data['status']);
         }
 
@@ -298,15 +308,21 @@ class ContactRepository
     }
 
     /**
-     * Write just the status, announcing the change. Preferred over update() for
-     * a status-only write — one column, no full-row read.
+     * @param string|null $expected Status the row must still hold, so two requests
+     *                              racing one transition cannot both announce it.
      */
-    public function updateStatus(int $id, string $status): bool
+    public function updateStatus(int $id, string $status, ?string $expected = null): bool
     {
         $old_status = $this->getStatus($id);
 
         if (null === $old_status) {
             return false;
+        }
+
+        $where = ['id' => $id];
+
+        if (null !== $expected) {
+            $where['status'] = $expected;
         }
 
         $updated = $this->db->update(
@@ -315,14 +331,68 @@ class ContactRepository
                 'status' => $status,
                 'updated_at' => current_time('mysql', true),
             ],
-            ['id' => $id]
-        ) !== false;
+            $where
+        );
 
-        if ($updated) {
+        // A guarded write that changed nothing was claimed by another request.
+        $claimed = null !== $expected ? (is_int($updated) && $updated > 0) : (false !== $updated);
+
+        if ($claimed) {
             $this->announceStatusChange($id, $old_status, $status);
         }
 
-        return $updated;
+        return $claimed;
+    }
+
+    /** @return int Strikes after the increment, 0 when no such contact exists. */
+    public function incrementSoftBounce(int $id): int
+    {
+        $query = $this->db->prepare(
+            "UPDATE {$this->tableName} SET soft_bounce_count = soft_bounce_count + 1, updated_at = %s WHERE id = %d",
+            current_time('mysql', true),
+            $id
+        );
+
+        if (null === $query || !$this->db->query($query)) {
+            return 0;
+        }
+
+        return (int) $this->db->get_var($this->db->prepare(
+            "SELECT soft_bounce_count FROM {$this->tableName} WHERE id = %d",
+            $id
+        ));
+    }
+
+    public function resetSoftBounce(int $id): bool
+    {
+        return $this->db->update(
+            $this->tableName,
+            ['soft_bounce_count' => 0],
+            ['id' => $id]
+        ) !== false;
+    }
+
+    /** A token minted before a suppression cannot carry consent given after it. */
+    public function clearOptinToken(int $id): bool
+    {
+        return $this->db->update(
+            $this->tableName,
+            ['optin_token' => ''],
+            ['id' => $id]
+        ) !== false;
+    }
+
+    /** Latest diagnostic, for the contact screen; the events table is the history. */
+    public function recordBounceReason(int $id, string $reason): bool
+    {
+        return $this->db->update(
+            $this->tableName,
+            [
+                'last_bounce_at' => current_time('mysql', true),
+                'bounce_reason' => mb_substr($reason, 0, 255),
+            ],
+            ['id' => $id]
+        ) !== false;
     }
 
     /** The stored status, or null when no such contact exists. */

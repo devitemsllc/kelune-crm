@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from '@store/hooks';
+import { useReferenceData } from '@hooks/useReferenceData';
 import {
   Form,
   Input,
   Button,
+  Flex,
   Space,
   Radio,
   Card,
@@ -26,11 +28,11 @@ import {
   previewSegmentCount,
   clearPreviewCount,
 } from '../../store/slices/segmentsSlice';
-import api from '../../services/api';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { formFieldDivider } from '@/utils/formStyles';
 import type { Segment, Tag as TagModel, ContactList } from '@/types/models';
 import InlineSwitch from '@/components/common/InlineSwitch';
+import { CONTACT_STATUS_OPTIONS } from '@/components/contacts/contactStatus';
 import SubmitOnEnter from '@/components/common/SubmitOnEnter';
 
 const { Option } = Select;
@@ -154,21 +156,8 @@ const SegmentBuilder = ({ segment, form, onSave }: SegmentBuilderProps) => {
   const [conditions, setConditions] = useState<Condition[]>([]);
   const [matchType, setMatchType] = useState('all');
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [allTags, setAllTags] = useState<TagModel[]>([]);
-  const [allLists, setAllLists] = useState<ContactList[]>([]);
-
-  const loadTagsAndLists = useCallback(async () => {
-    try {
-      const [tagsRes, listsRes] = await Promise.all([
-        api.tags.getAll(),
-        api.lists.getAll(),
-      ]);
-      setAllTags(tagsRes.data || []);
-      setAllLists(listsRes.data || []);
-    } catch (error) {
-      console.error('Failed to load tags and lists:', error);
-    }
-  }, []);
+  const { data: allTags } = useReferenceData('tags');
+  const { data: allLists } = useReferenceData('lists');
 
   const addCondition = useCallback(() => {
     setConditions((prev) => [
@@ -190,7 +179,9 @@ const SegmentBuilder = ({ segment, form, onSave }: SegmentBuilderProps) => {
   }, [conditions, matchType, dispatch]);
 
   useEffect(() => {
-    loadTagsAndLists();
+    // The drawer owns the form instance, so it still holds the last edited
+    // segment's values on a create open.
+    form.resetFields();
 
     if (segment) {
       form.setFieldsValue({
@@ -208,7 +199,7 @@ const SegmentBuilder = ({ segment, form, onSave }: SegmentBuilderProps) => {
     return () => {
       dispatch(clearPreviewCount());
     };
-  }, [segment, loadTagsAndLists, addCondition, form, dispatch]);
+  }, [segment, addCondition, form, dispatch]);
 
   useEffect(() => {
     // Auto-preview on conditions change with debounce
@@ -345,13 +336,10 @@ const SegmentBuilder = ({ segment, form, onSave }: SegmentBuilderProps) => {
             <Select
               placeholder={__('Select status', 'kelune-crm')}
               style={{ width: '100%' }}
-              value={condition.value as string}
+              value={condition.value ? String(condition.value) : undefined}
               onChange={(value) => updateCondition(index, { value })}
-            >
-              <Option value="active">{__('Active', 'kelune-crm')}</Option>
-              <Option value="inactive">{__('Inactive', 'kelune-crm')}</Option>
-              <Option value="pending">{__('Pending', 'kelune-crm')}</Option>
-            </Select>
+              options={CONTACT_STATUS_OPTIONS}
+            />
           );
         }
         break;
@@ -426,12 +414,14 @@ const SegmentBuilder = ({ segment, form, onSave }: SegmentBuilderProps) => {
           value={matchType}
           onChange={(e) => setMatchType(e.target.value)}
         >
-          <Radio value="all">
-            {__('Match All Conditions (AND)', 'kelune-crm')}
-          </Radio>
-          <Radio value="any">
-            {__('Match Any Condition (OR)', 'kelune-crm')}
-          </Radio>
+          <Space direction="vertical">
+            <Radio value="all">
+              {__('Match All Conditions (AND)', 'kelune-crm')}
+            </Radio>
+            <Radio value="any">
+              {__('Match Any Condition (OR)', 'kelune-crm')}
+            </Radio>
+          </Space>
         </Radio.Group>
       </Form.Item>
 
@@ -439,66 +429,59 @@ const SegmentBuilder = ({ segment, form, onSave }: SegmentBuilderProps) => {
         <Space direction="vertical" style={{ width: '100%' }} size="middle">
           {conditions.map((condition: Condition, index: number) => (
             <Card key={index} size="small">
-              <Space direction="vertical" style={{ width: '100%' }}>
-                <Space style={{ width: '100%' }}>
-                  <Select
-                    placeholder={__('Select field', 'kelune-crm')}
-                    style={{ width: 180 }}
-                    value={condition.field}
-                    onChange={(value) => {
-                      const operators = getOperatorsForField(value);
-                      updateCondition(index, {
-                        field: value,
-                        operator: operators[0].value,
-                        value: '',
-                      });
-                    }}
-                  >
-                    {Object.keys(FIELD_LABELS).map((field) => (
-                      <Option key={field} value={field}>
-                        {FIELD_LABELS[field]}
+              <Flex gap="small" align="center">
+                <Select
+                  placeholder={__('Select field', 'kelune-crm')}
+                  style={{ width: 180, flexShrink: 0 }}
+                  value={condition.field}
+                  onChange={(value) => {
+                    const operators = getOperatorsForField(value);
+                    updateCondition(index, {
+                      field: value,
+                      operator: operators[0].value,
+                      value: '',
+                    });
+                  }}
+                >
+                  {Object.keys(FIELD_LABELS).map((field) => (
+                    <Option key={field} value={field}>
+                      {FIELD_LABELS[field]}
+                    </Option>
+                  ))}
+                </Select>
+
+                <Select
+                  placeholder={__('Select operator', 'kelune-crm')}
+                  style={{ width: 180, flexShrink: 0 }}
+                  value={condition.operator}
+                  onChange={(value) =>
+                    updateCondition(index, { operator: value })
+                  }
+                >
+                  {getOperatorsForField(condition.field).map(
+                    (op: { value: string; label: string }) => (
+                      <Option key={op.value} value={op.value}>
+                        {op.label}
                       </Option>
-                    ))}
-                  </Select>
+                    )
+                  )}
+                </Select>
 
-                  <Select
-                    placeholder={__('Select operator', 'kelune-crm')}
-                    style={{ width: 180 }}
-                    value={condition.operator}
-                    onChange={(value) =>
-                      updateCondition(index, { operator: value })
-                    }
-                  >
-                    {getOperatorsForField(condition.field).map(
-                      (op: { value: string; label: string }) => (
-                        <Option key={op.value} value={op.value}>
-                          {op.label}
-                        </Option>
-                      )
-                    )}
-                  </Select>
+                <div style={{ flex: 1, minWidth: 180 }}>
+                  {renderValueInput(condition, index)}
+                </div>
 
-                  <div style={{ flex: 1 }}>
-                    {renderValueInput(condition, index)}
-                  </div>
-
-                  <Button
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => removeCondition(index)}
-                    disabled={conditions.length === 1}
-                  />
-                </Space>
-              </Space>
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={() => removeCondition(index)}
+                  disabled={conditions.length === 1}
+                />
+              </Flex>
             </Card>
           ))}
 
-          <Button
-            type="dashed"
-            onClick={addCondition}
-            icon={<PlusOutlined />}
-            block
-          >
+          <Button onClick={addCondition} icon={<PlusOutlined />}>
             {__('Add Condition', 'kelune-crm')}
           </Button>
         </Space>

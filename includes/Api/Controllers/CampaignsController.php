@@ -106,21 +106,33 @@ class CampaignsController extends BaseController
             ],
         ]);
 
+        // The path pattern only proves digits; the param still arrives as a string.
+        $id_arg = [
+            'id' => [
+                'type' => 'integer',
+                'required' => true,
+                'sanitize_callback' => 'absint',
+            ],
+        ];
+
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)', [
             [
                 'methods' => \WP_REST_Server::READABLE,
                 'callback' => [$this, 'getItem'],
                 'permission_callback' => [$this, 'checkReadPermission'],
+                'args' => $id_arg,
             ],
             [
                 'methods' => \WP_REST_Server::EDITABLE,
                 'callback' => [$this, 'updateItem'],
                 'permission_callback' => [$this, 'checkWritePermission'],
+                'args' => $id_arg,
             ],
             [
                 'methods' => \WP_REST_Server::DELETABLE,
                 'callback' => [$this, 'deleteItem'],
                 'permission_callback' => [$this, 'checkDeletePermission'],
+                'args' => $id_arg,
             ],
         ]);
 
@@ -128,6 +140,7 @@ class CampaignsController extends BaseController
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'duplicateItem'],
             'permission_callback' => [$this, 'checkCreatePermission'],
+            'args' => $id_arg,
         ]);
 
         // Activating IS the send: it permits dispatch, which starts at once or at
@@ -136,12 +149,14 @@ class CampaignsController extends BaseController
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'activateCampaign'],
             'permission_callback' => [$this, 'checkSendPermission'],
+            'args' => $id_arg,
         ]);
 
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/pause', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'pauseCampaign'],
             'permission_callback' => [$this, 'checkSendPermission'],
+            'args' => $id_arg,
         ]);
 
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/test', [
@@ -165,12 +180,14 @@ class CampaignsController extends BaseController
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'getStats'],
             'permission_callback' => [$this, 'checkReadPermission'],
+            'args' => $id_arg,
         ]);
 
         register_rest_route($namespace, '/' . $this->restBase . '/(?P<id>\d+)/recipients/count', [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'getRecipientCount'],
             'permission_callback' => [$this, 'checkReadPermission'],
+            'args' => $id_arg,
         ]);
 
         // Recipient count for targeting rules that are not persisted yet — the
@@ -186,6 +203,7 @@ class CampaignsController extends BaseController
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'getAnalytics'],
             'permission_callback' => [$this, 'checkReadPermission'],
+            'args' => $id_arg,
         ]);
 
         register_rest_route($namespace, '/' . $this->restBase . '/stats/summary', [
@@ -223,6 +241,9 @@ class CampaignsController extends BaseController
                 ],
                 'ids' => [
                     'required' => true,
+                    'sanitize_callback' => static function ($param) {
+                        return is_array($param) ? array_map('absint', $param) : $param;
+                    },
                     'validate_callback' => function ($param): bool {
                         return is_array($param) && !empty($param);
                     },
@@ -419,8 +440,8 @@ class CampaignsController extends BaseController
             );
         }
 
-        // Activation is the send, so what used to be caught at the Send button is
-        // checked here — the one place a campaign starts reaching contacts.
+        // Activation is the send, so completeness is checked here — the one
+        // place a campaign starts reaching contacts.
         $missing = $this->missingToSend($campaign);
 
         if ($missing !== null) {

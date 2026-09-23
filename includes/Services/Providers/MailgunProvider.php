@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KeluneCRM\Services\Providers;
 
+use KeluneCRM\Services\Bounce\BounceAttribution;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class MailgunProvider implements EmailProviderInterface
@@ -70,6 +71,11 @@ class MailgunProvider implements EmailProviderInterface
             $fields['h:Reply-To'] = $this->formatAddress($reply_to['name'], $reply_to['email']);
         }
         foreach ($this->customHeaderList($phpmailer) as $name => $value) {
+            // Mailgun echoes `v:` variables on its webhooks, never custom headers.
+            if (0 === strcasecmp($name, BounceAttribution::HEADER)) {
+                $fields['v:' . BounceAttribution::MAILGUN_VARIABLE] = $value;
+                continue;
+            }
             $fields['h:' . $name] = $value;
         }
 

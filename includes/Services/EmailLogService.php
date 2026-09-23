@@ -67,6 +67,18 @@ class EmailLogService
     }
 
     /**
+     * Store the subject and body as they go out, so the log and any resend
+     * carry the personalised, footered, tracked message rather than the draft.
+     */
+    public function updateContent(int $log_id, string $subject, string $body_html): bool
+    {
+        return $this->repository->update($log_id, [
+            'subject' => $subject,
+            'body_html' => $body_html,
+        ]);
+    }
+
+    /**
      * Log email as failed
      *
      * @param int $log_id
@@ -161,16 +173,11 @@ class EmailLogService
     }
 
     /**
-     * Record an email engagement (open/click) as a contact event AND announce it.
+     * Events-table row (timeline, `ConditionEvaluator`) plus the
+     * `kelune_crm_<event_type>` hook Pro enrols on, from one place.
      *
-     * The single place both halves learn about engagement: a row in the events
-     * table (read by `ConditionEvaluator` for the email_opened / email_clicked
-     * conditions) and the `kelune_crm_email_opened` / `_clicked` hooks (which
-     * Pro enrols contacts on). Called from both send paths, so an open is an
-     * open whichever mailer produced it.
-     *
-     * @param 'email_opened'|'email_clicked' $event_type
-     * @param array<string, mixed>           $data campaign_id / automation_id / email_id / link_url
+     * @param 'email_opened'|'email_clicked'|'email_bounced'|'email_soft_bounced'|'email_complained' $event_type
+     * @param array<string, mixed> $data
      */
     public function recordEmailEngagement(string $event_type, int $contact_id, array $data = []): void
     {
@@ -444,6 +451,7 @@ class EmailLogService
                 'from_name' => $from_name,
                 'from_email' => $from_email,
                 'text' => $body_text,
+                'tracking_token' => $new_token,
             ]
         );
 

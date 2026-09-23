@@ -64,6 +64,9 @@ class EmailLog
     public $bounced_at;
 
     /** @var string|null */
+    public $complained_at;
+
+    /** @var string|null */
     public $opened_at;
 
     /** @var string|null */
@@ -107,6 +110,7 @@ class EmailLog
         $this->sent_at = $data['sent_at'] ?? null;
         $this->delivered_at = $data['delivered_at'] ?? null;
         $this->bounced_at = $data['bounced_at'] ?? null;
+        $this->complained_at = $data['complained_at'] ?? null;
         $this->opened_at = $data['opened_at'] ?? null;
         $this->clicked_at = $data['clicked_at'] ?? null;
         $this->open_count = isset($data['open_count']) ? (int) $data['open_count'] : 0;
@@ -138,6 +142,7 @@ class EmailLog
             'sent_at' => $this->sent_at,
             'delivered_at' => $this->delivered_at,
             'bounced_at' => $this->bounced_at,
+            'complained_at' => $this->complained_at,
             'opened_at' => $this->opened_at,
             'clicked_at' => $this->clicked_at,
             'open_count' => $this->open_count,

@@ -3,6 +3,7 @@ import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import type {
   Automation,
   AutomationStep,
+  BounceConfig,
   Campaign,
   CampaignAbTest,
   CampaignVariant,
@@ -264,6 +265,20 @@ const apiService = {
     /** Runs a registered cron hook now; resolves with the refreshed status. */
     runCron: (hook: string): Res<CronStatus> =>
       api.post('/tools/run-cron', { hook }),
+  },
+
+  // Bounce handling
+  bounceConfig: {
+    get: (): Res<BounceConfig> => api.get('/bounce-config'),
+    regenerateKey: (provider: string): Res<BounceConfig> =>
+      api.post(`/bounce-config/providers/${provider}/regenerate`),
+    saveSigningSecret: (
+      provider: string,
+      signing_secret: string
+    ): Res<BounceConfig> =>
+      api.put(`/bounce-config/providers/${provider}`, { signing_secret }),
+    clearSigningSecret: (provider: string): Res<BounceConfig> =>
+      api.put(`/bounce-config/providers/${provider}`, { clear: true }),
   },
 
   // Lists

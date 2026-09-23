@@ -12,6 +12,7 @@ import uiReducer from './slices/uiSlice';
 import globalLoadingReducer from './slices/globalLoadingSlice';
 import licenseReducer from './slices/licenseSlice';
 import setupWizardReducer from './slices/setupWizardSlice';
+import referenceReducer from './slices/referenceSlice';
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
     globalLoading: globalLoadingReducer,
     license: licenseReducer,
     setupWizard: setupWizardReducer,
+    reference: referenceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

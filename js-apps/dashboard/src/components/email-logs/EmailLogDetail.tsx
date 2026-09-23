@@ -177,6 +177,13 @@ const EmailLogDetail = ({
         color: 'orange',
       });
     }
+    if (log.complained_at) {
+      events.push({
+        time: log.complained_at,
+        label: __('Reported as spam', 'kelune-crm'),
+        color: 'red',
+      });
+    }
 
     return events.sort(
       (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
@@ -260,7 +267,13 @@ const EmailLogDetail = ({
                 {log.click_count || 0}
               </Descriptions.Item>
               {log.error_message && (
-                <Descriptions.Item label={__('Error', 'kelune-crm')}>
+                <Descriptions.Item
+                  label={
+                    log.status === 'bounced'
+                      ? __('Bounce Reason', 'kelune-crm')
+                      : __('Error', 'kelune-crm')
+                  }
+                >
                   <Text type="danger">{log.error_message}</Text>
                 </Descriptions.Item>
               )}
@@ -281,6 +294,9 @@ const EmailLogDetail = ({
               </Descriptions.Item>
               <Descriptions.Item label={__('Bounced At', 'kelune-crm')}>
                 {log.bounced_at ? timeFormat(log.bounced_at) : '-'}
+              </Descriptions.Item>
+              <Descriptions.Item label={__('Complained At', 'kelune-crm')}>
+                {log.complained_at ? timeFormat(log.complained_at) : '-'}
               </Descriptions.Item>
               <Descriptions.Item label={__('Created At', 'kelune-crm')}>
                 {log.created_at ? timeFormat(log.created_at) : '-'}

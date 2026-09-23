@@ -69,6 +69,7 @@ const STATUS_BADGE: Record<ContactStatus, BadgeProps['status']> = {
   pending: 'warning',
   unsubscribed: 'error',
   bounced: 'error',
+  complained: 'error',
 };
 
 type ChartMode = 'contacts' | 'sent' | 'opened' | 'clicked';

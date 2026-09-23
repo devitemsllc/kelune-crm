@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace KeluneCRM\Models;
 
+/**
+ * `last_bounce_at` and `bounce_reason` hold the failure that set the current
+ * status, complaints included; `soft_bounce_count` is bounce-only.
+ */
 class Contact
 {
     /** Mailable. The only status campaigns are queued for. */
@@ -21,6 +25,9 @@ class Contact
      */
     public const STATUS_BOUNCED = 'bounced';
 
+    /** Reported as spam. Apart from `unsubscribed` because it must never be re-subscribed. */
+    public const STATUS_COMPLAINED = 'complained';
+
     /**
      * Every status a contact may hold, and every one a user may assign by hand.
      * The single source of truth: the REST layer validates against it, and the
@@ -33,6 +40,7 @@ class Contact
         self::STATUS_PENDING,
         self::STATUS_UNSUBSCRIBED,
         self::STATUS_BOUNCED,
+        self::STATUS_COMPLAINED,
     ];
 
     /**
@@ -55,11 +63,11 @@ class Contact
     }
 
     /**
-     * Whether marketing email may be sent to a contact holding this status.
-     * Every marketing send path must consult this — see EmailService and
-     * Processors\ActionProcessor.
+     * The mailable allowlist as it stands, filter applied.
+     *
+     * @return list<string>
      */
-    public static function isSendableStatus(mixed $status): bool
+    public static function sendableStatuses(): array
     {
         /**
          * Filters the contact statuses that may receive marketing email.
@@ -68,7 +76,16 @@ class Contact
          */
         $sendable = apply_filters('kelune_crm_email_sendable_statuses', self::SENDABLE_STATUSES);
 
-        return is_string($status) && in_array($status, (array) $sendable, true);
+        return array_values(array_filter((array) $sendable, 'is_string'));
+    }
+
+    /**
+     * Whether marketing email may be sent to a contact holding this status.
+     * Every marketing send path must consult this.
+     */
+    public static function isSendableStatus(mixed $status): bool
+    {
+        return is_string($status) && in_array($status, self::sendableStatuses(), true);
     }
 
     private ?int $id = null;

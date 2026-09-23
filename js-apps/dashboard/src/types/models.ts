@@ -8,11 +8,16 @@ export type ID = number;
 
 /**
  * Contact lifecycle status. Mirrors Models\Contact::STATUSES, which the REST
- * layer validates against — keep the two in step. `active` is the only mailable
- * one (CampaignRepository::getRecipientIds). Labels and the badge live in
- * components/contacts/contactStatus.
+ * layer validates against — keep the two in step. Mailability is decided by
+ * Models\Contact::sendableStatuses(), not by this list. Labels and the badge
+ * live in components/contacts/contactStatus.
  */
-export type ContactStatus = 'active' | 'pending' | 'unsubscribed' | 'bounced';
+export type ContactStatus =
+  | 'active'
+  | 'pending'
+  | 'unsubscribed'
+  | 'bounced'
+  | 'complained';
 
 /**
  * Strict entity base: `tsc` validates field access against the declared shape,
@@ -40,6 +45,10 @@ export interface Contact extends StrictBase {
   timezone?: string;
   /** See components/contacts/contactStatus for the vocabulary and its labels. */
   status?: ContactStatus;
+  /** The failure that set the current status, complaints included; count is bounce-only. */
+  soft_bounce_count?: number;
+  last_bounce_at?: string | null;
+  bounce_reason?: string | null;
   source?: string;
   lead_score?: number;
   custom_fields?: Record<string, unknown>;
@@ -102,13 +111,16 @@ export interface EmailLogStats {
   delivered_count?: number | string;
   failed_count?: number | string;
   bounced_count?: number | string;
+  complained_count?: number | string;
   opened_count?: number | string;
   clicked_count?: number | string;
   total_opens?: number | string;
   total_clicks?: number | string;
+  delivery_rate?: number | string;
   open_rate?: number | string;
   click_rate?: number | string;
   bounce_rate?: number | string;
+  complaint_rate?: number | string;
   by_type?: Record<string, unknown>;
   by_provider?: Record<string, unknown>;
   by_day?: unknown[];
@@ -304,6 +316,8 @@ export interface EmailLog extends StrictBase {
   sent_at?: string | null;
   delivered_at?: string | null;
   bounced_at?: string | null;
+  /** Status is untouched by a complaint. */
+  complained_at?: string | null;
   opened_at?: string | null;
   clicked_at?: string | null;
   open_count?: number;
@@ -423,6 +437,21 @@ export interface EmailProvider extends StrictBase {
   allowed_senders?: string[];
   is_default?: boolean;
   status?: 'active' | 'inactive';
+}
+
+/** One provider the receiver accepts for, whether or not the site sends through it. */
+export interface BounceProvider {
+  provider: EmailProviderType;
+  /** False for SMTP, which cannot report a bounce. */
+  has_feed: boolean;
+  /** '' without a feed. */
+  endpoint_url: string;
+  uses_signing_secret: boolean;
+  has_signing_secret: boolean;
+}
+
+export interface BounceConfig {
+  providers: BounceProvider[];
 }
 
 export interface Webhook extends StrictBase {

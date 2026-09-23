@@ -9,6 +9,7 @@ use KeluneCRM\Models\Contact;
 use KeluneCRM\Models\EmailProvider;
 use KeluneCRM\Repositories\CampaignRepository;
 use KeluneCRM\Repositories\EmailProviderRepository;
+use KeluneCRM\Services\Bounce\BounceAttribution;
 use KeluneCRM\Services\Providers\ProviderFactory;
 
 class EmailService
@@ -80,7 +81,7 @@ class EmailService
      * automations (and any caller) so every send shares one path and the same
      * provider routing as campaigns.
      *
-     * @param array{provider_id?: int|null, from_name?: string, from_email?: string, reply_to?: string, cc?: mixed, bcc?: mixed, attachments?: array<int, mixed>, headers?: array<string, string>, text?: string} $opts
+     * @param array{provider_id?: int|null, from_name?: string, from_email?: string, reply_to?: string, cc?: mixed, bcc?: mixed, attachments?: array<int, mixed>, headers?: array<string, string>, text?: string, tracking_token?: string} $opts
      * @return bool|\WP_Error
      */
     public function sendTransactional(string $to, string $subject, string $content, array $opts = [])
@@ -101,6 +102,7 @@ class EmailService
                 'attachments' => $opts['attachments'] ?? [],
                 'headers' => $opts['headers'] ?? [],
                 'text' => (string) ($opts['text'] ?? ''),
+                'tracking_token' => (string) ($opts['tracking_token'] ?? ''),
             ]
         );
     }
@@ -139,7 +141,7 @@ class EmailService
      * instance and the driver only transports it; without one it goes through
      * wp_mail.
      *
-     * @param array{cc?: mixed, bcc?: mixed, attachments?: array<int, mixed>, headers?: array<string, string>, text?: string} $extras
+     * @param array{cc?: mixed, bcc?: mixed, attachments?: array<int, mixed>, headers?: array<string, string>, text?: string, tracking_token?: string} $extras
      * @return bool|\WP_Error
      */
     private function dispatch(
@@ -182,8 +184,15 @@ class EmailService
         $cc = $extras['cc'] ?? [];
         $bcc = $extras['bcc'] ?? [];
         $attachments = $extras['attachments'] ?? [];
-        $custom_headers = $extras['headers'] ?? [];
+        $custom_headers = (array) ($extras['headers'] ?? []);
         $text = (string) ($extras['text'] ?? '');
+
+        // Tag with the log token so a later bounce attributes to this exact send.
+        $tracking_token = BounceAttribution::sanitizeToken((string) ($extras['tracking_token'] ?? ''));
+        if ($tracking_token !== '') {
+            $custom_headers[BounceAttribution::HEADER] = $tracking_token;
+        }
+
         if ($text === '' && $content !== '') {
             $text = $this->htmlToText($content);
         }
@@ -746,6 +755,13 @@ class EmailService
         // Inject tracking pixel and replace links
         $content = $this->injectTracking($content, $email['tracking_token'], (int) $campaign->id);
 
+        // The queue-time log holds the draft; persist the composed message so the
+        // log preview and a resend show what the contact received.
+        $email_log = $this->emailLogService->getByTrackingToken($email['tracking_token']);
+        if ($email_log) {
+            $this->emailLogService->updateContent((int) $email_log->id, $subject, $content);
+        }
+
         // Only an explicitly chosen provider sends through its driver; "Global
         // Email" and "Custom" leave email_provider_id empty and go via wp_mail.
         // The campaign's from_email/name are the custom From override.
@@ -757,7 +773,8 @@ class EmailService
             $content,
             $parts['from_name'],
             (string) $campaign->from_email,
-            (string) $campaign->reply_to
+            (string) $campaign->reply_to,
+            ['tracking_token' => (string) $email['tracking_token']]
         );
 
         // Update email status. Treat only an explicit non-error success as sent;
@@ -773,8 +790,6 @@ class EmailService
                 ['id' => $campaign_email_id]
             );
 
-            // Update email_logs status
-            $email_log = $this->emailLogService->getByTrackingToken($email['tracking_token']);
             if ($email_log) {
                 $provider_name = $provider ? $provider->provider_type : 'wp_mail';
                 $this->emailLogService->logEmailSent((int) $email_log->id, $provider_name);
@@ -795,13 +810,10 @@ class EmailService
                 ['id' => $campaign_email_id]
             );
 
-            // Update email_logs status
-            $email_log = $this->emailLogService->getByTrackingToken($email['tracking_token']);
             if ($email_log) {
                 $this->emailLogService->logEmailFailed((int) $email_log->id, $error_message);
             }
 
-            // Return original WP_Error with all details preserved
             return $sent;
         }
     }

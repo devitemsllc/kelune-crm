@@ -32,6 +32,7 @@ import type { ColumnsType, ColumnType } from 'antd/es/table';
 import type { Key } from 'react';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useDispatch } from '@store/hooks';
+import { invalidateReference } from '@store/slices/referenceSlice';
 import api from '../../services/api';
 import {
   startGlobalLoading,
@@ -83,6 +84,8 @@ interface ProviderTypeMeta {
   color: string;
   /** Helper text shown under the credential block. */
   hint: string;
+  /** Each provider names regions its own way; a shared default leaks one into another's form. */
+  region: string;
 }
 
 // Insertion order drives the dropdown + filter order: SMTP, Amazon SES,
@@ -95,6 +98,7 @@ const PROVIDER_META: Record<EmailProviderType, ProviderTypeMeta> = {
       'Any SMTP server (Gmail, Postmark, your host, etc.).',
       'kelune-crm'
     ),
+    region: '',
   },
   ses: {
     label: __('Amazon SES', 'kelune-crm'),
@@ -103,6 +107,7 @@ const PROVIDER_META: Record<EmailProviderType, ProviderTypeMeta> = {
       'Create IAM credentials with SES sending permissions from the AWS Console. The sender email must be a verified SES identity.',
       'kelune-crm'
     ),
+    region: 'us-east-1',
   },
   mailgun: {
     label: __('Mailgun', 'kelune-crm'),
@@ -111,6 +116,7 @@ const PROVIDER_META: Record<EmailProviderType, ProviderTypeMeta> = {
       'The sender email must be on your verified Mailgun domain.',
       'kelune-crm'
     ),
+    region: 'us',
   },
   sendgrid: {
     label: __('SendGrid', 'kelune-crm'),
@@ -119,8 +125,12 @@ const PROVIDER_META: Record<EmailProviderType, ProviderTypeMeta> = {
       'The sender email must be a verified SendGrid sender.',
       'kelune-crm'
     ),
+    region: '',
   },
 };
+
+const regionDefaultFor = (type?: EmailProviderType): string =>
+  type ? (PROVIDER_META[type]?.region ?? '') : '';
 
 const PROVIDER_TYPE_OPTIONS = (
   Object.keys(PROVIDER_META) as EmailProviderType[]
@@ -413,7 +423,7 @@ const EmailProviders = () => {
     form.resetFields();
     form.setFieldsValue({
       provider_type: 'smtp',
-      region: 'us-east-1',
+      region: regionDefaultFor('smtp'),
       status: 'active',
       is_default: providers.length === 0,
       credentials: { smtp_encryption: 'tls' },
@@ -431,7 +441,7 @@ const EmailProviders = () => {
       sender_name: provider.sender_name,
       sender_email: provider.sender_email,
       reply_to: provider.reply_to,
-      region: provider.region || 'us-east-1',
+      region: provider.region || regionDefaultFor(provider.provider_type),
       is_default: provider.is_default,
       status: provider.status ?? 'active',
       // Masked secrets arrive as the sentinel and are submitted back unchanged.
@@ -460,6 +470,7 @@ const EmailProviders = () => {
         message.success(__('Email provider created', 'kelune-crm'));
       }
       setDrawerOpen(false);
+      dispatch(invalidateReference('emailProviders'));
       loadProviders();
     } catch (error) {
       message.error(
@@ -560,6 +571,7 @@ const EmailProviders = () => {
       setNewSender('');
       message.success(__('Sender email added', 'kelune-crm'));
       await refreshDetails();
+      dispatch(invalidateReference('emailProviders'));
       loadProviders();
     } catch (error) {
       message.error(
@@ -579,6 +591,7 @@ const EmailProviders = () => {
       await api.emailProviders.removeSender(detailsProvider.id, email);
       message.success(__('Sender email removed', 'kelune-crm'));
       await refreshDetails();
+      dispatch(invalidateReference('emailProviders'));
       loadProviders();
     } catch (error) {
       message.error(
@@ -597,6 +610,7 @@ const EmailProviders = () => {
     try {
       await api.emailProviders.delete(id);
       message.success(__('Email provider deleted', 'kelune-crm'));
+      dispatch(invalidateReference('emailProviders'));
       loadProviders();
     } catch (error) {
       message.error(
@@ -628,6 +642,7 @@ const EmailProviders = () => {
         )
       );
       setSelectedRowKeys([]);
+      dispatch(invalidateReference('emailProviders'));
       loadProviders();
     } catch (error) {
       message.error(
@@ -658,6 +673,7 @@ const EmailProviders = () => {
           provider.name
         )
       );
+      dispatch(invalidateReference('emailProviders'));
       loadProviders();
     } catch (error) {
       message.error(
@@ -1205,7 +1221,12 @@ const EmailProviders = () => {
               },
             ]}
           >
-            <Select disabled={!!editing}>
+            <Select
+              disabled={!!editing}
+              onChange={(value: EmailProviderType) =>
+                form.setFieldValue('region', regionDefaultFor(value))
+              }
+            >
               {PROVIDER_TYPE_OPTIONS.map((opt) => (
                 <Option key={opt.value} value={opt.value}>
                   {opt.label}

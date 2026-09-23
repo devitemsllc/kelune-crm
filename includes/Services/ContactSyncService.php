@@ -92,6 +92,11 @@ class ContactSyncService
         $existing = $this->contactRepository->findByEmail($email);
         $doubleOptin = !empty($options['double_optin']);
 
+        // A complainer is never re-subscribed by a signup or comment; an opt-out may opt back in.
+        if ($existing !== null && (string) $existing->get('status') === Contact::STATUS_COMPLAINED) {
+            return $existing;
+        }
+
         $contact = $existing !== null
             ? $this->updateExisting($existing, $data)
             : $this->createNew($data, $options, $doubleOptin);

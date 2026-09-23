@@ -4,6 +4,7 @@ import {
   SettingOutlined,
   MailOutlined,
   SendOutlined,
+  WarningOutlined,
   SafetyOutlined,
   ApiOutlined,
   CheckCircleOutlined,
@@ -52,6 +53,13 @@ export const allSettingsSections = (): SettingsSection[] => [
     text: __('Email Providers', 'kelune-crm'),
     route: 'email-providers',
     capability: CAP.MANAGE_EMAIL_PROVIDERS,
+  },
+  {
+    key: 'bounce-handling',
+    icon: <WarningOutlined />,
+    text: __('Bounce Handling', 'kelune-crm'),
+    route: 'bounce-handling',
+    capability: CAP.MANAGE_SETTINGS,
   },
   {
     key: 'custom-fields',

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Modal,
   Upload,
@@ -27,11 +27,8 @@ import {
   contactRequiredLabels,
   isContactRequired,
 } from '@/utils/contactIdentity';
-import {
-  customFieldKey,
-  fetchCustomFields,
-  type CustomFieldDef,
-} from '@/utils/customFields';
+import { customFieldKey, type CustomFieldDef } from '@/utils/customFields';
+import { useReferenceData } from '@hooks/useReferenceData';
 
 const { Dragger } = Upload;
 const { Step } = Steps;
@@ -158,21 +155,7 @@ const ImportModal = ({ visible, onClose, onSuccess }: ImportModalProps) => {
   const [mapping, setMapping] = useState<Record<number, string>>({});
   const [importing, setImporting] = useState(false);
   const [result, setResult] = useState<ImportResult | null>(null);
-  const [customFields, setCustomFields] = useState<CustomFieldDef[]>([]);
-  const [customFieldsLoaded, setCustomFieldsLoaded] = useState(false);
-
-  useEffect(() => {
-    if (!visible || customFieldsLoaded) {
-      return;
-    }
-    fetchCustomFields()
-      .then(setCustomFields)
-      .catch((error) => {
-        // The core fields still map; only the custom ones go missing.
-        console.error('Failed to load custom fields:', error);
-      })
-      .finally(() => setCustomFieldsLoaded(true));
-  }, [visible, customFieldsLoaded]);
+  const { data: customFields } = useReferenceData('customFields', visible);
 
   const mappableFields = useMemo(
     () => [

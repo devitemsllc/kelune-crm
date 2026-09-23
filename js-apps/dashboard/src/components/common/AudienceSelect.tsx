@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Select, message } from 'antd';
 import { __, sprintf } from '@wordpress/i18n';
-import api from '@/services/api';
-import { getErrorMessage } from '@/utils/getErrorMessage';
+import { useReferenceData } from '@hooks/useReferenceData';
 import type { ContactList, Tag } from '@/types/models';
 
 type AudienceKind = 'tags' | 'lists';
@@ -51,35 +50,20 @@ const LABELS: Record<
  * labelled, still-removable placeholder rather than the bare number.
  */
 const useAudienceOptions = (kind: AudienceKind) => {
-  const [options, setOptions] = useState<AudienceOption[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { data, loading, error } = useReferenceData(kind);
 
   useEffect(() => {
-    let active = true;
+    if (error) message.error(LABELS[kind].error);
+  }, [error, kind]);
 
-    const fetchOptions = async () => {
-      setLoading(true);
-      try {
-        const response =
-          kind === 'tags' ? await api.tags.getAll() : await api.lists.getAll();
-        if (!active) return;
-        const items: Array<Tag | ContactList> = response.data ?? [];
-        setOptions(
-          items.map(({ id, name }) => ({ id, name: name ?? String(id) }))
-        );
-      } catch (error) {
-        if (active) message.error(getErrorMessage(error, LABELS[kind].error));
-      } finally {
-        if (active) setLoading(false);
-      }
-    };
-
-    void fetchOptions();
-
-    return () => {
-      active = false;
-    };
-  }, [kind]);
+  const options = useMemo<AudienceOption[]>(
+    () =>
+      (data as Array<Tag | ContactList>).map(({ id, name }) => ({
+        id,
+        name: name ?? String(id),
+      })),
+    [data]
+  );
 
   return { options, loading };
 };

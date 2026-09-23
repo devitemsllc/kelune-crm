@@ -186,14 +186,16 @@ class ActionProcessor
 
         // Add tracking to HTML if log was created
         $unsubscribe_url = '';
+        $tracking_token = '';
         if ($log_id) {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table; no WP API, fresh read required.
             $log = $wpdb->get_row($wpdb->prepare('SELECT * FROM %i WHERE id = %d', $table, $log_id), ARRAY_A);
 
             if ($log && !empty($log['tracking_token'])) {
-                $body = $this->emailLogService->addTrackingToHtml($body, $log['tracking_token']);
+                $tracking_token = (string) $log['tracking_token'];
+                $body = $this->emailLogService->addTrackingToHtml($body, $tracking_token);
 
-                $unsubscribe_url = $this->emailService->unsubscribeUrlFor((string) $log['tracking_token']);
+                $unsubscribe_url = $this->emailService->unsubscribeUrlFor($tracking_token);
             }
         }
 
@@ -223,6 +225,7 @@ class ActionProcessor
             'from_name' => $from_name,
             'from_email' => $from_email,
             'reply_to' => (string) ($config['reply_to'] ?? ''),
+            'tracking_token' => $tracking_token,
         ]);
 
         if (!is_wp_error($sent) && $sent) {

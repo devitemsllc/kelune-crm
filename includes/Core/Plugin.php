@@ -73,6 +73,10 @@ class Plugin
             return new \KeluneCRM\Handlers\ContactStatusSweeper();
         });
 
+        $this->container->register('bounce_service', function (): \KeluneCRM\Services\BounceService {
+            return new \KeluneCRM\Services\BounceService();
+        });
+
         $this->container->register('cleanup_handler', function (): \KeluneCRM\Handlers\CleanupHandler {
             return new \KeluneCRM\Handlers\CleanupHandler();
         });
@@ -133,6 +137,8 @@ class Plugin
         // status changes. Unconditional: an unsubscribe arrives on the front end
         // (the email link), not just from wp-admin.
         $this->container->get('contact_status_sweeper')->register();
+
+        $this->container->get('bounce_service')->register();
 
         // Daily queue housekeeping (recovers abandoned claims, purges old
         // terminal rows).

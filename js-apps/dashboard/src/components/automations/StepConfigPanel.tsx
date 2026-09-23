@@ -7,7 +7,6 @@ import {
   Divider,
   Steps,
   Typography,
-  message,
   Button,
   Card,
   Row,
@@ -18,7 +17,6 @@ import {
 import { EyeOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 import type { FormInstance } from 'antd';
-import api from '../../services/api';
 import EmailContentEditor from '../common/EmailContentEditor';
 import EmailPreviewModal from '../common/EmailPreviewModal';
 import { TagSelect, ListSelect } from '../common/AudienceSelect';
@@ -29,20 +27,15 @@ import SendStepTestEmail from './SendStepTestEmail';
 import { findActionType } from './actionTypeOptions';
 import { EMAIL_STEPS } from './emailStepOptions';
 import { isProActive } from '../../hooks/useFeature';
+import { useReferenceData } from '@hooks/useReferenceData';
 import { formSectionDivider } from '../../utils/formStyles';
 import { PRO_CONDITION_TYPES } from './proFeatures';
-import type { Tag, ContactList, Segment, EmailProvider } from '@/types/models';
 
 const { Option } = Select;
 const { Step } = Steps;
 const { Paragraph } = Typography;
 
 type SenderType = 'global' | 'provider' | 'custom';
-
-interface CustomFieldOption {
-  field_key: string;
-  field_label: string;
-}
 
 const STANDARD_FIELDS: { key: string; label: string }[] = [
   { key: 'first_name', label: __('First Name', 'kelune-crm') },
@@ -148,20 +141,21 @@ const StepConfigPanel = ({
   const contentMode = Form.useWatch(['action_config', 'content_mode'], form);
 
   const proActive = isProActive();
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [lists, setLists] = useState<ContactList[]>([]);
-  const [segments, setSegments] = useState<Segment[]>([]);
-  const [providers, setProviders] = useState<EmailProvider[]>([]);
-  const [customFields, setCustomFields] = useState<CustomFieldOption[]>([]);
-  const [loadingFields, setLoadingFields] = useState(false);
-  const [loadingSegments, setLoadingSegments] = useState(false);
+  const { data: tags } = useReferenceData('tags');
+  const { data: lists } = useReferenceData('lists');
+  const { data: segments, loading: loadingSegments } =
+    useReferenceData('segments');
+  const { data: providers } = useReferenceData('emailProviders');
+  const { data: customFields, loading: loadingFields } =
+    useReferenceData('customFields');
+  const { data: settings } = useReferenceData('settings');
   const [previewVisible, setPreviewVisible] = useState(false);
   // Settings → Global Email identity, shown as the resolved From line when the
   // step sends with the account default (mirrors the campaign summary).
-  const [globalSender, setGlobalSender] = useState<{
-    from_name: string;
-    from_email: string;
-  }>({ from_name: '', from_email: '' });
+  const globalSender = {
+    from_name: String(settings.email_from_name ?? ''),
+    from_email: String(settings.email_from_email ?? ''),
+  };
   const defaultProvider = providers.find((p) => p.is_default) ?? null;
 
   // The saved block tree for this step's email, handed to the content editor to
@@ -193,89 +187,6 @@ const StepConfigPanel = ({
   useEffect(() => {
     onWideChange?.(needsWide);
   }, [needsWide, onWideChange]);
-
-  useEffect(() => {
-    fetchTags();
-    fetchLists();
-    fetchProviders();
-    fetchCustomFields();
-    fetchGlobalSender();
-    // Segments are a Pro-only route; skip the fetch when Pro is inactive so we
-    // don't 404 and flash a "Failed to load segments" error for a feature the
-    // Free build cannot use anyway.
-    if (proActive) {
-      fetchSegments();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchTags = async () => {
-    try {
-      const response = await api.tags.getAll();
-      setTags(response.data || []);
-    } catch (error) {
-      message.error(__('Failed to fetch tags', 'kelune-crm'));
-    }
-  };
-
-  const fetchLists = async () => {
-    try {
-      const response = await api.lists.getAll();
-      setLists(response.data || []);
-    } catch (error) {
-      message.error(__('Failed to fetch lists', 'kelune-crm'));
-    }
-  };
-
-  const fetchSegments = async () => {
-    try {
-      setLoadingSegments(true);
-      const response = await api.segments.getAll();
-      setSegments(response.data || []);
-    } catch (error) {
-      console.error('Failed to fetch segments:', error);
-    } finally {
-      setLoadingSegments(false);
-    }
-  };
-
-  const fetchProviders = async () => {
-    try {
-      const response = await api.emailProviders.getAll();
-      // The response interceptor already unwraps the { success, data } envelope,
-      // so response.data IS the provider array.
-      setProviders((response.data as EmailProvider[]) || []);
-    } catch (error) {
-      console.error('Failed to fetch email providers:', error);
-    }
-  };
-
-  const fetchGlobalSender = async () => {
-    try {
-      const response = await api.settings.getAll();
-      const s = (response.data ?? {}) as Record<string, unknown>;
-      setGlobalSender({
-        from_name: String(s.email_from_name ?? ''),
-        from_email: String(s.email_from_email ?? ''),
-      });
-    } catch (error) {
-      console.error('Failed to fetch global sender:', error);
-    }
-  };
-
-  const fetchCustomFields = async () => {
-    try {
-      setLoadingFields(true);
-      const response = await api.get<CustomFieldOption[]>('/custom-fields', {
-        params: { per_page: 100, orderby: 'field_order', order: 'ASC' },
-      });
-      setCustomFields(response.data || []);
-    } catch (error) {
-      console.error('Failed to fetch custom fields:', error);
-    } finally {
-      setLoadingFields(false);
-    }
-  };
 
   // Default contact fields + custom fields as "Label (key)" select options.
   const fieldOptions = [

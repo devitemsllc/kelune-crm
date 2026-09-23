@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch } from '@store/hooks';
 import {
   Form,
@@ -20,7 +20,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { CheckOutlined, CopyOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 import { createWebhook, updateWebhook } from '../../store/slices/webhooksSlice';
-import api from '../../services/api';
+import { useReferenceData } from '@hooks/useReferenceData';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { buildWebhookUrl } from '@/utils/webhookUrl';
 import { formSectionDivider } from '@/utils/formStyles';
@@ -30,20 +30,6 @@ import SubmitOnEnter from '../common/SubmitOnEnter';
 const { TextArea } = Input;
 const { Option } = Select;
 const { Text } = Typography;
-
-interface ListTagOption {
-  id: number;
-  name: string;
-}
-
-/** Custom field definition as returned by GET /custom-fields. */
-interface CustomFieldDef {
-  id: number;
-  field_key: string;
-  field_label: string;
-  field_type?: string;
-  field_required?: number;
-}
 
 /** One row in the Usage tab's accepted-fields table. */
 interface AcceptedField {
@@ -78,89 +64,54 @@ const WebhookForm = ({
 }: WebhookFormProps) => {
   const dispatch = useDispatch();
   const rootRef = useRef<HTMLDivElement>(null);
-  const [lists, setLists] = useState<ListTagOption[]>([]);
-  const [tags, setTags] = useState<ListTagOption[]>([]);
-  const [customFields, setCustomFields] = useState<CustomFieldDef[]>([]);
-  const [loadingLists, setLoadingLists] = useState(false);
-  const [loadingTags, setLoadingTags] = useState(false);
-
-  const fetchLists = useCallback(async () => {
-    setLoadingLists(true);
-    try {
-      const response = await api.get<ListTagOption[]>('/lists', {
-        params: { per_page: 100 },
-      });
-      // Convert IDs from strings to integers
-      const nextLists = (response.data || []).map((list) => ({
-        ...list,
-        id: parseInt(String(list.id), 10),
-      }));
-      setLists(nextLists);
-    } catch (error) {
-      console.error('Failed to fetch lists:', error);
-      message.error(__('Failed to load lists', 'kelune-crm'));
-    } finally {
-      setLoadingLists(false);
-    }
-  }, []);
-
-  const fetchTags = useCallback(async () => {
-    setLoadingTags(true);
-    try {
-      const response = await api.get<ListTagOption[]>('/tags', {
-        params: { per_page: 100 },
-      });
-      // Convert IDs from strings to integers
-      const nextTags = (response.data || []).map((tag) => ({
-        ...tag,
-        id: parseInt(String(tag.id), 10),
-      }));
-      setTags(nextTags);
-    } catch (error) {
-      console.error('Failed to fetch tags:', error);
-      message.error(__('Failed to load tags', 'kelune-crm'));
-    } finally {
-      setLoadingTags(false);
-    }
-  }, []);
-
+  const {
+    data: lists,
+    loading: loadingLists,
+    ready: listsReady,
+  } = useReferenceData('lists');
+  const {
+    data: tags,
+    loading: loadingTags,
+    ready: tagsReady,
+  } = useReferenceData('tags');
   // Custom fields power the accepted-fields table in the Usage tab (each is
   // accepted on the payload as custom_field__<field_key>).
-  const fetchCustomFields = useCallback(async () => {
-    try {
-      const response = await api.get<CustomFieldDef[]>('/custom-fields', {
-        params: { per_page: 100 },
-      });
-      setCustomFields(response.data || []);
-    } catch (error) {
-      console.error('Failed to fetch custom fields:', error);
-    }
-  }, []);
+  const { data: customFields } = useReferenceData('customFields');
+  // Seeded once per webhook; a later lists/tags refresh must not re-seed over
+  // input typed in the meantime.
+  const seededWebhook = useRef<Webhook | null>(null);
 
-  // Fetch lists and tags on mount (the parent Drawer destroys this on close, so
-  // it remounts fresh each open), then seed form values from the edited row.
+  // The drawer owns the form instance, so it still holds the last edited
+  // webhook's values on a create open.
   useEffect(() => {
-    const loadData = async () => {
-      await Promise.all([fetchLists(), fetchTags(), fetchCustomFields()]);
+    form.resetFields();
+  }, [form]);
 
-      if (editingWebhook) {
-        form.setFieldsValue({
-          webhook_name: editingWebhook.webhook_name,
-          description: editingWebhook.description,
-          // Coerce to numbers to match the numeric Select option values
-          // (fetchLists/fetchTags parseInt the option ids; the API may send
-          // the selected ids as strings).
-          default_lists: (editingWebhook.default_lists || []).map(Number),
-          default_tags: (editingWebhook.default_tags || []).map(Number),
-          allowed_actions: editingWebhook.allowed_actions || [],
-          status: editingWebhook.status,
-          ip_whitelist: editingWebhook.ip_whitelist,
-        });
-      }
-    };
-
-    loadData();
-  }, [editingWebhook, form, fetchLists, fetchTags, fetchCustomFields]);
+  useEffect(() => {
+    // Seed only once the list/tag options exist, otherwise the selects show
+    // the raw ids until they arrive.
+    if (
+      !editingWebhook ||
+      !listsReady ||
+      !tagsReady ||
+      seededWebhook.current === editingWebhook
+    ) {
+      return;
+    }
+    seededWebhook.current = editingWebhook;
+    form.resetFields();
+    form.setFieldsValue({
+      webhook_name: editingWebhook.webhook_name,
+      description: editingWebhook.description,
+      // Coerce to numbers to match the numeric Select option values (the
+      // API may send the selected ids as strings).
+      default_lists: (editingWebhook.default_lists || []).map(Number),
+      default_tags: (editingWebhook.default_tags || []).map(Number),
+      allowed_actions: editingWebhook.allowed_actions || [],
+      status: editingWebhook.status,
+      ip_whitelist: editingWebhook.ip_whitelist,
+    });
+  }, [editingWebhook, form, listsReady, tagsReady]);
 
   // When the drawer flips from create into edit mode (Usage tab), the drawer
   // body keeps the create form's scroll position — reset it to the top so the
@@ -292,7 +243,7 @@ const WebhookForm = ({
           }
         >
           {lists.map((list) => (
-            <Option key={list.id} value={list.id}>
+            <Option key={list.id} value={Number(list.id)}>
               {list.name}
             </Option>
           ))}
@@ -328,7 +279,7 @@ const WebhookForm = ({
           }
         >
           {tags.map((tag) => (
-            <Option key={tag.id} value={tag.id}>
+            <Option key={tag.id} value={Number(tag.id)}>
               {tag.name}
             </Option>
           ))}
@@ -574,15 +525,17 @@ const WebhookForm = ({
         message={<span style={{ wordBreak: 'break-all' }}>{maskedUrl}</span>}
         action={
           <Typography.Text
+            className="kelune-crm-cc-copy-button"
             copyable={{
               text: webhookUrl,
               // Antd wraps these in its own button element.
               icon: [
-                <CopyOutlined key="copy" style={{ marginLeft: 12 }} />,
-                <CheckOutlined
-                  key="copied"
-                  style={{ marginLeft: 12, color: '#52c41a' }}
-                />,
+                <span key="copy">
+                  <CopyOutlined /> {__('Copy', 'kelune-crm')}
+                </span>,
+                <span key="copied">
+                  <CheckOutlined /> {__('Copied', 'kelune-crm')}
+                </span>,
               ],
               tooltips: [
                 __('Copy URL', 'kelune-crm'),

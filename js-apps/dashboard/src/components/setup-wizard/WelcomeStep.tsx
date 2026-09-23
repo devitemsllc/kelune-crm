@@ -13,6 +13,8 @@ import {
 } from 'antd';
 import { __ } from '@wordpress/i18n';
 import api from '@/services/api';
+import { useDispatch } from '@store/hooks';
+import { invalidateReference } from '@store/slices/referenceSlice';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
 const { Title, Paragraph } = Typography;
@@ -53,11 +55,13 @@ const WelcomeStep = ({
   skipSetup,
 }: WelcomeStepProps) => {
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
 
   const onFinish = async (values: Record<string, unknown>) => {
     setIsLoading(true);
     try {
       await api.settings.update(values);
+      dispatch(invalidateReference('settings'));
       message.success(__('Settings saved successfully', 'kelune-crm'));
       nextStep();
     } catch (error) {

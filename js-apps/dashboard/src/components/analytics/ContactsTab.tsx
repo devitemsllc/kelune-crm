@@ -9,13 +9,20 @@ import { contactStatusLabel } from '../contacts/contactStatus';
 
 // Fixed display order for the By Status donut — drives both slice sequence and
 // legend order. Any status not listed (a legacy value) falls to the end.
-const STATUS_ORDER = ['active', 'pending', 'bounced', 'unsubscribed'];
+const STATUS_ORDER = [
+  'active',
+  'pending',
+  'bounced',
+  'complained',
+  'unsubscribed',
+];
 
-// Per-status slice colour, keyed to STATUS_ORDER above.
+// Range must stay as long as STATUS_ORDER, or a status past the last colour draws unpainted.
 const STATUS_PALETTE = [
   CHART_COLORS.primary,
   CHART_COLORS.amber,
   CHART_COLORS.teal,
+  CHART_COLORS.violet,
   CHART_COLORS.red,
 ];
 

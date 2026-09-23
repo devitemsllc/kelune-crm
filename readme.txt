@@ -3,7 +3,7 @@ Contributors: devitemsllc, nazmulhudadev, aslamhasib
 Tags: crm, contacts, email marketing, marketing automation, email campaigns
 Requires at least: 6.6
 Tested up to: 7.1
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -187,6 +187,11 @@ Used to deliver email when you select SMTP as your email provider. This is not a
 
 == Changelog ==
 
+= Version: 1.0.6 - Date: 23 September, 2026 =
+* Added: Bounce and complaint handling for Amazon SES, Mailgun and SendGrid.
+* Updated: Tags, lists, segments and custom fields refresh across the dashboard without a reload.
+* Fixed: Minor bugs and issues to enhance functionality and user experience.
+
 = Version: 1.0.5 - Date: 8 September, 2026 =
 * Added: Roles and permissions, with built-in CRM Manager, CRM Agent and CRM Viewer roles ready to use.
 * Added: Custom roles, CRM permissions for your existing WordPress roles, and several roles per user.
@@ -221,6 +226,9 @@ Used to deliver email when you select SMTP as your email provider. This is not a
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.0.6 =
+Adds bounce and complaint handling for Amazon SES, Mailgun and SendGrid. The database updates automatically on the first admin page load after upgrading.
 
 = 1.0.5 =
 Adds roles and permissions: control what each role can see and do, including the WordPress roles you already use. Administrators keep full access.

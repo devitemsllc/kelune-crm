@@ -7,6 +7,7 @@ const STATUS_LABEL: Record<ContactStatus, string> = {
   pending: __('Pending', 'kelune-crm'),
   unsubscribed: __('Unsubscribed', 'kelune-crm'),
   bounced: __('Bounced', 'kelune-crm'),
+  complained: __('Complained', 'kelune-crm'),
 };
 
 const STATUS_COLOR: Record<ContactStatus, string> = {
@@ -14,6 +15,7 @@ const STATUS_COLOR: Record<ContactStatus, string> = {
   pending: 'orange',
   unsubscribed: 'red',
   bounced: 'volcano',
+  complained: 'magenta',
 };
 
 const CONTACT_STATUSES = Object.keys(STATUS_LABEL) as ContactStatus[];

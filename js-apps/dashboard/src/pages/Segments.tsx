@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import { useDispatch, useSelector } from '@store/hooks';
+import { invalidateReference } from '@store/slices/referenceSlice';
 import {
   Table,
   Button,
@@ -264,6 +265,7 @@ const Segments = () => {
         )
       );
       setSelectedRowKeys([]);
+      dispatch(invalidateReference('segments'));
       loadSegments();
     } catch (error) {
       message.error(

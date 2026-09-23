@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import { useDispatch, useSelector } from '@store/hooks';
+import { useReferenceData } from '@hooks/useReferenceData';
 import {
   Table,
   Button,
@@ -66,7 +67,7 @@ import type { SortOrder } from './incomingWebhookSortOptions';
 import api from '../../services/api';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { timeDiff, timeFormat } from '../../utils/time';
-import type { Webhook, ID, Tag as TagModel, ContactList } from '@/types/models';
+import type { Webhook, ID } from '@/types/models';
 
 const { Text } = Typography;
 
@@ -141,8 +142,24 @@ const WebhookList = () => {
   // True right after a create so the drawer opens on the Usage tab.
   const [justCreated, setJustCreated] = useState(false);
   const [selectedWebhook, setSelectedWebhook] = useState<Webhook | null>(null);
-  const [listsMap, setListsMap] = useState<Record<string, string>>({});
-  const [tagsMap, setTagsMap] = useState<Record<string, string>>({});
+  // Lists/tags lookups for the (default-off) default_lists / default_tags
+  // columns, keyed by numeric id.
+  const { data: allLists } = useReferenceData('lists');
+  const { data: allTags } = useReferenceData('tags');
+  const listsMap = useMemo(
+    () =>
+      Object.fromEntries(
+        allLists.map((list) => [String(Number(list.id)), list.name ?? ''])
+      ),
+    [allLists]
+  );
+  const tagsMap = useMemo(
+    () =>
+      Object.fromEntries(
+        allTags.map((tag) => [String(Number(tag.id)), tag.name ?? ''])
+      ),
+    [allTags]
+  );
 
   // Persisted view-state: search, filters, page/limit and visible columns are
   // all kept in localStorage so they survive reloads and direct visits.
@@ -193,33 +210,6 @@ const WebhookList = () => {
   useEffect(() => {
     loadWebhooks();
   }, [loadWebhooks]);
-
-  // Lists/tags lookups for the (default-off) default_lists / default_tags
-  // columns. Ids are normalised to numbers so they match the API's numeric ids.
-  const loadListsAndTags = useCallback(async () => {
-    try {
-      const [listsResponse, tagsResponse] = await Promise.all([
-        api.get<ContactList[]>('/lists', { params: { per_page: 100 } }),
-        api.get<TagModel[]>('/tags', { params: { per_page: 100 } }),
-      ]);
-      const listMap: Record<string, string> = {};
-      (listsResponse.data || []).forEach((list) => {
-        listMap[String(Number(list.id))] = list.name ?? '';
-      });
-      setListsMap(listMap);
-      const tagMap: Record<string, string> = {};
-      (tagsResponse.data || []).forEach((tag) => {
-        tagMap[String(Number(tag.id))] = tag.name ?? '';
-      });
-      setTagsMap(tagMap);
-    } catch (error) {
-      console.error('Failed to load lists and tags:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadListsAndTags();
-  }, [loadListsAndTags]);
 
   const handleCreate = () => {
     setEditingWebhook(null);

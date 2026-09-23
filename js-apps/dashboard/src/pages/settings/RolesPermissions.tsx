@@ -4,6 +4,7 @@ import { TeamOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { __, sprintf } from '@wordpress/i18n';
 import { useDispatch } from '@store/hooks';
+import { invalidateReference } from '@store/slices/referenceSlice';
 import api from '@/services/api';
 import {
   startGlobalLoading,
@@ -62,6 +63,7 @@ const RolesPermissions = () => {
     try {
       await api.settings.update({ multiple_user_roles_enabled: enabled });
       setMultipleRolesEnabled(enabled);
+      dispatch(invalidateReference('settings'));
       message.success(__('Settings saved successfully', 'kelune-crm'));
     } catch (err) {
       message.error(

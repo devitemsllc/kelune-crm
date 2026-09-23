@@ -53,8 +53,8 @@ class UserRoleFields
         }
 
         // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only renderer gated by promote_users; $_POST is read only to preselect a checkbox on a re-displayed form.
-        $role = isset($_POST['role']) ? wp_unslash($_POST['role']) : '';
-        $posted = is_scalar($role) ? RoleService::resolveSlug((string) $role) : '';
+        $role = isset($_POST['role']) ? sanitize_text_field(wp_unslash($_POST['role'])) : '';
+        $posted = RoleService::resolveSlug($role);
         $selected = $posted !== '' ? [$posted] : [(string) get_option('default_role')];
 
         $this->renderCheckboxes($selected, __('User Roles', 'kelune-crm'), false);

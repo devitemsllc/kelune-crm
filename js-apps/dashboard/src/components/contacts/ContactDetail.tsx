@@ -11,6 +11,7 @@ import {
   List,
   Tooltip,
   Card,
+  Typography,
 } from 'antd';
 import { __ } from '@wordpress/i18n';
 import api from '../../services/api';
@@ -28,6 +29,7 @@ import type {
 } from '@/types/models';
 
 const { TabPane } = Tabs;
+const { Text } = Typography;
 
 interface ContactDetailProps {
   contact: Contact | null;
@@ -177,6 +179,33 @@ const ContactDetail = ({ contact }: ContactDetailProps) => {
             <Descriptions.Item label={__('Status', 'kelune-crm')}>
               <ContactStatusTag status={contact.status} />
             </Descriptions.Item>
+            {contact.bounce_reason ? (
+              <Descriptions.Item
+                label={
+                  contact.status === 'complained'
+                    ? __('Complaint Reason', 'kelune-crm')
+                    : __('Bounce Reason', 'kelune-crm')
+                }
+              >
+                <Text code>{contact.bounce_reason}</Text>
+              </Descriptions.Item>
+            ) : null}
+            {contact.last_bounce_at ? (
+              <Descriptions.Item
+                label={
+                  contact.status === 'complained'
+                    ? __('Complained At', 'kelune-crm')
+                    : __('Last Bounce', 'kelune-crm')
+                }
+              >
+                {renderTime(contact.last_bounce_at)}
+              </Descriptions.Item>
+            ) : null}
+            {contact.soft_bounce_count ? (
+              <Descriptions.Item label={__('Soft Bounces', 'kelune-crm')}>
+                {contact.soft_bounce_count}
+              </Descriptions.Item>
+            ) : null}
             <Descriptions.Item label={__('Company', 'kelune-crm')}>
               {contact.company || '-'}
             </Descriptions.Item>

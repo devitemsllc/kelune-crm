@@ -30,7 +30,8 @@ import { CHART_COLORS, ratePercent } from '../analytics/chartUtils';
 import { timeDiff, timeFormat } from '../../utils/time';
 import { campaignStateColor, campaignStateLabel } from './campaignStatus';
 import { isProActive } from '../../hooks/useFeature';
-import type { Campaign, CampaignAbTest, EmailProvider } from '@/types/models';
+import { useReferenceData } from '@hooks/useReferenceData';
+import type { Campaign, CampaignAbTest } from '@/types/models';
 
 // Resolved sender the campaign will send with. Mirrors CampaignForm's review
 // step: a mode title (Custom / provider name / Global Email) and the From line.
@@ -99,11 +100,12 @@ const CampaignAnalytics = ({
   const [abTest, setAbTest] = useState<CampaignAbTest | null>(null);
   // Needed to resolve the sender the same way CampaignForm's review step does:
   // provider-mode reads the provider record, global-mode reads Settings.
-  const [providers, setProviders] = useState<EmailProvider[]>([]);
-  const [globalSender, setGlobalSender] = useState<{
-    from_name: string;
-    from_email: string;
-  }>({ from_name: '', from_email: '' });
+  const { data: providers } = useReferenceData('emailProviders', visible);
+  const { data: settings } = useReferenceData('settings', visible);
+  const globalSender = {
+    from_name: String(settings.email_from_name ?? ''),
+    from_email: String(settings.email_from_email ?? ''),
+  };
 
   const loadAnalytics = useCallback(async () => {
     if (!campaign?.id) return;
@@ -131,22 +133,6 @@ const CampaignAnalytics = ({
         ? await api.campaigns.getAbTest(id).catch(() => null)
         : null;
       setAbTest(abRes?.data ?? null);
-
-      // Sender lookups are best-effort — a failure just falls back to '-'.
-      const [providersRes, settingsRes] = await Promise.allSettled([
-        api.emailProviders.getAll(),
-        api.settings.getAll(),
-      ]);
-      if (providersRes.status === 'fulfilled') {
-        setProviders((providersRes.value.data as EmailProvider[]) ?? []);
-      }
-      if (settingsRes.status === 'fulfilled') {
-        const s = (settingsRes.value.data ?? {}) as Record<string, unknown>;
-        setGlobalSender({
-          from_name: String(s.email_from_name ?? ''),
-          from_email: String(s.email_from_email ?? ''),
-        });
-      }
     } catch (error) {
       console.error('Failed to load analytics', error);
     } finally {

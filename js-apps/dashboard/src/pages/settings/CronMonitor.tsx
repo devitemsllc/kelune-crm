@@ -3,12 +3,9 @@ import {
   Alert,
   Button,
   Card,
-  Col,
   Flex,
   List,
-  Row,
   Space,
-  Statistic,
   Tag,
   Tooltip,
   Typography,
@@ -29,24 +26,10 @@ import SettingsSectionTitle from './SettingsSectionTitle';
 import api from '@/services/api';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import type { CronEvent, CronStatus } from '@/types/models';
+import StatGrid from '../../components/analytics/StatGrid';
+import { tintedCardStyle } from '@/utils/infoCardTints';
 
 const { Text } = Typography;
-
-// Soft tinted info cards, one hue per metric — mirrors the Campaigns summary band.
-const INFO_CARD_TINTS = {
-  blue: {
-    background: 'linear-gradient(135deg, #eff6ff 0%, #f5f9ff 100%)',
-    border: '#bae0ff',
-  },
-  green: {
-    background: 'linear-gradient(135deg, #f0fdf4 0%, #f6fdf9 100%)',
-    border: '#b7eb8f',
-  },
-  orange: {
-    background: 'linear-gradient(135deg, #fff7ed 0%, #fffaf5 100%)',
-    border: '#ffd591',
-  },
-};
 
 const STATUS_TAG: Record<CronEvent['status'], { color: string; text: string }> =
   {
@@ -207,39 +190,18 @@ const CronMonitor = () => {
         />
       ) : null}
 
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} sm={12} xl={8}>
-          <Card
-            size="small"
-            variant="outlined"
-            loading={loading && !status}
-            style={{
-              background: INFO_CARD_TINTS.blue.background,
-              height: '100%',
-              border: `1px solid ${INFO_CARD_TINTS.blue.border}`,
-              boxShadow: 'none',
-            }}
-          >
-            <Statistic
-              title={__('Memory Limit', 'kelune-crm')}
-              value={server?.memory_limit ?? '—'}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} xl={8}>
-          <Card
-            size="small"
-            variant="outlined"
-            loading={loading && !status}
-            style={{
-              background: INFO_CARD_TINTS.green.background,
-              height: '100%',
-              border: `1px solid ${INFO_CARD_TINTS.green.border}`,
-              boxShadow: 'none',
-            }}
-          >
-            <Statistic
-              title={
+      <div style={{ marginBottom: 24 }}>
+        <StatGrid
+          loading={loading && !status}
+          items={[
+            {
+              title: __('Memory Limit', 'kelune-crm'),
+              value: server?.memory_limit ?? '—',
+              style: tintedCardStyle('blue'),
+            },
+            {
+              key: 'memory_usage',
+              title: (
                 <Space size={4}>
                   <span>{__('Memory In Use', 'kelune-crm')}</span>
                   <Tooltip
@@ -251,39 +213,26 @@ const CronMonitor = () => {
                     <QuestionCircleOutlined style={{ color: '#8c8c8c' }} />
                   </Tooltip>
                 </Space>
-              }
-              value={server?.memory_usage ?? '—'}
+              ),
+              value: server?.memory_usage ?? '—',
               // Null when memory_limit is unlimited: there is no ceiling to take
               // a percentage of, so the suffix is simply absent.
-              suffix={
+              suffix:
                 server && server.memory_usage_percent !== null
                   ? `(${server.memory_usage_percent}%)`
-                  : undefined
-              }
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} xl={8}>
-          <Card
-            size="small"
-            variant="outlined"
-            loading={loading && !status}
-            style={{
-              background: INFO_CARD_TINTS.orange.background,
-              height: '100%',
-              border: `1px solid ${INFO_CARD_TINTS.orange.border}`,
-              boxShadow: 'none',
-            }}
-          >
-            <Statistic
-              title={__('Max Execution Time', 'kelune-crm')}
-              value={
-                server ? formatExecutionTime(server.max_execution_time) : '—'
-              }
-            />
-          </Card>
-        </Col>
-      </Row>
+                  : undefined,
+              style: tintedCardStyle('green'),
+            },
+            {
+              title: __('Max Execution Time', 'kelune-crm'),
+              value: server
+                ? formatExecutionTime(server.max_execution_time)
+                : '—',
+              style: tintedCardStyle('orange'),
+            },
+          ]}
+        />
+      </div>
 
       <Card
         size="small"

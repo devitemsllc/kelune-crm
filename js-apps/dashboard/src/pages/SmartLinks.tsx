@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import { useDispatch, useSelector } from '@store/hooks';
+import { useReferenceData } from '@hooks/useReferenceData';
 import {
   Table,
   Button,
@@ -68,13 +69,7 @@ import {
 import type { SortOrder } from '../components/contacts/smartLinkSortOptions';
 import { timeDiff, timeFormat } from '../utils/time';
 import SubmitOnEnter from '../components/common/SubmitOnEnter';
-import type {
-  SmartLink,
-  Tag as TagModel,
-  ContactList,
-  Automation,
-  ID,
-} from '@/types/models';
+import type { SmartLink, ID } from '@/types/models';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -156,9 +151,9 @@ const SmartLinks = () => {
   const [copied, setCopied] = useState(false);
   const [form] = Form.useForm();
 
-  const [tags, setTags] = useState<TagModel[]>([]);
-  const [lists, setLists] = useState<ContactList[]>([]);
-  const [automations, setAutomations] = useState<Automation[]>([]);
+  const { data: tags } = useReferenceData('tags');
+  const { data: lists } = useReferenceData('lists');
+  const { data: automations } = useReferenceData('automations');
 
   // Persisted view-state: search, filters, sort, page/limit and visible columns
   // are all kept in localStorage so they survive reloads and direct visits.
@@ -212,48 +207,9 @@ const SmartLinks = () => {
     view.sortOrder,
   ]);
 
-  const loadTagsListsAutomations = useCallback(async () => {
-    try {
-      // Each request is optional; one refusal must not take the rest.
-      const [tagsRes, listsRes, automationsRes] = await Promise.all([
-        can(CAP.VIEW_TAGS) ? api.tags.getAll().catch(() => null) : null,
-        can(CAP.VIEW_LISTS) ? api.lists.getAll().catch(() => null) : null,
-        can(CAP.VIEW_AUTOMATIONS)
-          ? api.automations.getAll({ status: 'active' }).catch(() => null)
-          : null,
-      ]);
-      // Normalise ids to numbers (API may send strings) so they match the
-      // numeric Select option values below.
-      setTags(
-        (tagsRes?.data || []).map((tag) => ({ ...tag, id: Number(tag.id) }))
-      );
-      setLists(
-        (listsRes?.data || []).map((list) => ({ ...list, id: Number(list.id) }))
-      );
-      const automationsData = automationsRes?.data?.data || [];
-      setAutomations(
-        automationsData.map((auto: Automation) => ({
-          ...auto,
-          id: Number(auto.id),
-        }))
-      );
-    } catch (error) {
-      message.error(
-        getErrorMessage(
-          error,
-          __('Failed to load tags and lists', 'kelune-crm')
-        )
-      );
-    }
-  }, []);
-
   useEffect(() => {
     loadSmartLinks();
   }, [loadSmartLinks]);
-
-  useEffect(() => {
-    loadTagsListsAutomations();
-  }, [loadTagsListsAutomations]);
 
   const handleCreate = () => {
     setEditingLink(null);

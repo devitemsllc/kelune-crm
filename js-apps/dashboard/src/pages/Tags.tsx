@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import { useDispatch } from '@store/hooks';
+import { invalidateReference } from '@store/slices/referenceSlice';
 import {
   Table,
   Button,
@@ -168,6 +169,7 @@ const Tags = () => {
     try {
       await api.tags.delete(id);
       message.success(__('Tag deleted successfully', 'kelune-crm'));
+      dispatch(invalidateReference('tags'));
       loadTags();
     } catch (error) {
       message.error(
@@ -191,6 +193,7 @@ const Tags = () => {
         )
       );
       setSelectedRowKeys([]);
+      dispatch(invalidateReference('tags'));
       loadTags();
     } catch (error) {
       message.error(
@@ -218,6 +221,7 @@ const Tags = () => {
         message.success(__('Tag created successfully', 'kelune-crm'));
       }
       setModalVisible(false);
+      dispatch(invalidateReference('tags'));
       loadTags();
     } catch (error) {
       message.error(

@@ -8,6 +8,7 @@ import GeneralSettings from './settings/GeneralSettings';
 import EmailGlobalSettings from './settings/EmailGlobalSettings';
 import DoubleOptinSettings from './settings/DoubleOptinSettings';
 import EmailProviders from './settings/EmailProviders';
+import BounceHandling from './settings/BounceHandling';
 import ComplianceSettings from './settings/ComplianceSettings';
 import CronMonitor from './settings/CronMonitor';
 import RolesPermissions from './settings/RolesPermissions';
@@ -74,6 +75,9 @@ const Settings = () => {
       case 'email-providers':
         return <EmailProviders />;
 
+      case 'bounce-handling':
+        return <BounceHandling />;
+
       case 'custom-fields':
         return <CustomFields />;
 
@@ -119,6 +123,7 @@ const Settings = () => {
   const isOptionSection =
     activeMenu === 'general' ||
     activeMenu === 'email-global' ||
+    activeMenu === 'bounce-handling' ||
     activeMenu === 'double-optin' ||
     activeMenu === 'compliance';
   const contentStyle = isOptionSection

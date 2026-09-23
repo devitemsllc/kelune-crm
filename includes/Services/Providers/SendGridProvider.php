@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KeluneCRM\Services\Providers;
 
+use KeluneCRM\Services\Bounce\BounceAttribution;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class SendGridProvider implements EmailProviderInterface
@@ -91,7 +92,15 @@ class SendGridProvider implements EmailProviderInterface
             $payload['attachments'] = $attachments;
         }
 
-        $custom_headers = $this->customHeaderList($phpmailer);
+        // SendGrid echoes custom_args on its events, never custom headers.
+        $custom_headers = [];
+        foreach ($this->customHeaderList($phpmailer) as $name => $value) {
+            if (0 === strcasecmp($name, BounceAttribution::HEADER)) {
+                $payload['custom_args'] = [BounceAttribution::SENDGRID_ARG => $value];
+                continue;
+            }
+            $custom_headers[$name] = $value;
+        }
         if ($custom_headers !== []) {
             $payload['headers'] = $custom_headers;
         }

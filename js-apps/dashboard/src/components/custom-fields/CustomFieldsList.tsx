@@ -16,6 +16,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import type { Key } from 'react';
 import CustomFieldForm from './CustomFieldForm';
 import { useDispatch } from '@store/hooks';
+import { invalidateReference } from '@store/slices/referenceSlice';
 import api from '../../services/api';
 import {
   startGlobalLoading,
@@ -265,6 +266,7 @@ const CustomFieldsList = () => {
     try {
       await api.delete(`/custom-fields/${id}`);
       message.success(__('Custom field deleted successfully', 'kelune-crm'));
+      dispatch(invalidateReference('customFields'));
       loadFields();
     } catch (error) {
       message.error(
@@ -296,6 +298,7 @@ const CustomFieldsList = () => {
         )
       );
       setSelectedRowKeys([]);
+      dispatch(invalidateReference('customFields'));
       loadFields();
     } catch (error) {
       message.error(
@@ -321,6 +324,7 @@ const CustomFieldsList = () => {
       try {
         await api.post('/custom-fields/reorder', { orders });
         message.success(__('Field order updated successfully', 'kelune-crm'));
+        dispatch(invalidateReference('customFields'));
       } catch (error) {
         message.error(__('Failed to update field order', 'kelune-crm'));
         loadFields(); // Reload on error to restore correct order
@@ -646,6 +650,7 @@ const CustomFieldsList = () => {
         }}
         editingField={editingField}
         onSuccess={() => {
+          dispatch(invalidateReference('customFields'));
           loadFields();
           setFormVisible(false);
           setEditingField(null);

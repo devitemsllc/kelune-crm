@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Col, Flex, Form, Layout, Row, Spin, Steps, theme } from 'antd';
 import { __ } from '@wordpress/i18n';
 import { useDispatch } from '@store/hooks';
+import { invalidateReference } from '@store/slices/referenceSlice';
 import {
   setSetupFinished,
   setSetupRunning,
@@ -106,6 +107,16 @@ const SetupWizard = () => {
     void loadData();
   }, [loadData]);
 
+  // A step's save/delete changes the shared lists/tags every picker reads.
+  const reloadLists = useCallback(async () => {
+    dispatch(invalidateReference('lists'));
+    await loadData();
+  }, [dispatch, loadData]);
+  const reloadTags = useCallback(async () => {
+    dispatch(invalidateReference('tags'));
+    await loadData();
+  }, [dispatch, loadData]);
+
   // Reseed the forms whenever the step or the loaded data changes: existing rows
   // when present, otherwise three empty rows to invite input.
   useEffect(() => {
@@ -131,6 +142,7 @@ const SetupWizard = () => {
         });
         dispatch(setSetupStep(newStep));
         dispatch(setSetupFinished(isFinished));
+        dispatch(invalidateReference('settings'));
       } finally {
         setIsLoading(false);
       }
@@ -215,7 +227,7 @@ const SetupWizard = () => {
             nextStep={nextStep}
             prevStep={prevStep}
             skipSetup={skipSetup}
-            reloadData={loadData}
+            reloadData={reloadLists}
           />,
         ]
       : []),
@@ -242,7 +254,7 @@ const SetupWizard = () => {
             nextStep={nextStep}
             prevStep={prevStep}
             skipSetup={skipSetup}
-            reloadData={loadData}
+            reloadData={reloadTags}
           />,
         ]
       : []),

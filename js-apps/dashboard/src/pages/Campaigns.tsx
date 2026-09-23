@@ -2,18 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import { useDispatch, useSelector } from '@store/hooks';
-import {
-  Table,
-  Button,
-  Space,
-  Dropdown,
-  Tooltip,
-  message,
-  Row,
-  Col,
-  Card,
-  Statistic,
-} from 'antd';
+import { Table, Button, Space, Dropdown, Tooltip, message } from 'antd';
 import {
   EditOutlined,
   MoreOutlined,
@@ -82,6 +71,8 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { timeDiff, timeFormat } from '../utils/time';
 import type { Campaign, CampaignSummaryStats, ID } from '@/types/models';
+import StatGrid from '../components/analytics/StatGrid';
+import { tintedCardStyle, type InfoCardTint } from '@/utils/infoCardTints';
 
 const toRate = (rate?: number | string): number => {
   const num = parseFloat(String(rate ?? 0));
@@ -100,8 +91,7 @@ interface SummaryCard {
   precision?: number;
   suffix?: string;
   color?: string;
-  background: string;
-  border: string;
+  tint: InfoCardTint;
 }
 
 // Dashboard summary band shown above the filter card. Soft tinted backgrounds
@@ -111,16 +101,14 @@ const SUMMARY_CARDS: SummaryCard[] = [
     key: 'total',
     title: __('Total Campaigns', 'kelune-crm'),
     value: (s) => toNumber(s?.total_campaigns),
-    background: 'linear-gradient(135deg, #eff6ff 0%, #f5f9ff 100%)',
-    border: '#bae0ff',
+    tint: 'blue',
   },
   {
     key: 'active',
     title: __('Active Campaigns', 'kelune-crm'),
     value: (s) => toNumber(s?.active_campaigns),
     color: '#3f8600',
-    background: 'linear-gradient(135deg, #f0fdf4 0%, #f6fdf9 100%)',
-    border: '#b7eb8f',
+    tint: 'green',
   },
   {
     key: 'open',
@@ -128,8 +116,7 @@ const SUMMARY_CARDS: SummaryCard[] = [
     value: (s) => toNumber(s?.avg_open_rate),
     precision: 2,
     suffix: '%',
-    background: 'linear-gradient(135deg, #fff7ed 0%, #fffaf5 100%)',
-    border: '#ffd591',
+    tint: 'orange',
   },
   {
     key: 'click',
@@ -137,8 +124,7 @@ const SUMMARY_CARDS: SummaryCard[] = [
     value: (s) => toNumber(s?.avg_click_rate),
     precision: 2,
     suffix: '%',
-    background: 'linear-gradient(135deg, #faf5ff 0%, #fbf8ff 100%)',
-    border: '#d3adf7',
+    tint: 'purple',
   },
 ];
 
@@ -775,30 +761,19 @@ const Campaigns = () => {
         onReload={reloadAll}
       />
 
-      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-        {SUMMARY_CARDS.map((card) => (
-          <Col key={card.key} xs={24} sm={12} xl={6}>
-            <Card
-              size="small"
-              variant="outlined"
-              style={{
-                background: card.background,
-                height: '100%',
-                border: `1px solid ${card.border}`,
-                boxShadow: 'none',
-              }}
-            >
-              <Statistic
-                title={card.title}
-                value={card.value(summaryStats)}
-                precision={card.precision}
-                suffix={card.suffix}
-                valueStyle={{ color: card.color }}
-              />
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      <div style={{ marginBottom: 16 }}>
+        <StatGrid
+          items={SUMMARY_CARDS.map((card) => ({
+            key: card.key,
+            title: card.title,
+            value: card.value(summaryStats),
+            precision: card.precision,
+            suffix: card.suffix,
+            color: card.color,
+            style: tintedCardStyle(card.tint),
+          }))}
+        />
+      </div>
 
       <ListFilterCard
         search={filters.search}

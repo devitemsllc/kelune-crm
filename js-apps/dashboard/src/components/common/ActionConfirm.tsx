@@ -10,7 +10,8 @@ export type ConfirmAction =
   | 'deactivate'
   | 'restore'
   | 'duplicate'
-  | 'archive';
+  | 'archive'
+  | 'regenerate';
 
 interface ConfirmPreset {
   title: string;
@@ -47,6 +48,11 @@ const PRESETS: Record<ConfirmAction, ConfirmPreset> = {
   archive: {
     title: __('Archive', 'kelune-crm'),
     description: __('Are you sure you want to archive?', 'kelune-crm'),
+    color: '#faad14',
+  },
+  regenerate: {
+    title: __('Regenerate', 'kelune-crm'),
+    description: __('Are you sure you want to regenerate?', 'kelune-crm'),
     color: '#faad14',
   },
 };

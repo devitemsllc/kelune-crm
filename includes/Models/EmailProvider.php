@@ -69,6 +69,9 @@ class EmailProvider
         'sendgrid_api_key',
     ];
 
+    /** Stands in for a stored secret on the way out, means "unchanged" on the way back. */
+    public const SECRET_MASK = '__secret_unchanged__';
+
     /** @param array<string, mixed> $data */
     public function __construct($data = [])
     {

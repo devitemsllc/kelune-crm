@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { __ } from '@wordpress/i18n';
-import { Drawer, Form, Radio, ColorPicker, Alert } from 'antd';
+import { Drawer, Form, Radio, ColorPicker, Alert, Space } from 'antd';
 import type { TemplateSettings } from '@/utils/emailHtml';
 import RichTextEditor from '@/components/common/RichTextEditor';
 import { FOOTER_MERGE_TAGS, footerComplianceMessage } from '@/utils/mergeTags';
@@ -115,17 +115,22 @@ const FooterSettingsModal = ({
           <>
             <div style={sectionRule} />
 
-            <Form.Item style={{ marginBottom: isCustom ? 16 : 0 }}>
+            <Form.Item
+              label={__('Source', 'kelune-crm')}
+              style={{ marginBottom: isCustom ? 16 : 0 }}
+            >
               <Radio.Group
                 value={settings.footerSource}
                 onChange={(e) => onChange({ footerSource: e.target.value })}
               >
-                <Radio value="global">
-                  {__('Global Footer', 'kelune-crm')}
-                </Radio>
-                <Radio value="custom">
-                  {__('Custom Footer', 'kelune-crm')}
-                </Radio>
+                <Space direction="vertical">
+                  <Radio value="global">
+                    {__('Global Footer', 'kelune-crm')}
+                  </Radio>
+                  <Radio value="custom">
+                    {__('Custom Footer', 'kelune-crm')}
+                  </Radio>
+                </Space>
               </Radio.Group>
             </Form.Item>
 

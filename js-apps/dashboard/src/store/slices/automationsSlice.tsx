@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
 import { getApiError, getErrorMessage } from '@/utils/getErrorMessage';
 import { startGlobalLoading, stopGlobalLoading } from './globalLoadingSlice';
+import { invalidateReference } from './referenceSlice';
 import type {
   Automation,
   AutomationStep,
@@ -52,6 +53,7 @@ export const createAutomation = createAsyncThunk(
     dispatch(startGlobalLoading());
     try {
       const response = await api.automations.create(data);
+      dispatch(invalidateReference('automations'));
       return response.data;
     } finally {
       dispatch(stopGlobalLoading());
@@ -74,6 +76,7 @@ export const updateAutomation = createAsyncThunk(
     dispatch(startGlobalLoading());
     try {
       const response = await api.automations.update(id, data);
+      dispatch(invalidateReference('automations'));
       return response.data;
     } finally {
       dispatch(stopGlobalLoading());
@@ -87,6 +90,7 @@ export const deleteAutomation = createAsyncThunk(
     dispatch(startGlobalLoading());
     try {
       await api.automations.delete(id);
+      dispatch(invalidateReference('automations'));
       return id;
     } finally {
       dispatch(stopGlobalLoading());
@@ -100,6 +104,7 @@ export const duplicateAutomation = createAsyncThunk(
     dispatch(startGlobalLoading());
     try {
       const response = await api.automations.duplicate(id);
+      dispatch(invalidateReference('automations'));
       return response.data;
     } finally {
       dispatch(stopGlobalLoading());
@@ -113,6 +118,7 @@ export const activateAutomation = createAsyncThunk(
     dispatch(startGlobalLoading());
     try {
       const response = await api.automations.activate(id);
+      dispatch(invalidateReference('automations'));
       return { id, ...response.data };
     } catch (error) {
       // Surface the real reason (e.g. validation errors), not a generic message.
@@ -135,6 +141,7 @@ export const pauseAutomation = createAsyncThunk(
     dispatch(startGlobalLoading());
     try {
       const response = await api.automations.pause(id);
+      dispatch(invalidateReference('automations'));
       return { id, ...response.data };
     } finally {
       dispatch(stopGlobalLoading());
@@ -159,6 +166,7 @@ export const bulkActionAutomations = createAsyncThunk(
     dispatch(startGlobalLoading());
     try {
       const response = await api.automations.bulkAction(action, ids);
+      dispatch(invalidateReference('automations'));
       return { action, ids, ...response.data };
     } finally {
       dispatch(stopGlobalLoading());

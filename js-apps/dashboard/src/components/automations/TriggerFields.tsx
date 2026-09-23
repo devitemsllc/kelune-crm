@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import { Divider, Form, Input, Select } from 'antd';
 import { __ } from '@wordpress/i18n';
 import type { FormInstance } from 'antd';
-import api from '../../services/api';
+import { useReferenceData } from '@hooks/useReferenceData';
 import { formSectionDivider } from '../../utils/formStyles';
 import {
   LIST_TRIGGERS,
@@ -10,7 +10,6 @@ import {
   TRIGGER_OPTIONS,
   WAIT_UNITS,
 } from './triggerTypes';
-import type { ContactList, Tag } from '@/types/models';
 
 interface TriggerFieldsProps {
   /** The host form; the fields bind to trigger_type, trigger_config.* and settings.*. */
@@ -24,8 +23,8 @@ interface TriggerFieldsProps {
  * canvas trigger drawer — so the two cannot disagree.
  */
 const TriggerFields = ({ form }: TriggerFieldsProps) => {
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [lists, setLists] = useState<ContactList[]>([]);
+  const { data: tags } = useReferenceData('tags');
+  const { data: lists } = useReferenceData('lists');
 
   const triggerType = Form.useWatch('trigger_type', form) as string | undefined;
   // Drives both the visibility of Wait Between Entries and which of the two
@@ -33,21 +32,6 @@ const TriggerFields = ({ form }: TriggerFieldsProps) => {
   const allowReentry = Boolean(
     Form.useWatch(['settings', 'allow_reentry'], form)
   );
-
-  // Each source loads independently so one failing route never wipes the other.
-  const fetchEntities = useCallback(async () => {
-    const [tagsRes, listsRes] = await Promise.allSettled([
-      api.tags.getAll(),
-      api.lists.getAll(),
-    ]);
-
-    if (tagsRes.status === 'fulfilled') setTags(tagsRes.value.data || []);
-    if (listsRes.status === 'fulfilled') setLists(listsRes.value.data || []);
-  }, []);
-
-  useEffect(() => {
-    fetchEntities();
-  }, [fetchEntities]);
 
   const configField = () => {
     if (TAG_TRIGGERS.has(triggerType ?? '')) {

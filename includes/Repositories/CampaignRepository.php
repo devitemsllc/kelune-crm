@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KeluneCRM\Repositories;
 
 use KeluneCRM\Models\Campaign;
+use KeluneCRM\Models\Contact;
 
 class CampaignRepository
 {
@@ -160,7 +161,7 @@ class CampaignRepository
             'email_provider_id' => !empty($data['email_provider_id']) ? (int) $data['email_provider_id'] : null,
             'email_content' => $data['email_content'] ?? '',
             'content_mode' => $data['content_mode'] ?? 'html',
-            'json_structure' => $data['json_structure'] ?? null,
+            'json_structure' => $this->encodeJsonStructure($data['json_structure'] ?? null),
             'template_id' => $data['template_id'] ?? null,
             'target_segments' => is_array($data['target_segments'] ?? null) ? json_encode($data['target_segments']) : null,
             'target_lists' => is_array($data['target_lists'] ?? null) ? json_encode($data['target_lists']) : null,
@@ -227,6 +228,8 @@ class CampaignRepository
             } elseif ($field === 'email_provider_id') {
                 // Empty selection means "use the default provider" → store null.
                 $update_data[$field] = !empty($data[$field]) ? (int) $data[$field] : null;
+            } elseif ($field === 'json_structure') {
+                $update_data[$field] = $this->encodeJsonStructure($data[$field]);
             } elseif (in_array($field, $nullable_fields, true)) {
                 $update_data[$field] = !empty($data[$field]) ? $data[$field] : null;
             } else {
@@ -300,6 +303,27 @@ class CampaignRepository
     }
 
     /**
+     * The model decodes this column on read, so a value that passed through a
+     * Campaign object is an array; handing that to wpdb empties the column.
+     *
+     * @param mixed $value
+     */
+    private function encodeJsonStructure($value): ?string
+    {
+        if (is_string($value)) {
+            return '' !== $value ? $value : null;
+        }
+
+        if (!is_array($value) || [] === $value) {
+            return null;
+        }
+
+        $encoded = json_encode($value);
+
+        return false === $encoded ? null : $encoded;
+    }
+
+    /**
      * @param int $id
      * @return int|false
      */
@@ -323,7 +347,7 @@ class CampaignRepository
         $new_id = $this->create($data);
 
         if ($new_id) {
-            $this->duplicateVariants($id, (int) $new_id);
+            $this->duplicateVariants((int) $id, (int) $new_id);
         }
 
         return $new_id;
@@ -400,17 +424,28 @@ class CampaignRepository
             return [];
         }
 
+        // The same allowlist every other send path consults, so a status the
+        // filter adds or removes reaches campaigns too. Emptied, it means nobody.
+        $statuses = Contact::sendableStatuses();
+
+        if ($statuses === []) {
+            return [];
+        }
+
+        $status_placeholders = implode(',', array_fill(0, count($statuses), '%s'));
+
         $sendable = [];
 
         foreach (array_chunk($ids, 5000) as $chunk) {
             $placeholders = implode(',', array_fill(0, count($chunk), '%d'));
-            $query = $this->db->prepare(
-                "SELECT id FROM {$this->contactsTable}
-                WHERE status = 'active'
+
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Placeholders only; every value is bound below.
+            $sql = "SELECT id FROM {$this->contactsTable}
+                WHERE status IN ({$status_placeholders})
                 AND email IS NOT NULL AND email <> ''
-                AND id IN ({$placeholders})",
-                $chunk
-            );
+                AND id IN ({$placeholders})";
+
+            $query = $this->db->prepare($sql, array_merge($statuses, $chunk));
 
             if ($query) {
                 $sendable = array_merge($sendable, $this->db->get_col($query) ?: []);
@@ -596,6 +631,37 @@ class CampaignRepository
     {
         $contact_ids = $this->getRecipientIds($segments, $lists, $tags, $exclude_segments, $exclude_lists, $exclude_tags);
         return count($contact_ids);
+    }
+
+    /** Status is in the WHERE so a retried webhook cannot count twice. */
+    public function markEmailBounced(string $tracking_token, string $reason = ''): bool
+    {
+        if ('' === $tracking_token) {
+            return false;
+        }
+
+        $now = current_time('mysql', true);
+
+        $data = [
+            'status' => 'bounced',
+            'bounced_at' => $now,
+            'updated_at' => $now,
+        ];
+
+        if ('' !== $reason) {
+            $data['error_message'] = $reason;
+        }
+
+        $updated = $this->db->update(
+            $this->campaignEmailsTable,
+            $data,
+            [
+                'tracking_token' => $tracking_token,
+                'status' => 'sent',
+            ]
+        );
+
+        return is_int($updated) && $updated > 0;
     }
 
     /**

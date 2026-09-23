@@ -3,6 +3,7 @@ import { Form, message } from 'antd';
 import type { FormInstance } from 'antd';
 import { __ } from '@wordpress/i18n';
 import { useDispatch } from '@store/hooks';
+import { invalidateReference } from '@store/slices/referenceSlice';
 import {
   startGlobalLoading,
   stopGlobalLoading,
@@ -70,6 +71,7 @@ const useSettingsForm = (): UseSettingsForm => {
     try {
       const response = await api.settings.update(values);
       form.setFieldsValue(response.data ?? {});
+      dispatch(invalidateReference('settings'));
       message.success(__('Settings saved successfully', 'kelune-crm'));
     } catch (err) {
       message.error(

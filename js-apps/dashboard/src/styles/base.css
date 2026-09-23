@@ -2194,3 +2194,97 @@ between items. */
   border-left: 1px solid #f0f0f0;
   border-right: 1px solid #f0f0f0;
 }
+
+/* Card tabs whose labels are router links: padding on the anchor, or a click in the padding never follows the link. */
+.wp-admin
+  #kelune-crm-dashboard
+  .kelune-crm-cc-nav-tabs
+  .kelune-crm-ant-tabs-tab,
+.wp-admin
+  .kelune-crm-ant-modal
+  .kelune-crm-cc-nav-tabs
+  .kelune-crm-ant-tabs-tab,
+.wp-admin
+  .kelune-crm-ant-drawer
+  .kelune-crm-cc-nav-tabs
+  .kelune-crm-ant-tabs-tab {
+  padding: 0;
+}
+.wp-admin
+  #kelune-crm-dashboard
+  .kelune-crm-cc-nav-tabs
+  .kelune-crm-ant-tabs-tab-btn
+  > a,
+.wp-admin
+  .kelune-crm-ant-modal
+  .kelune-crm-cc-nav-tabs
+  .kelune-crm-ant-tabs-tab-btn
+  > a,
+.wp-admin
+  .kelune-crm-ant-drawer
+  .kelune-crm-cc-nav-tabs
+  .kelune-crm-ant-tabs-tab-btn
+  > a {
+  display: block;
+  padding: 12px 0;
+}
+
+/* `copyable` renders its own <button>; a real <Button> inside would nest one in another. */
+.wp-admin
+  #kelune-crm-dashboard
+  .kelune-crm-cc-copy-button
+  .kelune-crm-ant-typography-copy,
+.wp-admin
+  .kelune-crm-ant-modal
+  .kelune-crm-cc-copy-button
+  .kelune-crm-ant-typography-copy,
+.wp-admin
+  .kelune-crm-ant-drawer
+  .kelune-crm-cc-copy-button
+  .kelune-crm-ant-typography-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 8px;
+  margin-inline-start: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  color: rgba(0, 0, 0, 0.88);
+  font-size: 12px;
+  line-height: 1;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+.wp-admin
+  #kelune-crm-dashboard
+  .kelune-crm-cc-copy-button
+  .kelune-crm-ant-typography-copy:hover,
+.wp-admin
+  .kelune-crm-ant-modal
+  .kelune-crm-cc-copy-button
+  .kelune-crm-ant-typography-copy:hover,
+.wp-admin
+  .kelune-crm-ant-drawer
+  .kelune-crm-cc-copy-button
+  .kelune-crm-ant-typography-copy:hover {
+  color: #1677ff;
+  border-color: #1677ff;
+}
+.wp-admin
+  #kelune-crm-dashboard
+  .kelune-crm-cc-copy-button
+  .kelune-crm-ant-typography-copy-success,
+.wp-admin
+  .kelune-crm-ant-modal
+  .kelune-crm-cc-copy-button
+  .kelune-crm-ant-typography-copy-success,
+.wp-admin
+  .kelune-crm-ant-drawer
+  .kelune-crm-cc-copy-button
+  .kelune-crm-ant-typography-copy-success {
+  color: #52c41a;
+  border-color: #52c41a;
+}

@@ -28,11 +28,6 @@ class EmailProviderController extends BaseController
 
     private ProviderFactory $factory;
 
-    /**
-     * Sentinel returned in place of stored secrets.
-     */
-    private const SECRET_MASK = '__secret_unchanged__';
-
     public function __construct()
     {
         $this->repository = new EmailProviderRepository();
@@ -128,7 +123,7 @@ class EmailProviderController extends BaseController
         $total = $this->repository->getCount($params);
 
         $response = $this->successResponse(
-            array_map(fn (EmailProvider $p): array => $p->toArray(self::SECRET_MASK), $items)
+            array_map(fn (EmailProvider $p): array => $p->toArray(EmailProvider::SECRET_MASK), $items)
         );
         $response->header('X-WP-Total', (string) $total);
 
@@ -143,7 +138,7 @@ class EmailProviderController extends BaseController
             return $this->errorResponse(__('Email provider not found', 'kelune-crm'), 'not_found', 404);
         }
 
-        return $this->successResponse($provider->toArray(self::SECRET_MASK));
+        return $this->successResponse($provider->toArray(EmailProvider::SECRET_MASK));
     }
 
     public function createItem(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
@@ -177,7 +172,7 @@ class EmailProviderController extends BaseController
         }
 
         return $this->successResponse(
-            $provider->toArray(self::SECRET_MASK),
+            $provider->toArray(EmailProvider::SECRET_MASK),
             __('Email provider created successfully', 'kelune-crm')
         );
     }
@@ -237,7 +232,7 @@ class EmailProviderController extends BaseController
         }
 
         return $this->successResponse(
-            $provider->toArray(self::SECRET_MASK),
+            $provider->toArray(EmailProvider::SECRET_MASK),
             __('Email provider updated successfully', 'kelune-crm')
         );
     }
@@ -428,7 +423,7 @@ class EmailProviderController extends BaseController
         }
 
         return $this->successResponse(
-            $provider->toArray(self::SECRET_MASK),
+            $provider->toArray(EmailProvider::SECRET_MASK),
             __('Sender email added.', 'kelune-crm')
         );
     }
@@ -474,7 +469,7 @@ class EmailProviderController extends BaseController
         }
 
         return $this->successResponse(
-            $provider->toArray(self::SECRET_MASK),
+            $provider->toArray(EmailProvider::SECRET_MASK),
             __('Sender email removed.', 'kelune-crm')
         );
     }
@@ -711,7 +706,7 @@ class EmailProviderController extends BaseController
         // Carry forward any secret submitted as the unchanged-sentinel.
         $secretValue = function (string $key) use ($raw, $existing): string {
             $value = $raw[$key] ?? '';
-            if ($value === '' || $value === self::SECRET_MASK) {
+            if ($value === '' || $value === EmailProvider::SECRET_MASK) {
                 return (string) ($existing[$key] ?? '');
             }
             return $this->sanitizeCredentialValue($value);

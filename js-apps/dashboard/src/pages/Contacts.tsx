@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useDispatch, useSelector } from '@store/hooks';
+import { invalidateReference } from '@store/slices/referenceSlice';
+import { useReferenceData } from '@hooks/useReferenceData';
 
 interface VisibleColumn extends ColumnType<Contact> {
   visible?: boolean;
@@ -89,22 +91,11 @@ import Segments from './Segments';
 import ProFeatureGate from '../components/common/ProFeatureGate';
 import api from '../services/api';
 import { Link, useLocation } from 'react-router-dom';
-import type {
-  Contact,
-  Tag as TagModel,
-  ContactList,
-  Automation,
-  ID,
-} from '@/types/models';
+import type { Contact, Tag as TagModel, ContactList, ID } from '@/types/models';
 import type { Key } from 'react';
 import { timeDiff, timeFormat } from '../utils/time';
 import { countryName } from '../utils/countries';
-import {
-  customFieldDisplayValue,
-  customFieldKey,
-  fetchCustomFields,
-} from '../utils/customFields';
-import type { CustomFieldDef } from '../utils/customFields';
+import { customFieldDisplayValue, customFieldKey } from '../utils/customFields';
 
 const { Text } = Typography;
 
@@ -167,12 +158,10 @@ const Contacts = () => {
   const [tagsModalVisible, setTagsModalVisible] = useState(false);
   const [managingTagsContact, setManagingTagsContact] =
     useState<Contact | null>(null);
-  const [availableTags, setAvailableTags] = useState<TagModel[]>([]);
   const [selectedTags, setSelectedTags] = useState<ID[]>([]);
   const [listsModalVisible, setListsModalVisible] = useState(false);
   const [managingListsContact, setManagingListsContact] =
     useState<Contact | null>(null);
-  const [availableLists, setAvailableLists] = useState<ContactList[]>([]);
   const [selectedLists, setSelectedLists] = useState<ID[]>([]);
 
   // Persisted view-state: search, filters, page/limit and visible columns are
@@ -208,13 +197,17 @@ const Contacts = () => {
     [updateView]
   );
 
-  const [allTags, setAllTags] = useState<TagModel[]>([]);
-  const [allLists, setAllLists] = useState<ContactList[]>([]);
+  const { data: allTags } = useReferenceData('tags');
+  const { data: allLists } = useReferenceData('lists');
+  const { data: activeAutomations } = useReferenceData('automations');
+  const { data: customFields } = useReferenceData('customFields');
   // Active, manual-trigger automations a selection can be enrolled into — a
   // manual automation has no automatic trigger, so this bulk action is the way
   // to start it for chosen contacts.
-  const [manualAutomations, setManualAutomations] = useState<Automation[]>([]);
-  const [customFields, setCustomFields] = useState<CustomFieldDef[]>([]);
+  const manualAutomations = useMemo(
+    () => activeAutomations.filter((a) => a.trigger_type === 'manual'),
+    [activeAutomations]
+  );
 
   const loadContacts = useCallback(() => {
     if (!can(CAP.VIEW_CONTACTS)) {
@@ -255,55 +248,6 @@ const Contacts = () => {
   const activeTab = allowedTabs.some((tab) => tab.key === requestedTab)
     ? requestedTab
     : undefined;
-
-  const loadTagsAndLists = useCallback(async () => {
-    try {
-      // Each request is optional; one refusal must not take the rest.
-      const [tagsResponse, listsResponse, automationsResponse, fields] =
-        await Promise.all([
-          can(CAP.VIEW_TAGS) ? api.tags.getAll().catch(() => null) : null,
-          can(CAP.VIEW_LISTS) ? api.lists.getAll().catch(() => null) : null,
-          can(CAP.VIEW_AUTOMATIONS)
-            ? api.automations
-                .getAll({ per_page: 100, status: 'active' })
-                .catch(() => null)
-            : null,
-          fetchCustomFields(),
-        ]);
-      // Normalise ids to numbers (API may send strings) so they match the
-      // numeric filter/select values and id lookups below.
-      setAllTags(
-        (tagsResponse?.data || []).map((tag) => ({
-          ...tag,
-          id: Number(tag.id),
-        }))
-      );
-      setAllLists(
-        (listsResponse?.data || []).map((list) => ({
-          ...list,
-          id: Number(list.id),
-        }))
-      );
-      // Only manual-trigger automations are offered for bulk enrolment; the
-      // rest enrol themselves via their own events.
-      const automations = (automationsResponse?.data?.data ??
-        []) as Automation[];
-      setManualAutomations(
-        automations.filter((a) => a.trigger_type === 'manual')
-      );
-      setCustomFields(fields);
-    } catch (error) {
-      console.error(
-        'Failed to load tags, lists, automations and custom fields:',
-        error
-      );
-    }
-  }, []);
-
-  useEffect(() => {
-    // Load tags and lists for filters
-    loadTagsAndLists();
-  }, [loadTagsAndLists]);
 
   const handleCreate = () => {
     setEditingContact(null);
@@ -504,15 +448,19 @@ const Contacts = () => {
 
   const handleReload = () => {
     loadContacts();
-    loadTagsAndLists();
+    dispatch(
+      invalidateReference(['tags', 'lists', 'automations', 'customFields'])
+    );
+  };
+
+  // Import creates any tag or list the CSV names, so the pickers go stale.
+  const handleImported = () => {
+    loadContacts();
+    dispatch(invalidateReference(['tags', 'lists']));
   };
 
   const handleManageTags = async (record: Contact) => {
     try {
-      // Fetch all available tags
-      const tagsResponse = await api.tags.getAll();
-      setAvailableTags(tagsResponse.data || []);
-
       // Fetch full contact details to get current tags
       const contactResponse = await api.contacts.getOne(record.id);
       setManagingTagsContact(contactResponse.data);
@@ -548,10 +496,6 @@ const Contacts = () => {
 
   const handleManageLists = async (record: Contact) => {
     try {
-      // Fetch all available lists
-      const listsResponse = await api.lists.getAll();
-      setAvailableLists(listsResponse.data || []);
-
       // Fetch full contact details to get current lists
       const contactResponse = await api.contacts.getOne(record.id);
       setManagingListsContact(contactResponse.data);
@@ -1306,7 +1250,7 @@ const Contacts = () => {
       <ImportModal
         visible={importModalVisible}
         onClose={() => setImportModalVisible(false)}
-        onSuccess={loadContacts}
+        onSuccess={handleImported}
       />
 
       <ExportModal
@@ -1342,7 +1286,7 @@ const Contacts = () => {
           onChange={setSelectedLists}
           style={{ width: '100%' }}
         >
-          {availableLists.map((list) => (
+          {allLists.map((list) => (
             <Select.Option key={list.id} value={Number(list.id)}>
               {list.name}
             </Select.Option>
@@ -1371,7 +1315,7 @@ const Contacts = () => {
           onChange={setSelectedTags}
           style={{ width: '100%' }}
         >
-          {availableTags.map((tag) => (
+          {allTags.map((tag) => (
             <Select.Option key={tag.id} value={Number(tag.id)}>
               {tag.name}
             </Select.Option>

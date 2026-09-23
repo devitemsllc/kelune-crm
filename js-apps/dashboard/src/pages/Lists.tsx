@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import { useDispatch } from '@store/hooks';
+import { invalidateReference } from '@store/slices/referenceSlice';
 import {
   Table,
   Button,
@@ -197,6 +198,7 @@ const Lists = () => {
     try {
       await api.lists.delete(id);
       message.success(__('List deleted successfully', 'kelune-crm'));
+      dispatch(invalidateReference('lists'));
       loadLists();
     } catch (error) {
       message.error(
@@ -220,6 +222,7 @@ const Lists = () => {
         )
       );
       setSelectedRowKeys([]);
+      dispatch(invalidateReference('lists'));
       loadLists();
     } catch (error) {
       message.error(
@@ -247,6 +250,7 @@ const Lists = () => {
         message.success(__('List created successfully', 'kelune-crm'));
       }
       setModalVisible(false);
+      dispatch(invalidateReference('lists'));
       loadLists();
     } catch (error) {
       message.error(

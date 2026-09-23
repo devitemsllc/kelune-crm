@@ -26,11 +26,6 @@ const EmailsTab: React.FC = () => {
       color: CHART_COLORS.primary,
     },
     {
-      title: __('Delivered', 'kelune-crm'),
-      value: perf?.delivered ?? 0,
-      color: CHART_COLORS.teal,
-    },
-    {
       title: __('Opened', 'kelune-crm'),
       value: perf?.opened ?? 0,
       color: CHART_COLORS.green,
@@ -45,9 +40,6 @@ const EmailsTab: React.FC = () => {
       value: perf?.bounced ?? 0,
       color: CHART_COLORS.red,
     },
-  ];
-
-  const rates: StatItem[] = [
     {
       title: __('Delivery Rate', 'kelune-crm'),
       value: perf?.delivery_rate ?? 0,
@@ -80,11 +72,7 @@ const EmailsTab: React.FC = () => {
 
   return (
     <>
-      <StatGrid items={tiles} loading={isLoading} />
-
-      <div style={{ marginTop: 16 }}>
-        <StatGrid items={rates} loading={isLoading} />
-      </div>
+      <StatGrid items={tiles} loading={isLoading} columns={8} />
 
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
         <Col xs={24}>

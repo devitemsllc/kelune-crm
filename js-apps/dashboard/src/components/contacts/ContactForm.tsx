@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Form,
   Input,
@@ -21,12 +21,13 @@ import type { FormInstance } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import dayjs from 'dayjs';
-import api from '../../services/api';
 import { CONTACT_STATUS_OPTIONS } from './contactStatus';
 import { timeDiff, timeFormat } from '../../utils/time';
 import { formSectionDivider } from '../../utils/formStyles';
 import { countryOptions } from '../../utils/countries';
 import { ListSelect, TagSelect } from '@/components/common/AudienceSelect';
+import { useReferenceData } from '@hooks/useReferenceData';
+import type { CustomFieldDef } from '@/utils/customFields';
 import type { Contact, Tag, ContactList, Note } from '@/types/models';
 import SubmitOnEnter from '../common/SubmitOnEnter';
 import { contactFieldLabel, isContactRequired } from '@/utils/contactIdentity';
@@ -34,21 +35,6 @@ import { contactFieldLabel, isContactRequired } from '@/utils/contactIdentity';
 const { Option } = Select;
 const { TextArea } = Input;
 const { Text } = Typography;
-
-/** Custom field definition as returned by GET /custom-fields. */
-interface CustomFieldDef {
-  id: number;
-  field_key: string;
-  field_label: string;
-  field_type: string;
-  field_required?: number;
-  field_options?: {
-    choices?: string[];
-    options?: string[];
-  };
-  field_default?: unknown;
-  field_order?: number;
-}
 
 interface ContactFormProps {
   contact?: Contact | null;
@@ -58,18 +44,26 @@ interface ContactFormProps {
 }
 
 const ContactForm = ({ contact, form, onSubmit }: ContactFormProps) => {
-  const [customFields, setCustomFields] = useState<CustomFieldDef[]>([]);
-  const [customFieldsLoaded, setCustomFieldsLoaded] = useState(false);
+  const { data: customFields, ready: customFieldsReady } =
+    useReferenceData('customFields');
   const [deletedNoteIds, setDeletedNoteIds] = useState<number[]>([]);
+  // Seeded once per contact; a later custom-field refresh must not re-seed
+  // over input typed in the meantime.
+  const seededContact = useRef<Contact | null>(null);
 
+  // The form instance outlives this component (the drawer owns it), so values
+  // from the last edited contact survive a close. Clear once per mount, not in
+  // the seed effect below, which re-runs after custom fields load and would
+  // wipe input typed in the meantime.
   useEffect(() => {
-    fetchCustomFields();
-  }, []);
+    form.resetFields();
+  }, [form]);
 
   useEffect(() => {
     // A date value seeded before its definition is known stays a string, and
     // the DatePicker that mounts on it throws on render.
-    if (contact && customFieldsLoaded) {
+    if (contact && customFieldsReady && seededContact.current !== contact) {
+      seededContact.current = contact;
       // Don't set notes field - it's for adding new notes only
       const { notes: _notes, custom_fields, ...rest } = contact;
       const contactData: Record<string, unknown> = { ...rest };
@@ -119,21 +113,7 @@ const ContactForm = ({ contact, form, onSubmit }: ContactFormProps) => {
 
       form.setFieldsValue(contactData);
     }
-  }, [contact, form, customFields, customFieldsLoaded]);
-
-  const fetchCustomFields = async () => {
-    try {
-      const response = await api.get<CustomFieldDef[]>('/custom-fields', {
-        params: { per_page: 100 },
-      });
-      setCustomFields(response.data || []);
-    } catch (error) {
-      console.error('Failed to fetch custom fields:', error);
-    } finally {
-      // Also on failure: the standard fields still need seeding.
-      setCustomFieldsLoaded(true);
-    }
-  };
+  }, [contact, form, customFields, customFieldsReady]);
 
   const handleDeleteNote = (noteId: number) => {
     setDeletedNoteIds([...deletedNoteIds, noteId]);

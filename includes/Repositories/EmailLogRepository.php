@@ -176,6 +176,123 @@ class EmailLogRepository
         return $this->update($id, $update_data);
     }
 
+    /**
+     * Statuses a failure may still be reported against; an ended row is never re-marked.
+     *
+     * @var array<int, string>
+     */
+    private const ATTRIBUTABLE_STATUSES = ['sent', 'delivered', 'opened', 'clicked'];
+
+    /** Clock slack on the event-time bound, so skew cannot discard a legitimate attribution. */
+    private const EVENT_CLOCK_SKEW = 5 * MINUTE_IN_SECONDS;
+
+    /** @return EmailLog|null The row marked, so the caller can carry it to the queue row. */
+    public function markBounced(
+        string $token,
+        string $email,
+        string $reason = '',
+        string $event_at = '',
+        string $provider = ''
+    ): ?EmailLog {
+        $log = $this->resolveForAttribution($token, $email, 'bounced_at', $event_at, $provider);
+
+        if (!$log instanceof EmailLog || !in_array((string) $log->status, self::ATTRIBUTABLE_STATUSES, true)) {
+            return null;
+        }
+
+        $data = [];
+        if ('' !== $reason) {
+            $data['error_message'] = $reason;
+        }
+
+        return $this->updateStatus((int) $log->id, 'bounced', $data) ? $log : null;
+    }
+
+    /** Status is left alone: a spam report is about a message that was delivered. */
+    public function markComplained(
+        string $token,
+        string $email,
+        string $event_at = '',
+        string $provider = ''
+    ): ?EmailLog {
+        $log = $this->resolveForAttribution($token, $email, 'complained_at', $event_at, $provider);
+
+        if (!$log instanceof EmailLog || !empty($log->complained_at)) {
+            return null;
+        }
+
+        return $this->update((int) $log->id, ['complained_at' => current_time('mysql', true)])
+            ? $log
+            : null;
+    }
+
+    /**
+     * The token, else the newest attributable send to the address. Each bound
+     * on the fallback stops a redelivery from marking a delivered send: newer
+     * than the last row marked (no walking back), not after the event time (no
+     * walking forward), same provider or none (a carrier only reports its own
+     * mail; a `wp_mail` row was transported by another plugin, so it stays eligible).
+     *
+     * @param string $marker   Timestamp column the failure writes.
+     * @param string $event_at UTC `Y-m-d H:i:s` the provider reported, or ''.
+     */
+    private function resolveForAttribution(
+        string $token,
+        string $email,
+        string $marker,
+        string $event_at = '',
+        string $provider = ''
+    ): ?EmailLog {
+        if ('' !== $token) {
+            $log = $this->getByTrackingToken($token);
+
+            if ($log instanceof EmailLog) {
+                return $log;
+            }
+        }
+
+        if (!is_email($email)) {
+            return null;
+        }
+
+        $marked = $this->db->get_var($this->db->prepare(
+            "SELECT MAX(sent_at) FROM {$this->table} WHERE email_to = %s AND %i IS NOT NULL",
+            $email,
+            $marker
+        ));
+
+        $placeholders = implode(', ', array_fill(0, count(self::ATTRIBUTABLE_STATUSES), '%s'));
+        $params = array_merge([$email], self::ATTRIBUTABLE_STATUSES);
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Placeholders only; every value is bound below.
+        $sql = "SELECT * FROM {$this->table} WHERE email_to = %s AND status IN ({$placeholders})";
+
+        if (is_string($marked) && '' !== $marked) {
+            $sql .= ' AND sent_at > %s';
+            $params[] = $marked;
+        }
+
+        if ('' !== $event_at) {
+            $sql .= ' AND sent_at <= %s';
+            $params[] = gmdate('Y-m-d H:i:s', (int) strtotime($event_at . ' UTC') + self::EVENT_CLOCK_SKEW);
+        }
+
+        if ('' !== $provider) {
+            $sql .= " AND (provider IS NULL OR provider IN ('', 'wp_mail') OR provider = %s)";
+            $params[] = $provider;
+        }
+
+        $sql .= ' ORDER BY sent_at DESC, id DESC LIMIT 1';
+
+        $result = $this->db->get_row(
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Prepared immediately above with a generated placeholder list.
+            $this->db->prepare($sql, $params),
+            ARRAY_A
+        );
+
+        return is_array($result) ? new EmailLog($result) : null;
+    }
+
     public function getByTrackingToken(string $token): ?EmailLog
     {
         $result = $this->db->get_row(
@@ -229,6 +346,7 @@ class EmailLogRepository
                 COUNT(*) as total_sent,
                 SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed_count,
                 SUM(CASE WHEN status = 'bounced' THEN 1 ELSE 0 END) as bounced_count,
+                SUM(CASE WHEN complained_at IS NOT NULL THEN 1 ELSE 0 END) as complained_count,
                 SUM(CASE WHEN status IN ('sent', 'delivered', 'opened', 'clicked') THEN 1 ELSE 0 END) as delivered_count,
                 SUM(CASE WHEN status IN ('opened', 'clicked') OR open_count > 0 THEN 1 ELSE 0 END) as opened_count,
                 SUM(CASE WHEN status = 'clicked' OR click_count > 0 THEN 1 ELSE 0 END) as clicked_count,
@@ -248,9 +366,15 @@ class EmailLogRepository
         $total = (int) ($row['total_sent'] ?? 0);
         $delivered = (int) ($row['delivered_count'] ?? 0);
 
+        $row['delivery_rate'] = $total > 0 ? round(($delivered / $total) * 100, 2) : 0.0;
         $row['open_rate'] = $delivered > 0 ? round(((int) ($row['opened_count'] ?? 0) / $delivered) * 100, 2) : 0.0;
         $row['click_rate'] = $delivered > 0 ? round(((int) ($row['clicked_count'] ?? 0) / $delivered) * 100, 2) : 0.0;
         $row['bounce_rate'] = $total > 0 ? round(((int) ($row['bounced_count'] ?? 0) / $total) * 100, 2) : 0.0;
+
+        // A complaint never writes a log status; the timestamp column is the only count.
+        $row['complaint_rate'] = $total > 0
+            ? round(((int) ($row['complained_count'] ?? 0) / $total) * 100, 2)
+            : 0.0;
 
         return $row;
     }

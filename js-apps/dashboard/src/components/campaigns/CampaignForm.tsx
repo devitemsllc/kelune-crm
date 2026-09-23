@@ -47,16 +47,11 @@ import EmailPreviewModal from '../common/EmailPreviewModal';
 import ModalFooter from '../common/ModalFooter';
 import { buildDefaultTemplateContent } from '../email-templates/blockDefaults';
 import { isProActive } from '../../hooks/useFeature';
+import { useReferenceData } from '@hooks/useReferenceData';
 import { ProTag } from '../common/ProTag';
 import ProUpgradeModal from '../common/ProUpgradeModal';
 import { proLockTitle } from '../../utils/pro';
-import type {
-  Campaign,
-  Segment,
-  ContactList,
-  Tag as TagType,
-  EmailProvider,
-} from '@/types/models';
+import type { Campaign } from '@/types/models';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import SubmitOnEnter from '../common/SubmitOnEnter';
 
@@ -215,21 +210,24 @@ const CampaignForm = ({
   const isEditing = Boolean(editingCampaign);
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [segments, setSegments] = useState<Segment[]>([]);
   const [proUpgradeOpen, setProUpgradeOpen] = useState(false);
-  const [lists, setLists] = useState<ContactList[]>([]);
-  const [tags, setTags] = useState<TagType[]>([]);
   const [recipientCount, setRecipientCount] = useState(0);
   const [testEmailVisible, setTestEmailVisible] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
-  const [providers, setProviders] = useState<EmailProvider[]>([]);
+  // Shared reference data, loaded once the drawer opens and kept fresh by the
+  // pages that edit it.
+  const { data: segments } = useReferenceData('segments', visible);
+  const { data: lists } = useReferenceData('lists', visible);
+  const { data: tags } = useReferenceData('tags', visible);
+  const { data: providers } = useReferenceData('emailProviders', visible);
+  const { data: settings } = useReferenceData('settings', visible);
   // Global Email identity, shown as the resolved sender when "Account default"
   // is chosen so the user sees who the campaign actually sends as.
-  const [globalSender, setGlobalSender] = useState<GlobalSender>({
-    from_name: '',
-    from_email: '',
-    reply_to: '',
-  });
+  const globalSender: GlobalSender = {
+    from_name: String(settings.email_from_name ?? ''),
+    from_email: String(settings.email_from_email ?? ''),
+    reply_to: String(settings.email_reply_to_email ?? ''),
+  };
 
   // Which sender identity the campaign uses (drives the sender section fields).
   const senderType = (Form.useWatch('sender_type', form) ??
@@ -260,50 +258,9 @@ const CampaignForm = ({
   // explicitly chosen (Account default / Custom sender modes).
   const defaultProvider = providers.find((p) => p.is_default) ?? null;
 
-  const fetchTargetingOptions = useCallback(async () => {
-    // Each source is loaded independently: a single failing request (e.g. the
-    // Pro-only segments route 404ing when Pro is inactive) must NOT wipe out the
-    // others — a plain Promise.all would reject the whole batch and leave every
-    // dropdown empty. Segments are only fetched when Pro is active.
-    const [segmentsRes, listsRes, tagsRes, providersRes, settingsRes] =
-      await Promise.allSettled([
-        proActive ? api.segments.getAll() : Promise.resolve(null),
-        api.lists.getAll(),
-        api.tags.getAll(),
-        api.emailProviders.getAll(),
-        api.settings.getAll(),
-      ]);
-
-    setSegments(
-      segmentsRes.status === 'fulfilled' && segmentsRes.value
-        ? segmentsRes.value.data || []
-        : []
-    );
-    if (listsRes.status === 'fulfilled') {
-      setLists(listsRes.value.data || []);
-    }
-    if (tagsRes.status === 'fulfilled') {
-      setTags(tagsRes.value.data || []);
-    }
-    if (providersRes.status === 'fulfilled') {
-      // The response interceptor already unwraps the { success, data } envelope,
-      // so response.data IS the provider array.
-      setProviders((providersRes.value.data as EmailProvider[]) || []);
-    }
-    if (settingsRes.status === 'fulfilled') {
-      const s = (settingsRes.value.data ?? {}) as Record<string, unknown>;
-      setGlobalSender({
-        from_name: String(s.email_from_name ?? ''),
-        from_email: String(s.email_from_email ?? ''),
-        reply_to: String(s.email_reply_to_email ?? ''),
-      });
-    }
-  }, [proActive]);
-
   useEffect(() => {
     if (!visible) return;
 
-    fetchTargetingOptions();
     setCurrentStep(0);
     setRecipientCount(0);
     form.resetFields();
@@ -351,7 +308,7 @@ const CampaignForm = ({
       // Stored UTC → local dayjs so the picker edits in the viewer's timezone.
       scheduled_at: fromUtc(editingCampaign.scheduled_at),
     });
-  }, [visible, editingCampaign, form, fetchTargetingOptions]);
+  }, [visible, editingCampaign, form]);
 
   // Count against the targeting rules as they stand in the form, so the Review
   // step reflects unsaved edits (and works before the record exists at all).
